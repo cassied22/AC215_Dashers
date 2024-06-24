@@ -12,7 +12,7 @@ from genai.streamlit_pages.utils import sample_docs
 from genai.utils import read_json
 
 
-def eyfs_dm_kb(index_name: str = "eyfs-index", sidebar: bool = True) -> None:
+def eyfs_dm_kb(index_name: str = "eyfs-index-1718673592-index", sidebar: bool = True) -> None:
     """Run the Development Matters app."""
 
     # Define your custom CSS

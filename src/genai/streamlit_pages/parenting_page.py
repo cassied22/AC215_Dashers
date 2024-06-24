@@ -53,7 +53,7 @@ def parenting_chatbot(aws_key: str, aws_secret: str, s3_path: str, sidebar: bool
 
     selected_model = "gpt-3.5-turbo"
     temperature = 0.6
-    pinecone_index = get_index(index_name="eyfs-index")
+    pinecone_index = get_index(index_name="eyfs-index-1718673592-index")
 
     if sidebar:
         with st.sidebar:

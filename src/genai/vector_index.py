@@ -3,7 +3,8 @@ import time
 
 from typing import Optional
 
-import pinecone
+# import pinecone
+from pinecone import Pinecone
 
 from genai.utils import batch
 
@@ -23,24 +24,16 @@ class PineconeIndex:
         """Initialize the index."""
 
         # Connect to pinecone
-        if api_key and environment:
-            pinecone.init(
-                api_key=api_key,
-                environment=environment,
-            )
+        if api_key:
+            self.pc = Pinecone(api_key=api_key)
         else:
-            pinecone.init(
-                api_key=os.environ["PINECONE_API_KEY"],
-                environment=os.environ["PINECONE_REGION"],
-            )
+            self.pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
 
-    def connect(self, index_name: str) -> pinecone.index.Index:
+    def connect(self, index_name: str) -> Pinecone.Index:
         """Connect to the index."""
-        if index_name not in pinecone.list_indexes():
-            raise ValueError(f"Index {index_name} does not exist.")
+        return self.pc.Index(index_name)
 
-        return pinecone.Index(index_name)
-
+    # To do: update for the new Pinecone API
     def build_and_upsert(
         self,
         index_name: str,
@@ -81,10 +74,10 @@ class PineconeIndex:
         if delete_if_exists:
             self.delete(index_name)
 
-        if index_name in pinecone.list_indexes():
+        if index_name in pinecone.list_indexes():  # noqa: F821
             index = self.connect(index_name)
         else:
-            pinecone.create_index(
+            pinecone.create_index(  # noqa: F821
                 index_name,
                 dimension=dimension,
                 metadata_config=metadata_config,
@@ -103,6 +96,6 @@ class PineconeIndex:
     def delete(index_name: str) -> None:
         """Delete the index."""
         try:
-            pinecone.delete_index(index_name)
+            pinecone.delete_index(index_name)  # noqa: F821
         except Exception as e:
             print(e)  # noqa: T001

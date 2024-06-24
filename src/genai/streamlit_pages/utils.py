@@ -5,10 +5,14 @@ from typing import List
 from typing import Optional
 from typing import Union
 
+import dotenv
 import pinecone
 import streamlit as st
 
 from genai.vector_index import PineconeIndex
+
+
+dotenv.load_dotenv()
 
 
 def reset_state(key: Optional[str] = None) -> None:

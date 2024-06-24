@@ -10,7 +10,7 @@ from genai.utils import read_json
 def eyfs_compare() -> None:
     """Compare the EYFS prototypes."""
     st.title("Compare the EYFS prototypes")
-    index = get_index(index_name="eyfs-index")
+    index = get_index(index_name="eyfs-index-1718673592-index")
     areas_of_learning_desc = read_json("src/genai/eyfs/areas_of_learning.json")
     aol = list(areas_of_learning_desc.keys())
 
