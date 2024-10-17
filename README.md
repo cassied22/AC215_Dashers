@@ -90,7 +90,19 @@ Go to a terminal inside datapipeline
 - This container has scripts for model training, rag pipeline and inference
 - Instructions for running the model container
 
-  
+Mock Submission
 
-**Notebooks/Reports**
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
+To open the container:
+
+Send an email to hanqizenghannanana@gmail.com with your email address associated with your GCP account. We would add you as an editor to our GCP project.
+[Login GCP, select project id, our ```x-goog-project-id``` is ac215vm, start the VM instance]
+Open a GCP terminal, change directory into /home/cassied22/AC215_Dashers/src/datapipeline folder
+Run docker-shell.sh using command: ```sudo sh docker-shell.sh```
+Inside the container, run preprocessing using command: ```python cli.py```
+cli.py would download text files from GCP bucket, and then upload the processed files to GCP bucket. You could observe the updates in Cloud Storage - Buckets in your GCP project.
+Stop VM instance!
+Container 2 TO BE UPDATED
+
+<!-- **Notebooks/Reports**
+This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. -->
+
