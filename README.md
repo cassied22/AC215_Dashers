@@ -67,7 +67,7 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 ## Data Pipeline Overview
 
-1. **`src/datapipeline/preprocess_cv.py`**
+1. **`src/datapipeline/preprocess_txt.py`**
    This script handles preprocessing on our 2.29 GB dataset. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to XX GB and stored on GCS.
 
 2. **`src/datapipeline/preprocess_rag.py`**
