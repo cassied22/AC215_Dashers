@@ -68,7 +68,7 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 ## Data Pipeline Overview
 
 1. **`src/datapipeline/preprocess_cv.py`**
-   This script handles preprocessing on our 100GB dataset. It reduces the image sizes to 128x128 (a parameter that can be changed later) to enable faster iteration during processing. The preprocessed dataset is now reduced to 10GB and stored on GCS.
+   This script handles preprocessing on our 2.29 GB dataset. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to XX GB and stored on GCS.
 
 2. **`src/datapipeline/preprocess_rag.py`**
    This script prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
