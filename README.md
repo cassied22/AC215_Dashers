@@ -1,9 +1,9 @@
-## Milestone 2 Template
+## Milestone 2
 
-```
+<!-- ```
 The files are empty placeholders only. You may adjust this template as appropriate for your project.
 Never commit large data files,trained models, personal API Keys/secrets to GitHub
-```
+``` -->
 
 #### Project Milestone 2 Organization
 
@@ -33,7 +33,7 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
         └── train_model.py
 ```
 
-# AC215 - Milestone2 - Cheesy App
+# AC215 - Milestone2 - Daily Meal Assistant - "What to Eat Today"
 
 **Team Members**
 Hanqi Zeng(hanqizeng@hsph.harvard.edu) 
@@ -68,14 +68,14 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 ## Data Pipeline Overview
 
 1. **`src/datapipeline/preprocess_cv.py`**
-   This script handles preprocessing on our 2.29 GB dataset. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to XX GB and stored on GCS.
 
 2. **`src/datapipeline/preprocess_rag.py`**
-   This script prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
+   This script handles preprocessing on our 2.29 GB dataset. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to XX GB and stored on GCS.
+   This script also prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
 
 3. **`src/datapipeline/Pipfile`**
    We used the following packages to help with preprocessing:
-   - `special cheese package`
+   <!-- - `special cheese package` -->
 
 4. **`src/preprocessing/Dockerfile(s)`**
    Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
