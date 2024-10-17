@@ -36,11 +36,11 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
 # AC215 - Milestone2 - Daily Meal Assistant - "What to Eat Today"
 
 **Team Members**
-Hanqi Zeng(hanqizeng@hsph.harvard.edu) 
-Chris Wang(ywang3@hsph.harvard.edu) 
-Selina Qian(jingyun_qian@hsph.harvard.edu)
-Shiyu Ma(shiyuma@g.harvard.edu) 
-Cassie Dai(cdai@g.harvard.edu)
+Hanqi Zeng(hanqizeng@hsph.harvard.edu)  <br/> 
+Chris Wang(ywang3@hsph.harvard.edu)   <br/> 
+Selina Qian(jingyun_qian@hsph.harvard.edu) <br/> 
+Shiyu Ma(shiyuma@g.harvard.edu)  <br/> 
+Cassie Dai(cdai@g.harvard.edu) <br/> 
 
 
 **Group Name**
@@ -82,12 +82,15 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 
 ## Running Dockerfile
-Instructions for running the Dockerfile can be added here.
-To run Dockerfile - `Instructions here`
+Go to a terminal inside datapipeline
+- Run docker container by using:
+```sh docker-shell.sh```
 
 **Models container**
 - This container has scripts for model training, rag pipeline and inference
-- Instructions for running the model container - `Instructions here`
+- Instructions for running the model container
+
+  
 
 **Notebooks/Reports**
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
