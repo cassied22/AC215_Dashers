@@ -54,8 +54,7 @@ In this project, we aim to develop an app that serves as a personal meal assista
 In this milestone, we have the components for data management, including versioning, as well as the computer vision and language models.
 
 **Data**
-We gathered a dataset of 100,000 cheese images representing approximately 1,500 different varieties. The dataset, approximately 100GB in size, was collected from the following sources: (1), (2), (3). We have stored it in a private Google Cloud Bucket.
-Additionally, we compiled 250 bibliographical sources on cheese, including books and reports, from sources such as (4) and (5).
+We gathered a dataset of 2,231,150 recipes including title (dish name), ingredients, directions, retrieved link, source type, and named entity recognition (NER) for food items. The ingredients are listed as an array of strings. The directions are provided as an array of strings, with each string representing a step in the cooking process. The NER data consists of an array of food item names extracted from the recipe. The dataset, approximately 2.29 GB in size, was collected from the following source: https://huggingface.co/datasets/mbien/recipe_nlg. We have stored it in a private Google Cloud Bucket.
 
 **Data Pipeline Containers**
 1. One container processes the 100GB dataset by resizing the images and storing them back to Google Cloud Storage (GCS).
@@ -92,6 +91,3 @@ To run Dockerfile - `Instructions here`
 
 **Notebooks/Reports**
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
-
-----
-You may adjust this template as appropriate for your project.
