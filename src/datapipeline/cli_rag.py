@@ -20,6 +20,22 @@ from vertexai.generative_models import (
 # from langchain.text_splitter import CharacterTextSplitter
 # from langchain_experimental.text_splitter import SemanticChunker
 
+
+# ------- optional: params versioning -------------------
+# import yaml
+
+# with open('params.yaml', 'r') as file:
+#     params = yaml.safe_load(file)
+
+# EMBEDDING_MODEL = params['embedding']['model']
+# EMBEDDING_DIMENSION = params['embedding']['dimension']
+# GENERATIVE_MODEL = params['generative_model']['name']
+# INPUT_FOLDER = params['input_folder']
+# OUTPUT_FOLDER = params['output_folder']
+# CHROMADB_HOST = params['chromadb']['host']
+# CHROMADB_PORT = params['chromadb']['port']
+# ----------------------------------------------
+
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = "us-central1"
