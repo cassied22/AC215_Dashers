@@ -50,7 +50,7 @@ Dashers
 **Project**
 In this project, we aim to develop an app that serves as a personal meal assistant, helping users track their available ingredients, suggest healthy recipes, and recommend nearby restaurants based on user preferences and current inventory. The app will combine advanced AI tools like object detection and large language models (LLMs) to provide tailored meal recommendations and route suggestions for dining out. <br/>
 
-The app pipeline flow is as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone2/reports/Prototupe_v2.pdf).
+The app pipeline flow is as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone2/reports/Prototype_v2.pdf).
 
 ### Milestone2 ###
 
