@@ -73,9 +73,9 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 3. **`src/datapipeline/Pipfile`**
    We used the following packages to help with preprocessing:
-   <!-- - `special cheese package` -->
+   - `user-agent requests google-cloud-storage google-generativeai google-cloud-aiplatform pandas langchain llama-index chromadb langchain-community pyarrow`
 
-4. **`src/preprocessing/Dockerfile(s)`**
+1. **`src/preprocessing/Dockerfile(s)`**
    Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
 
 
