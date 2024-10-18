@@ -84,11 +84,7 @@ Go to a terminal inside datapipeline
 - Run docker container by using:
 ```sh docker-shell.sh```
 
-**Models container**
-- This container has scripts for model training, rag pipeline and inference
-- Instructions for running the model container
-
-Mock Submission
+## Mock Submission
 
 To open the container:
 
@@ -96,8 +92,8 @@ Send an email to hanqizenghannanana@gmail.com with your email address associated
 [Login GCP, select project id, our ```x-goog-project-id``` is ac215vm, start the VM instance]<br/>
 Open a GCP terminal, change directory into corresponding folder with Dockerfile <br/>
 Run docker-shell.sh using command: ```sudo sh docker-shell.sh``` <br/>
-Inside the container, run preprocessing using command: ```python cli.py```.
-cli.py would download text files from GCP bucket, and then upload the processed files to GCP bucket. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
+Inside the container, run preprocessing using command: ```python cli_rag.py```.
+cli_rag.py would (download text files from GCP bucket, and then upload the processed files to GCP bucket) run the RAG LLM. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
 Stop VM instance!<br/>
 
 <!-- **Notebooks/Reports**
