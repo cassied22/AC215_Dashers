@@ -14,16 +14,22 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
 │   └── eda.ipynb
 ├── references
 ├── reports
+|   └── Daily Meal Assistant Prototype.pdf
 │   └── Statement of Work_Sample.pdf
+|   └── Prototype_v2.pdf
 └── src
     ├── datapipeline
+    │   ├── cli_rag.py
     │   ├── Dockerfile
+    │   ├── docker-compose.yml
+    │   ├── docker-entrypoint.sh
+    │   ├── docker-shell.sh
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── dataloader.py
     │   ├── docker-shell.sh
     │   ├── preprocess_cv.py
-    │   ├── preprocess_rag.py
+    │   ├── requirements.txt
     ├── docker-compose.yml
     └── models
         ├── Dockerfile
