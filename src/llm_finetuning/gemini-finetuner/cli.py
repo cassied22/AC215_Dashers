@@ -32,9 +32,9 @@ def train(wait_for_job=True):
         source_model=GENERATIVE_SOURCE_MODEL,
         train_dataset=TRAIN_DATASET,
         validation_dataset=VALIDATION_DATASET,
-        epochs=3, # change to 2-3
+        epochs=4, # change to 2-3
         adapter_size=4,
-        learning_rate_multiplier=1.0,
+        learning_rate_multiplier=0.9,
         tuned_model_display_name="food-planner-finetuned-v1",
     )
     print("Training job started. Monitoring progress...\n\n")

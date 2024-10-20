@@ -24,7 +24,7 @@ The training data was generated and processed from raw recipe data[https://eight
 
 ## Training Details
 The fine-tuning process was executed on Google Cloud Platform (GCP) using Vertex AI.
-I finetuning 2 models using the following configurations/hyperparameters, and the picture recording training progress is saved in `./image` folder as `training-img1.png` and `training-img2.png`
+I finetuning 2 models using the configurations/hyperparameters detailed below, and the picture recording training progress is saved in `./image` folder as `training-img1.png` and `training-img2.png`
 
 ### Model 1: food-planner-finetuned-v1
 generation_config = {
@@ -32,12 +32,16 @@ generation_config = {
     "temperature": 0.75,  
     "top_p": 0.95, 
 }
-hyperparameter= 
+hyperparameter= {
         source_model='gemini-1.5-flash-002',
         epochs=3,
         adapter_size=4,
         learning_rate_multiplier=1.0,
-        tuned_model_display_name="food-planner-finetuned-v1",
+        tuned_model_display_name="food-planner-finetuned-v1"
+}
+
+
+From the training image of model 1, we observed that both training and validation losses are decreasing steadily, which suggest that the model might benefit from additional epochs. Therefore, for the second trial, we increase number of epochs to 4 and also slightly decrease the learning rate to 0.9 to avoid overfitting. 
 
 
 ### Model 2: food-planner-finetuned-v2
@@ -46,10 +50,11 @@ generation_config = {
     "temperature": 0.75,  # Control randomness in output
     "top_p": 0.95,  # Use nucleus sampling
 }
-hyperparameter= 
+hyperparameter= {
         source_model='gemini-1.5-flash-002',
-        epochs=3,
+        epochs=4,
         adapter_size=4,
-        learning_rate_multiplier=1.0,
-        tuned_model_display_name="food-planner-finetuned-v1",
+        learning_rate_multiplier=0.9,
+        tuned_model_display_name="food-planner-finetuned-v1"
+}
 
