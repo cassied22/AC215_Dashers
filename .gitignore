@@ -164,3 +164,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 .DS_Store
+.dvc/cache
+.dvc/cache
+data/recipe_qa.csv
+data/*.csv
