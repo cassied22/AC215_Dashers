@@ -59,9 +59,9 @@ def train(wait_for_job=True):
 def chat():
     print("chat()")
     # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
-    #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
-    #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
-    MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048" # Finetuned model
+
+    # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048" # Finetuned model
+    MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/2727018634814685184"
     
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
