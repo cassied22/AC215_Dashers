@@ -71,17 +71,15 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 ## Data Pipeline Overview
 
-1. **`src/datapipeline/preprocess_cv.py`**
-
-2. **`src/datapipeline/cli_rag.py`**
+1. **`src/datapipeline/cli_rag.py`**
    This script handles preprocessing on our 2.29 GB dataset. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to XX GB and stored on GCS.
    This script also prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
 
-3. **`src/datapipeline/Pipfile`**
+2. **`src/datapipeline/Pipfile`**
    We used the following packages to help with preprocessing:
    - `user-agent requests google-cloud-storage google-generativeai google-cloud-aiplatform pandas langchain llama-index chromadb langchain-community pyarrow`
 
-1. **`src/preprocessing/Dockerfile(s)`**
+3. **`src/preprocessing/Dockerfile(s)`**
    Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
 
 
@@ -92,14 +90,12 @@ Go to a terminal inside datapipeline
 
 ## Mock Submission
 
-To open the container:
-
-Send an email to hanqizenghannanana@gmail.com with your email address associated with your GCP account. We would add you as an editor to our GCP project. <br/>
-[Login GCP, select project id, our ```x-goog-project-id``` is ac215vm, start the VM instance]<br/>
-Open a GCP terminal, change directory into corresponding folder with Dockerfile <br/>
+<br/>
+Login GCP, select project id, our ```x-goog-project-id```, start the VM instance.<br/>
+Open a GCP terminal, change directory into corresponding folder with Dockerfile. <br/>
 Run docker-shell.sh using command: ```sudo sh docker-shell.sh``` <br/>
 Inside the container, run preprocessing using command: ```python cli_rag.py```. <br/>
-cli_rag.py would (download text files from GCP bucket, and then upload the processed files to GCP bucket) run the RAG LLM. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
+cli_rag.py would run the RAG LLM. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
 
 <!-- **Notebooks/Reports**
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. -->
