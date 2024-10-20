@@ -10,6 +10,9 @@ The training data was generated and processed from raw recipe data[https://eight
 
 2. **Question-Answer Pair Creation**: 
    - Generated question-answer pairs by creating questions such as "How do you prepare [recipe title] using these ingredients: [ingredients ]?" and setting the corresponding recipe directions as the answer.
+   - Example Question-Answer Pair:
+   -- Question: "How do you prepare 'Jewell Ball'S Chicken' using these ingredients: [""1 small jar chipped beef, cut up"", ""4 boned chicken breasts"", ""1 can cream of mushroom soup"", ""1 carton sour cream""]?"
+   -- Answer: "Place chipped beef on bottom of baking dish. Place chicken on top of beef. Mix soup and cream together; pour over chicken. Bake, uncovered, at 275° for 3 hours."
 
 3. **Data Split**:
    - Split the data into training and test sets using a 90/10 split ratio, ensuring that 10% of the dataset (maximum 256 examples) was held out for testing.
