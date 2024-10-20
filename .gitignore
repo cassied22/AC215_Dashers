@@ -167,3 +167,4 @@ cython_debug/
 .dvc/cache
 .dvc/cache
 data/recipe_qa.csv
+data/*.csv
