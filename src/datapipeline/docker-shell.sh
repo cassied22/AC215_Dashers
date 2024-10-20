@@ -20,6 +20,7 @@ docker build -t $IMAGE_NAME -f Dockerfile .
 
 # Run All Containers
 docker-compose run --rm --service-ports $IMAGE_NAME
+# docker-compose up
 
 
 
