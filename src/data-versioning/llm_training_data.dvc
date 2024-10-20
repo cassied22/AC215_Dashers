@@ -1,0 +1,6 @@
+outs:
+- md5: 37ff19f4b33d86bf4bc4050e2a7b5e42.dir
+  size: 2569199
+  nfiles: 1
+  hash: md5
+  path: llm_training_data

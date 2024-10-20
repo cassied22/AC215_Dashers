@@ -1,0 +1,4 @@
+[core]
+    remote = llm_training_data
+['remote "llm_training_data"']
+    url = gs://food-planner-data-versioning/dvc_store

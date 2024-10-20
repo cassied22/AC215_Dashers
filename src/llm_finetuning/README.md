@@ -13,6 +13,7 @@ The training data was generated and processed from raw recipe data[https://eight
    - Example Question-Answer Pair:
       - Question: "How do you prepare 'Jewell Ball'S Chicken' using these ingredients: [""1 small jar chipped beef, cut up"", ""4 boned chicken breasts"", ""1 can cream of mushroom soup"", ""1 carton sour cream""]?"
       - Answer: "Place chipped beef on bottom of baking dish. Place chicken on top of beef. Mix soup and cream together; pour over chicken. Bake, uncovered, at 275° for 3 hours."
+   - The generated question-answer data is saved as a csv file and uploaded it to a private Google Cloud Bucket. It is tracked by DVC.
 
 3. **Data Split**:
    - Split the data into training and test sets using a 90/10 split ratio, ensuring that 10% of the dataset (maximum 256 examples) was held out for testing.
