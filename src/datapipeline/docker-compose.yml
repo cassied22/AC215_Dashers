@@ -14,6 +14,7 @@ services:
             GCP_PROJECT: $GCP_PROJECT
         depends_on:
             - chromadb
+
     chromadb:
         image: chromadb/chroma:latest
         container_name: recipe-rag-chromadb
@@ -25,3 +26,4 @@ services:
             - IS_PERSISTENT=TRUE
             - ANONYMIZED_TELEMETRY=FALSE
             - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"] # This is not recommended for production environments.
+

@@ -46,7 +46,9 @@ INPUT_FOLDER = "input-datasets"
 OUTPUT_FOLDER = "outputs"
 CHROMADB_HOST = "recipe-rag-chromadb"
 CHROMADB_PORT = 8000
-MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048"
+# MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048"
+# MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/7256513960042561536"
+MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/8362147668562018304"
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 # https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api#python
 embedding_model = TextEmbeddingModel.from_pretrained(EMBEDDING_MODEL)
