@@ -46,6 +46,7 @@ INPUT_FOLDER = "input-datasets"
 OUTPUT_FOLDER = "outputs"
 CHROMADB_HOST = "recipe-rag-chromadb"
 CHROMADB_PORT = 8000
+MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048"
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 # https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api#python
 embedding_model = TextEmbeddingModel.from_pretrained(EMBEDDING_MODEL)
@@ -79,10 +80,15 @@ Remember:
 
 Your goal is to provide accurate, helpful information about food recipe based solely on the content of the text chunks you receive with each query.
 """
-generative_model = GenerativeModel(
-    GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION]
-)
+# generative_model = GenerativeModel(
+#     GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION]
+# )
+raw_model = GenerativeModel(
+    GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION])
 
+finetuned_model = GenerativeModel(
+    MODEL_ENDPOINT, system_instruction=[SYSTEM_INSTRUCTION]
+)
 
 def generate_query_embedding(query):
     """
@@ -241,10 +247,16 @@ def query(query_input):
     return results
 
 
-def chat():
+def chat(generative_model = "raw"):
     """
     Function to chat with the model to generate a recipe based on user input
     """
+    # Choose the generative model to use
+    if generative_model == "finetuned":
+        generative_model = finetuned_model
+    else:
+        generative_model = raw_model
+
     default_query_input = "[broccoli, chicken, cheese]"
     user_input = input(
         "Enter your ingredients (or press Enter to use the default [broccoli, chicken, cheese]): "
@@ -313,7 +325,9 @@ def main(args=None):
         query()
         print("Query complete")
     elif args.chat:
-        chat()
+        # Use the first argument after --chat as the model type (finetuned or raw)
+        model_type = args.chat[0] if args.chat else "raw"
+        chat(generative_model=model_type)
         print("Chat complete")
     else:
         print("No valid operation selected.")
@@ -327,8 +341,9 @@ if __name__ == "__main__":
     parser.add_argument("--embed", action="store_true", help="Generate embeddings")
     parser.add_argument("--load", action="store_true", help="Load embeddings into ChromaDB")
     parser.add_argument("--query", action="store_true", help="Query ChromaDB")
-    parser.add_argument("--chat", action="store_true", help="Chat with the model")
-
+    parser.add_argument(
+        "--chat", nargs="*", help="Chat with the model, specify 'finetuned' or 'raw' model (default is raw)"
+    )
     args = parser.parse_args()
 
     main(args)
