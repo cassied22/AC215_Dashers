@@ -8,35 +8,132 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
 #### Project Milestone 2 Organization
 
 ```
-├── Readme.md
-├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
+├── .dvc
+│   ├── .gitignore
+│   ├── cache
+│   │   └── files
+│   ├── config
+│   ├── config.local
+│   └── tmp
+│       ├── btime
+│       ├── lock
+│       ├── rwlock
+│       ├── rwlock.lock
+│       ├── updater
+│       └── updater.lock
+├── .dvcignore
+├── .git
+│   ├── COMMIT_EDITMSG
+│   ├── FETCH_HEAD
+│   ├── HEAD
+│   ├── ORIG_HEAD
+│   ├── branches
+│   ├── config
+│   ├── description
+│   ├── hooks
+│   ├── index
+│   ├── info
+│   │   └── exclude
+│   ├── logs
+│   │   ├── HEAD
+│   │   └── refs
+│   ├── objects
+│   ├── packed-refs
+│   └── refs
+│       ├── heads
+│       ├── remotes
+│       └── tags
+├── .gitignore
+├── LICENSE
+├── README.md
+├── data
+│   ├── recipe_qa.csv
+│   └── recipe_qa.csv.dvc
 ├── notebooks
-│   └── eda.ipynb
+│   ├── Object_detection_documentation.md
+│   ├── container.ipynb
+│   ├── dvc_retrieval.ipynb
+│   ├── eda.ipynb
+│   ├── fig_container
+│   │   └── rag_container.png
+│   ├── fig_llm_performance
+│   │   ├── raw-rag3-1.png
+│   │   ├── raw_rag1-1.png
+│   │   ├── raw_rag1-2.png
+│   │   ├── raw_rag1-3.png
+│   │   ├── raw_rag2-1.png
+│   │   ├── raw_rag2-2.png
+│   │   └── raw_rag3-2.png
+│   ├── food
+│   │   ├── food1.jpg
+│   │   ├── food1_gemini.png
+│   │   ├── food1_gpt.png
+│   │   ├── food1_mediapipe.png
+│   │   ├── food1_yolov8.png
+│   │   ├── food2.png
+│   │   ├── food2_gemini.png
+│   │   ├── food2_gpt.png
+│   │   ├── food2_mediapipe.png
+│   │   ├── food2_yolov8.png
+│   │   ├── food3.jpg
+│   │   ├── food3_gemini.png
+│   │   ├── food3_gpt.png
+│   │   ├── food3_mediapipe.png
+│   │   └── food3_yolov8.png
+│   └── llm_performance.ipynb
 ├── references
+│   └── .gitkeep
 ├── reports
-|   └── Daily Meal Assistant Prototype.pdf
+│   ├── Daily Meal Assistant Prototype.pdf
+│   ├── Prototype_v2.pdf
 │   └── Statement of Work_Sample.pdf
-|   └── Prototype_v2.pdf
 └── src
-    ├── datapipeline
-    │   ├── cli_rag.py
+    ├── data-versioning
+    │   ├── .gitignore
     │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── README.md
+    │   ├── docker-entrypoint.sh
+    │   └── docker-shell.sh
+    ├── datapipeline
+    │   ├── .gitignore
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── cli_rag.py
+    │   ├── dataloader.py
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
-    │   ├── dataloader.py
-    │   ├── docker-shell.sh
+    │   ├── input-datasets
+    │   ├── outputs
     │   ├── preprocess_cv.py
-    │   ├── requirements.txt
-    ├── docker-compose.yml
-    └── models
-        ├── Dockerfile
-        ├── docker-shell.sh
-        ├── infer_model.py
-        ├── model_rag.py
-        └── train_model.py
+    │   └── requirements.txt
+    ├── food-detection
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── data
+    │   ├── docker-compose.yml
+    │   ├── docker-shell.sh
+    │   ├── gemini-object-detection.py
+    │   ├── gpt-object-detection.py
+    │   └── requirements.txt
+    ├── llm_finetuning
+    │   ├── .gitignore
+    │   ├── README.md
+    │   ├── dataset-creator
+    │   ├── env.dev
+    │   ├── gemini-finetuner
+    │   └── images
+    ├── models
+    │   ├── Dockerfile
+    │   ├── docker-shell.sh
+    │   ├── infer_model.py
+    │   ├── model_rag.py
+    │   └── train_model.py
+    └── secrets
+        └── .gitkeep
 ```
 
 # AC215 - Milestone2 - Daily Meal Assistant - "What to Eat Today"
