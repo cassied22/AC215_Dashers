@@ -164,16 +164,17 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 **Data Pipeline Containers**
 
-One [llm container](https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/llm_finetuning) prepares data for the RAG model, including tasks such as chunking, embedding, and populating the vector database. <br/>
+**Containers**
 
-One [data versioning container (DVC)](https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/data-versioning) (with .dvc stored here:
+1. **Data Pipeline Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/datapipeline): The container prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe. 
+2. **Date Versioning Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/data-versioning) :The container controls data versioning using DVC. The DVC was chosen because it provides a robust and scalable solution for managing large datasets and machine learning models, which is particularly for our project as we plan on incorporating larger recipe dataset for future steps. (with .dvc stored here:
 https://github.com/cassied22/AC215_Dashers/tree/milestone2/.dvc)
 This container includes the llm-training data.
 ```cd data-versioning```
 ```sudo docker build -t data-version-cli -f Dockerfile .```
 ```chmod +x docker-shell.s```
-
-One [object detection container](https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/food-detection) includes all codes conducting the object detection functionality.
+2. **Object  Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/food-detection) :The container includes all codes conducting the object detection functionality: given a picture, output list of detected food.
+3. **LLM Finetuning** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/llm_finetuning) :The container performs LLM finetuning task.
 
 ## Data Pipeline Overview
 
@@ -190,14 +191,35 @@ One [object detection container](https://github.com/cassied22/AC215_Dashers/tree
 
 
 
-## Running Dockerfile
-Go to a terminal inside folder
+## Instructions for Running Containers
+Go to a terminal inside each folder
 - Build docker image by using:
 ```sudo docker build -t XXX -f Dockerfile .```
 - Run docker container by using:
 ```chmod +x docker-shell.s```
 ```sh docker-shell.sh```
 ```sh docker-shell.sh```
+
+
+## Documentations
+1. **Data Version Control**: [.dvc](https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_tracked_history_logs.png)
+2. **fine-tuning process**：https://github.com/cassied22/AC215_Dashers/blob/milestone2/src/llm_finetuning/README.md
+3. **Experiment logs for llm**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/llm_performance.ipynb)
+4. **Experiment logs for object detection**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/Object_detection_documentation.md)
+5. **Application mock-up**：Front end: https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/front-end.txt; backend interaction: https://github.com/cassied22/AC215_Dashers/blob/milestone2/reports/Prototype_v2.pdf
+6. **Running Docker**：https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/container.ipynb
+
+<br/>
+Login GCP, select project id, our "x-goog-project-id", start the VM instance.<br/>
+Open a GCP terminal, change directory into corresponding folder with Dockerfile. <br/>
+Run docker-shell.sh using command: <br/>
+
+```sudo sh docker-shell.sh``` 
+Inside the container, run preprocessing using command: ```python cli_rag.py```. <br/>
+cli_rag.py would run the RAG LLM. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
+
+<!-- **Notebooks/Reports**
+This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. -->
 
 ## Mock Submission
 
