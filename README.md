@@ -164,7 +164,14 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 **Data Pipeline Containers**
 
-1. One container prepares data for the RAG model, including tasks such as chunking, embedding, and populating the vector database.
+One llm container prepares data for the RAG model, including tasks such as chunking, embedding, and populating the vector database. <br/>
+
+One data versioning container (DVC)
+https://github.com/cassied22/AC215_Dashers/tree/milestone2/.dvc
+This container includes the llm-training data.
+```cd data-versioning```
+```sudo docker build -t data-version-cli -f Dockerfile .```
+```chmod +x docker-shell.s```
 
 ## Data Pipeline Overview
 
@@ -178,12 +185,7 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 3. **`src/preprocessing/Dockerfile(s)`**
    Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
-## Data Versioning Container (DVC)
-https://github.com/cassied22/AC215_Dashers/tree/milestone2/.dvc
-This container includes the llm-training data.
-```cd data-versioning```
-```sudo docker build -t data-version-cli -f Dockerfile .```
-```chmod +x docker-shell.s```
+
 
 
 ## Running Dockerfile
