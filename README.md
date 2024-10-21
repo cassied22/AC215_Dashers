@@ -166,8 +166,8 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 One llm container prepares data for the RAG model, including tasks such as chunking, embedding, and populating the vector database. <br/>
 
-One data versioning container (DVC)
-https://github.com/cassied22/AC215_Dashers/tree/milestone2/.dvc
+One data versioning container (DVC) https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/data-versioning (with .dvc stored here:
+https://github.com/cassied22/AC215_Dashers/tree/milestone2/.dvc)
 This container includes the llm-training data.
 ```cd data-versioning```
 ```sudo docker build -t data-version-cli -f Dockerfile .```
