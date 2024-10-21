@@ -162,19 +162,14 @@ In this milestone, we have the components for data management, including version
 **Data**
 We gathered a dataset of 2,231,150 recipes including title (dish name), ingredients, directions, retrieved link, source type, and named entity recognition (NER) for food items. The ingredients are listed as an array of strings. The directions are provided as an array of strings, with each string representing a step in the cooking process. The NER data consists of an array of food item names extracted from the recipe. The dataset, approximately 2.29 GB in size, was collected from the following source: https://huggingface.co/datasets/mbien/recipe_nlg. We have stored it in a private Google Cloud Bucket.
 
-**Data Pipeline Containers**
 
 **Containers**
 
 1. **Data Pipeline Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/datapipeline): The container prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe. 
-2. **Date Versioning Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/data-versioning) :The container controls data versioning using DVC. The DVC was chosen because it provides a robust and scalable solution for managing large datasets and machine learning models, which is particularly for our project as we plan on incorporating larger recipe dataset for future steps. (with .dvc stored here:
+2. **Date Versioning Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/data-versioning) :The container controls data versioning using DVC. The DVC was chosen because it provides a robust and scalable solution for managing large datasets and machine learning models, which is particularly important for our project as we plan on incorporating larger recipe dataset for future steps. (with .dvc stored here:
 https://github.com/cassied22/AC215_Dashers/tree/milestone2/.dvc)
-This container includes the llm-training data.
-```cd data-versioning```
-```sudo docker build -t data-version-cli -f Dockerfile .```
-```chmod +x docker-shell.s```
-2. **Object  Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/food-detection) :The container includes all codes conducting the object detection functionality: given a picture, output list of detected food.
-3. **LLM Finetuning** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/llm_finetuning) :The container performs LLM finetuning task.
+3. **Object  Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/food-detection) :The container includes all codes conducting the object detection functionality: given a picture, output list of detected food.
+4. **LLM Finetuning** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/llm_finetuning) :The container performs LLM finetuning task.
 
 
 ## Instructions for Running Containers
