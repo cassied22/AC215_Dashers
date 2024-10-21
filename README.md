@@ -202,7 +202,7 @@ Go to a terminal inside each folder
 
 
 ## Documentations
-1. **Data Version Control**: [.dvc](https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_tracked_history_logs.png)
+1. **Data Version Control**: (https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_tracked_history_logs.png)
 2. **fine-tuning process**：https://github.com/cassied22/AC215_Dashers/blob/milestone2/src/llm_finetuning/README.md
 3. **Experiment logs for llm**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/llm_performance.ipynb)
 4. **Experiment logs for object detection**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/Object_detection_documentation.md)
