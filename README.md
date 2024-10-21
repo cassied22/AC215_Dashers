@@ -176,20 +176,6 @@ This container includes the llm-training data.
 2. **Object  Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/food-detection) :The container includes all codes conducting the object detection functionality: given a picture, output list of detected food.
 3. **LLM Finetuning** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/llm_finetuning) :The container performs LLM finetuning task.
 
-## Data Pipeline Overview
-
-1. **`src/datapipeline/cli_rag.py`**
-   This script handles preprocessing on our 2.29 GB dataset in the `input-datasets` folder. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to 676 MB and stored on GCS. The `outputs` folder is a temperary path where the local copy of the vector database is stored. 
-   This script also prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
-
-2. **`src/datapipeline/Pipfile`**
-   We used the following packages to help with preprocessing:
-   - `user-agent requests google-cloud-storage google-generativeai google-cloud-aiplatform pandas langchain llama-index chromadb langchain-community pyarrow`
-
-3. **`src/preprocessing/Dockerfile(s)`**
-   Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
-
-
 
 ## Instructions for Running Containers
 Go to a terminal inside each folder
@@ -209,17 +195,20 @@ Go to a terminal inside each folder
 5. **Application mock-up**：Front end: https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/front-end.txt; backend interaction: https://github.com/cassied22/AC215_Dashers/blob/milestone2/reports/Prototype_v2.pdf
 6. **Running Docker**：https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/container.ipynb
 
-<br/>
-Login GCP, select project id, our "x-goog-project-id", start the VM instance.<br/>
-Open a GCP terminal, change directory into corresponding folder with Dockerfile. <br/>
-Run docker-shell.sh using command: <br/>
-
-```sudo sh docker-shell.sh``` 
-Inside the container, run preprocessing using command: ```python cli_rag.py```. <br/>
-cli_rag.py would run the RAG LLM. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
-
 <!-- **Notebooks/Reports**
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. -->
+## Data Pipeline Overview
+
+1. **`src/datapipeline/cli_rag.py`**
+   This script handles preprocessing on our 2.29 GB dataset in the `input-datasets` folder. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to 676 MB and stored on GCS. The `outputs` folder is a temperary path where the local copy of the vector database is stored. 
+   This script also prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
+
+2. **`src/datapipeline/Pipfile`**
+   We used the following packages to help with preprocessing:
+   - `user-agent requests google-cloud-storage google-generativeai google-cloud-aiplatform pandas langchain llama-index chromadb langchain-community pyarrow`
+
+3. **`src/preprocessing/Dockerfile(s)`**
+   Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
 
 ## Mock Submission
 
