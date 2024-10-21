@@ -181,16 +181,21 @@ We gathered a dataset of 2,231,150 recipes including title (dish name), ingredie
 
 
 ## Running Dockerfile
-Go to a terminal inside datapipeline
+Go to a terminal inside folder
+- Build docker image by using:
+```sudo docker build -t XXX -f Dockerfile .```
 - Run docker container by using:
+```chmod +x docker-shell.s```
 ```sh docker-shell.sh```
 
 ## Mock Submission
 
 <br/>
-Login GCP, select project id, our ```x-goog-project-id```, start the VM instance.<br/>
+Login GCP, select project id, our "x-goog-project-id", start the VM instance.<br/>
 Open a GCP terminal, change directory into corresponding folder with Dockerfile. <br/>
-Run docker-shell.sh using command: ```sudo sh docker-shell.sh``` <br/>
+Run docker-shell.sh using command: <br/>
+
+```sudo sh docker-shell.sh``` 
 Inside the container, run preprocessing using command: ```python cli_rag.py```. <br/>
 cli_rag.py would run the RAG LLM. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
 
