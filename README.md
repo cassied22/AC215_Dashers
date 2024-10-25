@@ -188,7 +188,7 @@ Go to a terminal inside each folder
 3. **Experiment logs for llm**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/llm_performance.ipynb)
 4. **Experiment logs for object detection**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/Object_detection_documentation.md)
 5. **Application mock-up**：Front end: https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/front-end.txt; backend interaction: https://github.com/cassied22/AC215_Dashers/blob/milestone2/reports/Prototype_v2.pdf
-6. **Running Docker**：https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/container.ipynb
+6. **Running Docker** https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/fig_container/rag_container.png
 
 <!-- **Notebooks/Reports**
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. -->
