@@ -183,7 +183,7 @@ Go to a terminal inside each folder
 
 
 ## Documentations
-1. **Data Version Control**: (https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_tracked_history_logs.png)
+1. **Data Version Control**: (https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_tracked_history_logs.png; https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_retrieval.ipynb) We control data versions using DVC. The DVC was chosen because it provides a robust and scalable solution for managing large datasets and machine learning models, which is particularly important for our project as we plan on incorporating larger recipe dataset for future steps. Currently we are tracking only the one version of training data used for fine-tunning LLM (data/recipe_qa.csv, remotely tracked on GCP), and plan on tracking more data in the future milestones as needed.  
 2. **fine-tuning process**：https://github.com/cassied22/AC215_Dashers/blob/milestone2/src/llm_finetuning/README.md
 3. **Experiment logs for llm**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/llm_performance.ipynb)
 4. **Experiment logs for object detection**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/Object_detection_documentation.md)
