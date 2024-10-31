@@ -160,7 +160,8 @@ In this milestone, we make the following modifications:
 2. Add our integration plan to the Google Cloud Platform as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/GCP_integration.png).
 3. Update a shorter version of the app pipeline flow as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/Prototype_shorten.png).
 4. Create a user interface demo of our app as shown [here](https://www.youtube.com/shorts/qZ1eMskElWo).
-5. Solve the GCP authentification issue.
+5. Updated the [`cli_rag.py`](https://github.com/cassied22/AC215_Dashers/blob/milestone3/src/datapipeline/cli_rag.py) to solve the GCP authentification issue when deploying the finetuned model.
+6. Replaced original notebook files to markdown files([`container_screenshot.md`](https://github.com/cassied22/AC215_Dashers/blob/milestone3/notebooks/container_screenshot.md) and [`llm_performance.md`](https://github.com/cassied22/AC215_Dashers/blob/milestone3/notebooks/llm_performance.md)) to avoid picuture rendering issues.
 
 The content below is the same as **Milestone2**.
 
