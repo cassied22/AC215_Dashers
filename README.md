@@ -156,11 +156,13 @@ The app pipeline flow is as shown [here](https://github.com/cassied22/AC215_Dash
 ### Milestone3 ###
 
 In this milestone, we make the following modifications:
-1. Add our midterm presentation to the midterm_presentation folder.
+1. Add our midterm presentation to the midterm_presentation folder [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/midterm_presentation/slides.pdf).
 2. Add our integration plan to the Google Cloud Platform as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/GCP_integration.png).
 3. Update a shorter version of the app pipeline flow as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/Prototype_shorten.png).
 4. Create a user interface demo of our app as shown [here](https://www.youtube.com/shorts/qZ1eMskElWo).
 5. Solve the GCP authentification issue.
+
+The content below is the same as **Milestone2**.
 
 **Data**
 We gathered a dataset of 2,231,150 recipes including title (dish name), ingredients, directions, retrieved link, source type, and named entity recognition (NER) for food items. The ingredients are listed as an array of strings. The directions are provided as an array of strings, with each string representing a step in the cooking process. The NER data consists of an array of food item names extracted from the recipe. The dataset, approximately 2.29 GB in size, was collected from the following source: https://huggingface.co/datasets/mbien/recipe_nlg. We have stored it in a private Google Cloud Bucket.
