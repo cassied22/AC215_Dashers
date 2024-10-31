@@ -1,0 +1,1 @@
+![](fig_container/rag_container.png)

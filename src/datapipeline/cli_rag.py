@@ -14,7 +14,10 @@ from vertexai.generative_models import (
     Content,
     Part,
     ToolConfig,
+    HarmBlockThreshold,
+    HarmCategory,
 )
+
 
 # # Langchain
 # from langchain.text_splitter import CharacterTextSplitter
@@ -47,8 +50,8 @@ OUTPUT_FOLDER = "outputs"
 CHROMADB_HOST = "recipe-rag-chromadb"
 CHROMADB_PORT = 8000
 # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048"
-# MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/7256513960042561536"
-MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/8362147668562018304"
+MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/7256513960042561536"
+# MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/8362147668562018304"
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 # https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api#python
 embedding_model = TextEmbeddingModel.from_pretrained(EMBEDDING_MODEL)
@@ -57,6 +60,12 @@ generation_config = {
     "max_output_tokens": 8192,  # Maximum number of tokens for output
     "temperature": 0.25,  # Control randomness in output
     "top_p": 0.95,  # Use nucleus sampling
+}
+safety_settings={
+    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH
 }
 # Initialize the GenerativeModel with specific system instructions
 SYSTEM_INSTRUCTION = """
@@ -82,9 +91,6 @@ Remember:
 
 Your goal is to provide accurate, helpful information about food recipe based solely on the content of the text chunks you receive with each query.
 """
-# generative_model = GenerativeModel(
-#     GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION]
-# )
 raw_model = GenerativeModel(
     GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION])
 
@@ -269,16 +275,20 @@ def chat(generative_model = "raw"):
 
     # Generate initial response based on retrieved recipes
     conversation_history = [f"User input ingredients: {query_input}"]
+    # Currently using the first 3 recipes as sample recipes
     INPUT_PROMPT = f"""
-Input ingredients the user has: {query_input}
-{"\n".join([f'\nSample recipe:\n{recipe}' for recipe in results["documents"][0]])}
+{"\n".join([f'\nSample recipe:\n{recipe}' for recipe in results["documents"][0][0:10]])}
+How can I make a dish from these ingredients: {query_input}?
 """
+    # Archived prompt: Input ingredients the user has: {query_input}, create a recipe
+    #                  How can I make a dish from these ingredients: {query_input}?
     print("\n\nINPUT_PROMPT: ", INPUT_PROMPT)
     conversation_history.append(f"Sample recipes provided:\n{INPUT_PROMPT}")
 
     response = generative_model.generate_content(
         [INPUT_PROMPT],
         generation_config=generation_config,
+        safety_settings=safety_settings,
         stream=False,
     )
     generated_text = response.text
@@ -302,7 +312,10 @@ User requested changes: {feedback}.
 Generate a new recipe based on these changes.
 """
             response = generative_model.generate_content(
-                [INPUT_PROMPT], generation_config=generation_config, stream=False
+                [INPUT_PROMPT], 
+                generation_config=generation_config, 
+                safety_settings=safety_settings,
+                stream=False
             )
             generated_text = response.text
             conversation_history.append(f"LLM response:\n{generated_text}")
@@ -310,6 +323,29 @@ Generate a new recipe based on these changes.
     except KeyboardInterrupt:
         print("Conversation ended. Enjoy your meal!")
 
+
+def test():
+    generative_model = finetuned_model
+    # PROMPT = "Input ingredients the user has: [chicken], create a recipe"
+    PROMPT = '''
+Sample recipe:
+Title: Jewell Ball'S Chicken
+Ingredients: ["1 small jar chipped beef, cut up", "4 boned chicken breasts", "1 can cream of mushroom soup", "1 carton sour cream"]
+Directions: ["Place chipped beef on bottom of baking dish.", "Place chicken on top of beef.", "Mix soup and cream together; pour over chicken. Bake, uncovered, at 275\u00b0 for 3 hours."]
+
+Input ingredients the user has: [chicken, broccoli, cheese], create a recipe'''
+    response = generative_model.generate_content(
+        [PROMPT],
+        generation_config=generation_config,
+        safety_settings=safety_settings,
+        stream=False,
+    )
+    generated_text = response.text
+    print("Prompt:\n", PROMPT)
+    print("Generated Text:\n", generated_text)
+    print("Candidates:\n",response)
+    # for part in response:
+    #     print(part)
 
 def main(args=None):
     print("CLI Arguments:", args)
@@ -331,6 +367,8 @@ def main(args=None):
         model_type = args.chat[0] if args.chat else "raw"
         chat(generative_model=model_type)
         print("Chat complete")
+    elif args.test:
+        test()
     else:
         print("No valid operation selected.")
         parser.print_help()
@@ -346,6 +384,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--chat", nargs="*", help="Chat with the model, specify 'finetuned' or 'raw' model (default is raw)"
     )
+    parser.add_argument("--test", action="store_true", help="Test the model")
     args = parser.parse_args()
 
     main(args)
