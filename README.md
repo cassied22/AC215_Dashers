@@ -1,4 +1,4 @@
-## Milestone 2
+## Milestone 3
 
 <!-- ```
 The files are empty placeholders only. You may adjust this template as appropriate for your project.
@@ -49,6 +49,9 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
 ├── data
 │   ├── recipe_qa.csv
 │   └── recipe_qa.csv.dvc
+├── midterm_presentation
+│   ├── slides.pdf
+│   └── slides.pptx
 ├── notebooks
 │   ├── Object_detection_documentation.md
 │   ├── container.ipynb
@@ -86,7 +89,7 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
 ├── reports
 │   ├── Daily Meal Assistant Prototype.pdf
 │   ├── Prototype_v2.pdf
-│   └── Statement of Work_Sample.pdf
+│   └── Project Description.pdf
 └── src
     ├── data-versioning
     │   ├── .gitignore
@@ -136,7 +139,7 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
         └── .gitkeep
 ```
 
-# AC215 - Milestone2 - Daily Meal Assistant - "What to Eat Today"
+# AC215 - Milestone3 - Daily Meal Assistant - "What to Eat Today"
 
 **Team Members**
 
@@ -153,11 +156,12 @@ Dashers
 **Project**
 In this project, we aim to develop an app that serves as a personal meal assistant, helping users track their available ingredients, suggest healthy recipes, and recommend nearby restaurants based on user preferences and current inventory. The app will combine advanced AI tools like object detection and large language models (LLMs) to provide tailored meal recommendations and route suggestions for dining out. <br/>
 
-The app pipeline flow is as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone2/reports/Prototype_v2.pdf).
+Our midterm presentation is in the midterm_presentation folder.
+The app pipeline flow is as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/Prototype_v2.pdf).
 
-### Milestone2 ###
+### Milestone3 ###
 
-In this milestone, we have the components for data management, including versioning, as well as the computer vision and language models.
+In this milestone, we add the integration plan of our app with Google Cloud as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/GCP_integration.png).
 
 **Data**
 We gathered a dataset of 2,231,150 recipes including title (dish name), ingredients, directions, retrieved link, source type, and named entity recognition (NER) for food items. The ingredients are listed as an array of strings. The directions are provided as an array of strings, with each string representing a step in the cooking process. The NER data consists of an array of food item names extracted from the recipe. The dataset, approximately 2.29 GB in size, was collected from the following source: https://huggingface.co/datasets/mbien/recipe_nlg. We have stored it in a private Google Cloud Bucket.
