@@ -1,11 +1,6 @@
 ## Milestone 3
 
-<!-- ```
-The files are empty placeholders only. You may adjust this template as appropriate for your project.
-Never commit large data files,trained models, personal API Keys/secrets to GitHub
-``` -->
-
-#### Project Milestone 2 Organization
+#### Project Milestone 3 Organization
 
 ```
 ├── .dvc
@@ -156,12 +151,16 @@ Dashers
 **Project**
 In this project, we aim to develop an app that serves as a personal meal assistant, helping users track their available ingredients, suggest healthy recipes, and recommend nearby restaurants based on user preferences and current inventory. The app will combine advanced AI tools like object detection and large language models (LLMs) to provide tailored meal recommendations and route suggestions for dining out. <br/>
 
-Our midterm presentation is in the midterm_presentation folder.
 The app pipeline flow is as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/Prototype_v2.pdf).
 
 ### Milestone3 ###
 
-In this milestone, we add the integration plan of our app with Google Cloud as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/GCP_integration.png).
+In this milestone, we make the following modifications:
+1. Add our midterm presentation to the midterm_presentation folder.
+2. Add our integration plan to the Google Cloud Platform as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/GCP_integration.png).
+3. Update a shorter version of the app pipeline flow as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/Prototype_shorten.png).
+4. Create a user interface demo of our app as shown [here](https://www.youtube.com/shorts/qZ1eMskElWo).
+5. Solve the GCP authentification issue.
 
 **Data**
 We gathered a dataset of 2,231,150 recipes including title (dish name), ingredients, directions, retrieved link, source type, and named entity recognition (NER) for food items. The ingredients are listed as an array of strings. The directions are provided as an array of strings, with each string representing a step in the cooking process. The NER data consists of an array of food item names extracted from the recipe. The dataset, approximately 2.29 GB in size, was collected from the following source: https://huggingface.co/datasets/mbien/recipe_nlg. We have stored it in a private Google Cloud Bucket.
