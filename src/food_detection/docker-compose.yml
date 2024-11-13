@@ -1,0 +1,14 @@
+---
+networks:
+  default:
+    name: recipe-rag-network
+    external: true
+
+services:
+  food-detection-cli:
+    image: food-detection-cli
+    container_name: food-detection-cli
+    volumes:
+      - ../food-detection:/app
+    networks:
+      - recipe-rag-network
