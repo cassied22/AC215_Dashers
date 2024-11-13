@@ -13,7 +13,7 @@ Cassie Dai(cdai@g.harvard.edu) <br/>
 Dashers
 
 **How to play with this app**
-1. Place your OPENAI_API_KEY and GOOGLE_API_KEY in the ``.env``
+1. Place your OPENAI_API_KEY and GOOGLE_API_KEY in the root directory's ``.env``
 2. Run the Docker
   - ```docker build -t discovery_generative_ai .```
   - ```docker run -p 8501:8501 discovery_generative_ai```
