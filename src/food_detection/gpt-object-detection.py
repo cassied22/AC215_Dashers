@@ -30,14 +30,22 @@ def identify_food_gpt(image_path, api_key):
                         "type": "text",
                         "text": "Give me the name of food items shown in this image. Not a full sentense.",
                     },
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+                    },
                 ],
             }
         ],
         "max_tokens": 300,
     }
 
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=10)
+    response = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers=headers,
+        json=payload,
+        timeout=10,
+    )
 
     return response.json()["choices"][0]["message"]["content"]
 

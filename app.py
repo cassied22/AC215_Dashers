@@ -11,7 +11,12 @@ from streamlit_option_menu import option_menu
 
 
 # Must be the first Streamlit command
-st.set_page_config(page_title="Recipe Assistant", page_icon="🍳", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(
+    page_title="Recipe Assistant",
+    page_icon="🍳",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 # Add the project root to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -34,7 +39,9 @@ def setup_vector_db():
     try:
         embeddings = OpenAIEmbeddings()
         persist_directory = os.path.join(src_path, "datapipeline/outputs/chroma_db")
-        vector_db = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+        vector_db = Chroma(
+            persist_directory=persist_directory, embedding_function=embeddings
+        )
         return vector_db
     except Exception as e:
         st.error(f"Failed to initialize vector database: {str(e)}")
@@ -49,7 +56,9 @@ def ingredient_detection_section(vector_db):
     with st.container():
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("🔧 Test Gemini Connection", help="Check if the Gemini API is working"):
+            if st.button(
+                "🔧 Test Gemini Connection", help="Check if the Gemini API is working"
+            ):
                 with st.spinner("Testing connection..."):
                     result = test_model_availability()
                     if "successful" in result:
@@ -69,15 +78,23 @@ def ingredient_detection_section(vector_db):
 
         if uploaded_file:
             try:
-                st.image(uploaded_file, caption="Image Preview", use_container_width=True)
+                st.image(
+                    uploaded_file, caption="Image Preview", use_container_width=True
+                )
 
-                if st.button("🔎 Analyze Ingredients", type="primary", help="Start ingredient detection"):
+                if st.button(
+                    "🔎 Analyze Ingredients",
+                    type="primary",
+                    help="Start ingredient detection",
+                ):
                     with st.spinner("Analyzing image..."):
                         try:
                             detected_ingredients = detect_objects(uploaded_file)
 
                             if detected_ingredients:
-                                st.session_state["detected_ingredients"] = detected_ingredients
+                                st.session_state[
+                                    "detected_ingredients"
+                                ] = detected_ingredients
                                 st.success("✨ Detection Complete!")
 
                                 # Display ingredients in a nice format
@@ -87,11 +104,15 @@ def ingredient_detection_section(vector_db):
 
                                 # Get additional details
                                 with st.spinner("Getting ingredient information..."):
-                                    details = get_ingredient_details(detected_ingredients)
+                                    details = get_ingredient_details(
+                                        detected_ingredients
+                                    )
                                     if details:
                                         st.session_state["ingredient_details"] = details
                             else:
-                                st.warning("👀 No ingredients detected. Try uploading a clearer image.")
+                                st.warning(
+                                    "👀 No ingredients detected. Try uploading a clearer image."
+                                )
 
                         except Exception as e:
                             st.error("❌ Detection failed")
@@ -107,21 +128,23 @@ def ingredient_detection_section(vector_db):
             # Recipe recommendations
             if st.button("👨‍🍳 Find Matching Recipes", type="primary"):
                 with st.spinner("Searching for perfect recipes..."):
-                    query = (
-                        f"Find recipes using these ingredients: {', '.join(st.session_state['detected_ingredients'])}"
-                    )
+                    query = f"Find recipes using these ingredients: {', '.join(st.session_state['detected_ingredients'])}"
                     recommendations = process_query(query, vector_db)
 
                     if recommendations:
                         st.success("🎉 Found these recipes for you!")
                         for i, recipe in enumerate(recommendations, 1):
-                            with st.expander(f"🍳 Recipe {i}: {recipe.get('title', 'Untitled')}"):
+                            with st.expander(
+                                f"🍳 Recipe {i}: {recipe.get('title', 'Untitled')}"
+                            ):
                                 st.markdown("**📝 Ingredients needed:**")
                                 for ingredient in recipe.get("ingredients", []):
                                     st.markdown(f"- {ingredient}")
 
                                 st.markdown("**👩‍🍳 Instructions:**")
-                                for j, step in enumerate(recipe.get("directions", []), 1):
+                                for j, step in enumerate(
+                                    recipe.get("directions", []), 1
+                                ):
                                     st.markdown(f"{j}. {step}")
 
             # Ingredient details
@@ -162,7 +185,9 @@ def main():
     vector_db = setup_vector_db()
 
     if vector_db is None:
-        st.error("Failed to initialize vector database. Please check your configuration.")
+        st.error(
+            "Failed to initialize vector database. Please check your configuration."
+        )
         return
 
     with st.sidebar:

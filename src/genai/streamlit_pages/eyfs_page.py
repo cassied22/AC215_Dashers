@@ -50,7 +50,12 @@ def early_year_activity_plan() -> None:
             on_change=reset_state,
         )
 
-        st.button("Reset chat", on_click=reset_state, type="primary", help="Reset the chat history")
+        st.button(
+            "Reset chat",
+            on_click=reset_state,
+            type="primary",
+            help="Reset the chat history",
+        )
 
     # Select the areas of learning
     areas_of_learning = st.multiselect(
@@ -59,7 +64,9 @@ def early_year_activity_plan() -> None:
         default=aol,
         on_change=reset_state,
     )
-    areas_of_learning_text = [v for k, v in areas_of_learning_desc.items() if k in areas_of_learning]
+    areas_of_learning_text = [
+        v for k, v in areas_of_learning_desc.items() if k in areas_of_learning
+    ]
 
     # Describe each Area of Learning in an expanding window
     with st.expander("**Areas of Learning Description**"):
@@ -69,7 +76,11 @@ def early_year_activity_plan() -> None:
                 st.write(v.split("##")[-1])
 
     areas_of_learning_text = "\n\n".join(areas_of_learning_text)
-    location = st.selectbox(label="**Location**", options=["Indoor", "Outdoor", "Indoor or Outdoor"], index=2)
+    location = st.selectbox(
+        label="**Location**",
+        options=["Indoor", "Outdoor", "Indoor or Outdoor"],
+        index=2,
+    )
 
     # Create the messages
     paths = [
@@ -84,7 +95,8 @@ def early_year_activity_plan() -> None:
     # Initialize chat history
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": prompt_template.role, "content": prompt_template.content} for prompt_template in prompt_templates
+            {"role": prompt_template.role, "content": prompt_template.content}
+            for prompt_template in prompt_templates
         ]
 
     # Display chat messages from history on app rerun.
@@ -94,7 +106,9 @@ def early_year_activity_plan() -> None:
             st.markdown(message["content"])
 
     # Accept user input
-    prompt = st.chat_input("Let's create activities educating children on how whales breathe")
+    prompt = st.chat_input(
+        "Let's create activities educating children on how whales breathe"
+    )
     if prompt:
         # Display user message in chat message container
         with st.chat_message("user"):
@@ -114,7 +128,10 @@ def early_year_activity_plan() -> None:
             for response in TextGenerator.generate(
                 model=selected_model,
                 temperature=temperature,
-                messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                messages=[
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages
+                ],
                 message_kwargs={
                     "description": description,
                     "areas_of_learning": areas_of_learning,
@@ -127,4 +144,6 @@ def early_year_activity_plan() -> None:
                 full_response += response.choices[0].delta.get("content", "")
                 message_placeholder.markdown(full_response + "▌")
             message_placeholder.markdown(full_response)
-        st.session_state.messages.append({"role": "assistant", "content": full_response})
+        st.session_state.messages.append(
+            {"role": "assistant", "content": full_response}
+        )

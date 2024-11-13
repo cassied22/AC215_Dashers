@@ -48,7 +48,9 @@ def process_query(query, vector_db=None):
         if vector_db is None:
             # Initialize vector database if not provided
             embeddings = OpenAIEmbeddings()
-            vector_db = Chroma(persist_directory="outputs/chroma_db", embedding_function=embeddings)
+            vector_db = Chroma(
+                persist_directory="outputs/chroma_db", embedding_function=embeddings
+            )
 
         # Search for similar documents
         results = vector_db.similarity_search(query, k=5)

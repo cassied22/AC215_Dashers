@@ -22,7 +22,9 @@ from genai.streamlit_pages.utils import reset_state
 load_dotenv()
 
 
-def parenting_chatbot(aws_key: str, aws_secret: str, s3_path: str, sidebar: bool = True) -> None:
+def parenting_chatbot(
+    aws_key: str, aws_secret: str, s3_path: str, sidebar: bool = True
+) -> None:
     """Early-years parenting chatbot."""
 
     # Define your custom CSS
@@ -57,12 +59,25 @@ def parenting_chatbot(aws_key: str, aws_secret: str, s3_path: str, sidebar: bool
 
     if sidebar:
         with st.sidebar:
-            st.button("Reset chat", on_click=reset_state, type="primary", help="Reset the chat history")
+            st.button(
+                "Reset chat",
+                on_click=reset_state,
+                type="primary",
+                help="Reset the chat history",
+            )
 
-    system_message = MessageTemplate.load("src/genai/parenting_chatbot/prompts/system.json")
-    filter_refs_function = FunctionTemplate.load("src/genai/parenting_chatbot/prompts/filter_refs_function.json")
-    filter_refs_user_message = MessageTemplate.load("src/genai/parenting_chatbot/prompts/filter_refs_user.json")
-    filter_refs_system_message = MessageTemplate.load("src/genai/parenting_chatbot/prompts/filter_refs_system.json")
+    system_message = MessageTemplate.load(
+        "src/genai/parenting_chatbot/prompts/system.json"
+    )
+    filter_refs_function = FunctionTemplate.load(
+        "src/genai/parenting_chatbot/prompts/filter_refs_function.json"
+    )
+    filter_refs_user_message = MessageTemplate.load(
+        "src/genai/parenting_chatbot/prompts/filter_refs_user.json"
+    )
+    filter_refs_system_message = MessageTemplate.load(
+        "src/genai/parenting_chatbot/prompts/filter_refs_system.json"
+    )
 
     if "session_uuid" not in st.session_state:
         st.session_state["session_uuid"] = f"{current_time()}-{str(uuid.uuid4())}"
@@ -114,7 +129,9 @@ def parenting_chatbot(aws_key: str, aws_secret: str, s3_path: str, sidebar: bool
                 function_call={"name": filter_refs_function.name},
             )
 
-            pred = json.loads(pred["choices"][0]["message"]["function_call"]["arguments"])["prediction"]
+            pred = json.loads(
+                pred["choices"][0]["message"]["function_call"]["arguments"]
+            )["prediction"]
 
             if pred:
                 nhs_texts.append(result["metadata"]["text"])
@@ -169,8 +186,12 @@ def parenting_chatbot(aws_key: str, aws_secret: str, s3_path: str, sidebar: bool
                     for url in nhs_urls:
                         st.markdown(f"[{url}]({url})")
 
-        st.session_state["messages"].append({"role": "assistant", "content": full_response})
-        st.session_state["memory"].add_message({"role": "assistant", "content": full_response})
+        st.session_state["messages"].append(
+            {"role": "assistant", "content": full_response}
+        )
+        st.session_state["memory"].add_message(
+            {"role": "assistant", "content": full_response}
+        )
 
         write_to_s3(
             aws_key,
@@ -200,7 +221,9 @@ def parenting_chatbot(aws_key: str, aws_secret: str, s3_path: str, sidebar: bool
         )
 
 
-def write_to_s3(key: str, secret: str, s3_path: str, filename: str, data: dict, how: str = "a") -> None:
+def write_to_s3(
+    key: str, secret: str, s3_path: str, filename: str, data: dict, how: str = "a"
+) -> None:
     """Write data to a jsonl file in S3.
 
     Parameters

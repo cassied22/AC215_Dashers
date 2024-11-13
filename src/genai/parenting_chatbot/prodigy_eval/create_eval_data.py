@@ -30,19 +30,32 @@ if __name__ == "__main__":
     questions = pd.read_json(QUESTION_FILE, lines=True)["question"].to_list()
     # Load answers
     answers = [
-        pd.read_json(path_or_buf=ANSWER_FILE.format(answer_type), lines=True)[answer_type]
+        pd.read_json(path_or_buf=ANSWER_FILE.format(answer_type), lines=True)[
+            answer_type
+        ]
         for answer_type in ANSWER_TYPES
     ]
 
     answers_df = (
         # Construct a dataframe with columns: question, human, rag, and gpt4
-        pd.DataFrame({"question": questions, "human": answers[0], "rag": answers[1], "gpt4": answers[2]})
+        pd.DataFrame(
+            {
+                "question": questions,
+                "human": answers[0],
+                "rag": answers[1],
+                "gpt4": answers[2],
+            }
+        )
         # Melt the dataframe for pairwise combinations and rename the resulting column
-        .melt(id_vars=["question"], value_vars=ANSWER_TYPES).rename(columns={"value": "answer"})
+        .melt(id_vars=["question"], value_vars=ANSWER_TYPES).rename(
+            columns={"value": "answer"}
+        )
         # Add html formatting to the question
         .assign(question=lambda df: QUESTION_PREFIX + df["question"] + QUESTION_SUFFIX)
         # Format the answer as a dictionary {answer_type: answer}
-        .assign(answer=lambda df: df.apply(lambda x: {x["variable"]: x["answer"]}, axis=1))
+        .assign(
+            answer=lambda df: df.apply(lambda x: {x["variable"]: x["answer"]}, axis=1)
+        )
     )
 
     # Generate pairwise combinations of answer types
@@ -52,13 +65,19 @@ if __name__ == "__main__":
     dataframes = []
     for answer_type_pair in answer_type_pairs:
         subset_df = answers_df[answers_df["variable"].isin(answer_type_pair)]
-        aggregated_df = subset_df.groupby("question").agg(lambda x: x.tolist()).reset_index()
+        aggregated_df = (
+            subset_df.groupby("question").agg(lambda x: x.tolist()).reset_index()
+        )
         dataframes.append(aggregated_df)
 
     # Combine the results, merge dictionaries and save the output
     (
         pd.concat(dataframes, ignore_index=True)
-        .assign(answers=lambda df: df.apply(lambda x: {k: v for d in x["answer"] for k, v in d.items()}, axis=1))
+        .assign(
+            answers=lambda df: df.apply(
+                lambda x: {k: v for d in x["answer"] for k, v in d.items()}, axis=1
+            )
+        )
         .drop(columns=["variable", "answer"])
         .sort_values(by="question")
         .reset_index(drop=True)

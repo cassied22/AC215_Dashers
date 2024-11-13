@@ -44,7 +44,9 @@ if __name__ == "__main__":
         )
         responses.append(response)
     # Extract only texts from each response
-    answer_text = [response["choices"][0]["message"]["content"] for response in responses]
+    answer_text = [
+        response["choices"][0]["message"]["content"] for response in responses
+    ]
     # Write the answers to jsonl file
     pd.DataFrame({"question": questions, "gpt4": answer_text}).to_json(
         path_or_buf=OUTPUT_FILE, orient="records", lines=True

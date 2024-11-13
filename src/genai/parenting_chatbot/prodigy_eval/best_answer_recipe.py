@@ -48,7 +48,9 @@ def best_answer(dataset: str, file_path: str) -> Dict:
     def format_stream(stream: List) -> Dict:
         for item in stream:
             question = item["question"]
-            options = [{"id": key, "html": value} for key, value in item["answers"].items()]
+            options = [
+                {"id": key, "html": value} for key, value in item["answers"].items()
+            ]
             yield {"html": question, "options": options}
 
     stream = format_stream(get_shuffled_stream(stream))

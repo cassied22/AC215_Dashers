@@ -48,7 +48,9 @@ EXCLUDED_HEADERS = ["Sign up for emails"]
 OUTPUT_PATH = "data/start_for_life.csv"
 
 
-def merge_sections_based_on_headers(headers: List[str], sections: List[str]) -> (List[str], List[str], List[int]):
+def merge_sections_based_on_headers(
+    headers: List[str], sections: List[str]
+) -> (List[str], List[str], List[int]):
     """
     Merge sections based on headers, where sections without headers will be merged in the previous section that has a header
 
@@ -127,9 +129,13 @@ def web_scraper(url: str, timeout: float = 10) -> (List[str], List[str], List[st
     # Keep only text
     divs_processed = [div.get_text() for div in divs_processed]
     # Merge divs without header into previous div
-    headers, divs_processed, removed_indices = merge_sections_based_on_headers(headers, divs_processed)
+    headers, divs_processed, removed_indices = merge_sections_based_on_headers(
+        headers, divs_processed
+    )
     # Remove corresponding elements from divs_classes
-    divs_classes = [div for i, div in enumerate(divs_classes) if i not in removed_indices]
+    divs_classes = [
+        div for i, div in enumerate(divs_classes) if i not in removed_indices
+    ]
     # Remove new lines from the beginning and end of each div
     divs_processed = [div.strip() for div in divs_processed]
     # and replace multiple new lines with a space
@@ -181,7 +187,11 @@ if __name__ == "__main__":
         # Remove rows with excluded headers
         .loc[~content_dfs["header"].isin(EXCLUDED_HEADERS)]
         # For each unique URL, reindex the content_no to follow subsequent integers
-        .assign(content_no=lambda x: x.groupby("URL")["content_no"].rank(method="first").astype(int))
+        .assign(
+            content_no=lambda x: x.groupby("URL")["content_no"]
+            .rank(method="first")
+            .astype(int)
+        )
         # Export to CSV
         .to_csv(OUTPUT_PATH, index=False)
     )

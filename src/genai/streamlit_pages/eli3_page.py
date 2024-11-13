@@ -45,7 +45,12 @@ def eli3(sidebar: bool = True) -> None:
                 on_change=reset_state,
             )
 
-            st.button("Reset chat", on_click=reset_state, type="primary", help="Reset the chat history")
+            st.button(
+                "Reset chat",
+                on_click=reset_state,
+                type="primary",
+                help="Reset the chat history",
+            )
     else:
         selected_model = "gpt-4"
         temperature = 0.6
@@ -54,7 +59,9 @@ def eli3(sidebar: bool = True) -> None:
 
     # Initialize chat history
     if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": prompt_template.role, "content": prompt_template.content}]
+        st.session_state.messages = [
+            {"role": prompt_template.role, "content": prompt_template.content}
+        ]
 
     # Display chat messages from history on app rerun.
     # The first message is the prompt, so we skip it.
@@ -77,11 +84,16 @@ def eli3(sidebar: bool = True) -> None:
             for response in TextGenerator.generate(
                 model=selected_model,
                 temperature=temperature,
-                messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                messages=[
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages
+                ],
                 message_kwargs=None,
                 stream=True,
             ):
                 full_response += response.choices[0].delta.get("content", "")
                 message_placeholder.markdown(full_response + "▌")
             message_placeholder.markdown(full_response)
-        st.session_state.messages.append({"role": "assistant", "content": full_response})
+        st.session_state.messages.append(
+            {"role": "assistant", "content": full_response}
+        )

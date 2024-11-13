@@ -70,7 +70,9 @@ class TextGenerator:
         if not message_kwargs:
             message_kwargs = {}
 
-        messages = [cls.prepare_message(message, **message_kwargs) for message in messages]
+        messages = [
+            cls.prepare_message(message, **message_kwargs) for message in messages
+        ]
 
         response = cls._call(
             messages=messages,
@@ -126,7 +128,11 @@ class TextGenerator:
     def _extract_placeholders(s: str) -> List[str]:
         """Extract placeholder variables that can be filled in an f-string."""
         formatter = string.Formatter()
-        return [field_name for _, field_name, _, _ in formatter.parse(s) if field_name is not None]
+        return [
+            field_name
+            for _, field_name, _, _ in formatter.parse(s)
+            if field_name is not None
+        ]
 
 
 class EYFSClassifier:
@@ -171,7 +177,9 @@ class EYFSClassifier:
         if not message_kwargs:
             message_kwargs = {}
 
-        messages = [cls.prepare_message(message, **message_kwargs) for message in messages]
+        messages = [
+            cls.prepare_message(message, **message_kwargs) for message in messages
+        ]
 
         response = cls._call(
             messages=messages,
@@ -180,7 +188,9 @@ class EYFSClassifier:
             **openai_kwargs,
         )
 
-        parsed_response = json.loads(response["choices"][0]["message"]["function_call"]["arguments"])
+        parsed_response = json.loads(
+            response["choices"][0]["message"]["function_call"]["arguments"]
+        )
         if parsed_response:
             parsed_response["url"] = message_kwargs["url"]
             return parsed_response
@@ -271,7 +281,9 @@ class EYFSClassifier:
             if not message_kwargs:
                 message_kwargs = {}
 
-            messages = [cls.prepare_message(message, **message_kwargs) for message in messages]
+            messages = [
+                cls.prepare_message(message, **message_kwargs) for message in messages
+            ]
 
             response = await cls._acall(
                 messages=messages,

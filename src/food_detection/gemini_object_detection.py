@@ -43,13 +43,16 @@ def detect_objects(image_file):
 
         # Pass content as a list with both text and image
         response = model.generate_content(
-            [prompt, image], generation_config={"temperature": 0.1, "top_p": 0.8, "top_k": 40}
+            [prompt, image],
+            generation_config={"temperature": 0.1, "top_p": 0.8, "top_k": 40},
         )
 
         if response and response.text:
             # Clean and process the response
             ingredients = [
-                item.strip() for item in response.text.split(",") if item.strip() and not item.strip().startswith("- ")
+                item.strip()
+                for item in response.text.split(",")
+                if item.strip() and not item.strip().startswith("- ")
             ]
             return [ing for ing in ingredients if ing]  # Remove empty strings
 
@@ -76,7 +79,9 @@ def get_ingredient_details(ingredients):
         Keep the response concise and focused on common kitchen knowledge.
         """
 
-        response = model.generate_content(prompt, generation_config={"temperature": 0.1, "top_p": 0.8, "top_k": 40})
+        response = model.generate_content(
+            prompt, generation_config={"temperature": 0.1, "top_p": 0.8, "top_k": 40}
+        )
 
         if response and response.text:
             import json

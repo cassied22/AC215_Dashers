@@ -16,14 +16,22 @@ def eyfs_compare() -> None:
 
     with st.sidebar:
         # Select a model, temperature and number of results
-        selected_model = st.radio(label="**OpenAI model**", options=["gpt-3.5-turbo", "gpt-4"], index=1)
+        selected_model = st.radio(
+            label="**OpenAI model**", options=["gpt-3.5-turbo", "gpt-4"], index=1
+        )
         # description = "<THIS IS WHERE THE GENERATOR WILL SHOW THE RESULTS>"
         n_results = 10
-        temperature = st.slider(label="**Temperature**", min_value=0.0, max_value=2.0, value=0.6, step=0.1)
+        temperature = st.slider(
+            label="**Temperature**", min_value=0.0, max_value=2.0, value=0.6, step=0.1
+        )
 
     # Select the areas of learning
-    areas_of_learning = st.multiselect(label="**Areas of learning**", options=aol, default=aol)
-    areas_of_learning_text = [v for k, v in areas_of_learning_desc.items() if k in areas_of_learning]
+    areas_of_learning = st.multiselect(
+        label="**Areas of learning**", options=aol, default=aol
+    )
+    areas_of_learning_text = [
+        v for k, v in areas_of_learning_desc.items() if k in areas_of_learning
+    ]
 
     # Describe each Area of Learning in an expanding window
     with st.expander("**Areas of Learning Description**"):
@@ -33,7 +41,11 @@ def eyfs_compare() -> None:
                 st.write(v.split("##")[-1])
 
     areas_of_learning_text = "\n\n".join(areas_of_learning_text)
-    location = st.selectbox(label="**Location**", options=["Indoor", "Outdoor", "Indoor or Outdoor"], index=2)
+    location = st.selectbox(
+        label="**Location**",
+        options=["Indoor", "Outdoor", "Indoor or Outdoor"],
+        index=2,
+    )
 
     # Get the user input
     query = st.text_input(
@@ -115,7 +127,10 @@ def eyfs_compare() -> None:
                     "location": location,
                     "areas_of_learning_text": areas_of_learning_text,
                     "activity_examples": "\n======\n".join(
-                        [similar_doc["metadata"]["text"] for similar_doc in similar_docs]
+                        [
+                            similar_doc["metadata"]["text"]
+                            for similar_doc in similar_docs
+                        ]
                     ),
                 }
 

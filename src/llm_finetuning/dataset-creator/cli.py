@@ -97,7 +97,9 @@ def upload():
     bucket = storage_client.bucket(GCS_BUCKET_NAME)
     timeout = 500
 
-    data_files = glob.glob(os.path.join(OUTPUT_FOLDER, "*.jsonl")) + glob.glob(os.path.join(OUTPUT_FOLDER, "*.csv"))
+    data_files = glob.glob(os.path.join(OUTPUT_FOLDER, "*.jsonl")) + glob.glob(
+        os.path.join(OUTPUT_FOLDER, "*.csv")
+    )
     data_files.sort()
 
     # Upload

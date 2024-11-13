@@ -1,40 +1,34 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9.18-slim
+# Use the Anaconda base image
+FROM continuumio/anaconda3:latest
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Install system dependencies (for compiling dependencies)
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc python3-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install poetry
-RUN pip install "poetry==1.5.1"
-
-# Set the working directory in the Docker image
+# Set working directory
 WORKDIR /app
 
-# Copy only requirements to cache them in docker layer
-COPY pyproject.toml poetry.lock ./
-
-# Copy source code into the container
-COPY src/genai  /app/src/genai
+# Copy the environment.yml and project files
+COPY environment.yml /app/
+COPY src/genai /app/src/genai
 COPY README.md /app/README.md
 COPY app.py /app/app.py
-
-# Don't push the image to Dockerhub
 COPY .env /app/.env
 COPY .streamlit /app/.streamlit
 
-# Install project dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi
+# Ensure the datapipeline folder is copied correctly from src
+COPY src/datapipeline /app/datapipeline
+COPY src/food_detection /app/food_detection
+# Ensure the datapipeline folder is copied from the correct location
 
-# Expose port for Streamlit
-EXPOSE 8501
+# Create the Conda environment
+RUN conda env create -f /app/environment.yml
 
-# Command to run Streamlit app
-CMD ["streamlit", "run", "app.py"]
+# Install langchain-community within the Conda environment
+RUN /opt/conda/envs/discovery-generative-ai/bin/pip install langchain-community
+
+# Install system dependencies using apt-get (protobuf-compiler, libprotobuf-dev, build-essential)
+RUN apt-get update && apt-get install -y \
+    protobuf-compiler \
+    libprotobuf-dev \
+    build-essential \
+    cmake
+
+# Activate the environment and run the app
+CMD ["conda", "run", "--no-capture-output", "-n", "discovery-generative-ai", "streamlit", "run", "app.py"]

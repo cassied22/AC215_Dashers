@@ -49,13 +49,18 @@ if "__main__" == __name__:
                     docs.append(doc)
 
     # Build the index
-    conn = PineconeIndex(api_key=os.environ["PINECONE_API_KEY"], environment=os.environ["PINECONE_REGION"])
+    conn = PineconeIndex(
+        api_key=os.environ["PINECONE_API_KEY"],
+        environment=os.environ["PINECONE_REGION"],
+    )
 
     conn.build_and_upsert(
         index_name=INDEX_NAME,
         dimension=1536,
         metric="euclidean",
         docs=docs,
-        metadata_config={"indexed": ["areas_of_learning", "source", "type_", "age_group"]},
+        metadata_config={
+            "indexed": ["areas_of_learning", "source", "type_", "age_group"]
+        },
         batch_size=40,
     )

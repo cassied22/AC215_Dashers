@@ -44,7 +44,10 @@ def reset_state(key: Optional[str] = None) -> None:
 @st.cache_resource
 def get_index(index_name: str) -> pinecone.index.Index:
     """Return and persist the pinecone index."""
-    conn = PineconeIndex(api_key=os.environ["PINECONE_API_KEY"], environment=os.environ["PINECONE_REGION"])
+    conn = PineconeIndex(
+        api_key=os.environ["PINECONE_API_KEY"],
+        environment=os.environ["PINECONE_REGION"],
+    )
     index = conn.connect(index_name=index_name)
     return index
 

@@ -52,10 +52,17 @@ def main() -> None:
     labels = get_labelled_bbc_activities(os.environ["PATH_TO_LABELLED_BBC_DATA"])
     bbc = get_bbc_activities(os.environ["PATH_TO_BBC_ACTIVITIES_DATA"])
 
-    df = labels.merge(bbc[["SHORT DESCRIPTION", "text", "URL", "title"]], how="left", left_on="URL", right_on="URL")
+    df = labels.merge(
+        bbc[["SHORT DESCRIPTION", "text", "URL", "title"]],
+        how="left",
+        left_on="URL",
+        right_on="URL",
+    )
 
     # Encode the BBC activities' text
-    df["embedding"] = df["text"].apply(lambda row: get_embedding(row, model=ENCODER_NAME))
+    df["embedding"] = df["text"].apply(
+        lambda row: get_embedding(row, model=ENCODER_NAME)
+    )
 
     # Batch items
     items = []
@@ -63,18 +70,28 @@ def main() -> None:
         item = (
             tup.URL,
             tup.embedding,
-            {"areas_of_learning": tup.areas_of_learning, "title": tup.title, "text": tup.text, "source": "BBC"},
+            {
+                "areas_of_learning": tup.areas_of_learning,
+                "title": tup.title,
+                "text": tup.text,
+                "source": "BBC",
+            },
         )
         items.append(item)
 
     # Build the index
-    conn = PineconeIndex(api_key=os.environ["PINECONE_API_KEY"], environment=os.environ["PINECONE_REGION"])
+    conn = PineconeIndex(
+        api_key=os.environ["PINECONE_API_KEY"],
+        environment=os.environ["PINECONE_REGION"],
+    )
     conn.build_and_upsert(
         index_name=INDEX_NAME,
         dimension=len(df["embedding"].iloc[0]),
         metric="euclidean",
         docs=items,
-        metadata_config={"indexed": ["areas_of_learning", "source", "type_", "age_group"]},
+        metadata_config={
+            "indexed": ["areas_of_learning", "source", "type_", "age_group"]
+        },
         batch_size=40,
         delete_if_exists=True,
     )

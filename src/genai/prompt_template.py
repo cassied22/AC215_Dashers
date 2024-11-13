@@ -59,7 +59,9 @@ class BasePromptTemplate(ABC):
         elif isinstance(obj, Dict):
             return cls._from_dict(obj)
         else:
-            raise TypeError(f"Expected a JSON file path or a dictionary, got {type(obj)}.")
+            raise TypeError(
+                f"Expected a JSON file path or a dictionary, got {type(obj)}."
+            )
 
     @staticmethod
     def _exclude_keys(
@@ -88,7 +90,11 @@ class BasePromptTemplate(ABC):
     def _extract_placeholders(s: str) -> List[str]:
         """Extract placeholder variables that can be filled in an f-string."""
         formatter = string.Formatter()
-        return [field_name for _, field_name, _, _ in formatter.parse(s) if field_name is not None]
+        return [
+            field_name
+            for _, field_name, _, _ in formatter.parse(s)
+            if field_name is not None
+        ]
 
     @classmethod
     def _from_json(cls, json_path: str) -> "BasePromptTemplate":
@@ -123,7 +129,9 @@ class MessageTemplate(BasePromptTemplate):
         """Keep the initial template and error when the role is function but not name was given."""
         super().__post_init__()
         if self.role == "function" and not self.name:
-            raise ValueError("The 'name' attribute is required when 'role' is 'function'.")
+            raise ValueError(
+                "The 'name' attribute is required when 'role' is 'function'."
+            )
 
     def _initialize_template(self) -> Dict[str, str]:
         return {"role": self.role, "content": self.content, "name": self.name}
@@ -133,7 +141,9 @@ class MessageTemplate(BasePromptTemplate):
         instance = MessageTemplate(**data)
         # Validate after initialisation
         if instance.role == "function" and not instance.name:
-            raise ValueError("The 'name' attribute is required when 'role' is 'function'.")
+            raise ValueError(
+                "The 'name' attribute is required when 'role' is 'function'."
+            )
         return instance
 
 
@@ -143,9 +153,13 @@ class FunctionTemplate(BasePromptTemplate):
 
     name: str
     description: str
-    parameters: Dict[str, Union[str, Dict[str, Dict[str, Union[str, List[str]]]], List[str]]]
+    parameters: Dict[
+        str, Union[str, Dict[str, Dict[str, Union[str, List[str]]]], List[str]]
+    ]
 
-    def _initialize_template(self) -> Dict[str, Union[str, Dict[str, Dict[str, Union[str, List[str]]]], List[str]]]:
+    def _initialize_template(
+        self,
+    ) -> Dict[str, Union[str, Dict[str, Dict[str, Union[str, List[str]]]], List[str]]]:
         return {
             "name": self.name,
             "description": self.description,

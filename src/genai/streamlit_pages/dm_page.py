@@ -12,7 +12,9 @@ from genai.streamlit_pages.utils import sample_docs
 from genai.utils import read_json
 
 
-def eyfs_dm_kb(index_name: str = "eyfs-index-1718673592-index", sidebar: bool = True) -> None:
+def eyfs_dm_kb(
+    index_name: str = "eyfs-index-1718673592-index", sidebar: bool = True
+) -> None:
     """Run the Development Matters app."""
 
     # Define your custom CSS
@@ -162,7 +164,9 @@ def eyfs_dm_kb(index_name: str = "eyfs-index-1718673592-index", sidebar: bool = 
                         top_n=n_examples,
                     )
                     results.extend(search_results)
-                areas_of_learning = [result["metadata"]["areas_of_learning"] for result in results]
+                areas_of_learning = [
+                    result["metadata"]["areas_of_learning"] for result in results
+                ]
                 results = list(set([result["metadata"]["text"] for result in results]))
                 idx = sample_docs(num_docs=len(results), n=n_examples)
                 results = [results[i] for i in idx]
@@ -200,7 +204,8 @@ def eyfs_dm_kb(index_name: str = "eyfs-index-1718673592-index", sidebar: bool = 
                 selected_model=selected_model,
                 temperature=temperature,
                 message=MessageTemplate(
-                    role="user", content="###Activities###\n{activities} ###Task###\n{text_input}"
+                    role="user",
+                    content="###Activities###\n{activities} ###Task###\n{text_input}",
                 ),
                 messages_placeholders={
                     "text_input": text_input,
@@ -209,7 +214,9 @@ def eyfs_dm_kb(index_name: str = "eyfs-index-1718673592-index", sidebar: bool = 
             )
 
 
-def get_data(path: str, type_: str, areas_of_learning: List[str], age_groups: List[str]) -> List[str]:
+def get_data(
+    path: str, type_: str, areas_of_learning: List[str], age_groups: List[str]
+) -> List[str]:
     """Get Learning Goals or Examples based on the selected areas of learning and age groups."""
     data = read_json(path)
     # Temp hack to exclude the template
@@ -256,12 +263,22 @@ def _sidebar() -> tuple:
         on_change=reset_state,
     )
 
-    st.button("Reset chat", on_click=reset_state, type="primary", help="Reset the chat history")
+    st.button(
+        "Reset chat",
+        on_click=reset_state,
+        type="primary",
+        help="Reset the chat history",
+    )
 
     return selected_model, temperature, n_examples
 
 
-def llm_call(selected_model: str, temperature: float, message: MessageTemplate, messages_placeholders: dict) -> str:
+def llm_call(
+    selected_model: str,
+    temperature: float,
+    message: MessageTemplate,
+    messages_placeholders: dict,
+) -> str:
     """Call the LLM."""
     message_placeholder = st.empty()
     full_response = ""

@@ -1,3 +1,6 @@
+**/docker-volumes/
+**/secrets
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -82,7 +85,6 @@ target/
 profile_default/
 ipython_config.py
 
-.streamlit/secrets.toml
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
 #   intended to run in multiple environments; otherwise, check them in:
@@ -107,8 +109,10 @@ ipython_config.py
 #pdm.lock
 #   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
 #   in version control.
-#   https://pdm.fming.dev/#use-with-ide
+#   https://pdm.fming.dev/latest/usage/project/#working-with-version-control
 .pdm.toml
+.pdm-python
+.pdm-build/
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
@@ -159,16 +163,8 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
-
-data/
-notebooks/
 .DS_Store
-.vscode/
-src/scraping/data/*
-
-src/evals/parenting_chatbot/*
-src/genai/parenting_chatbot/prodigy_eval/_scrap/*
-!src/genai/parenting_chatbot/prodigy_eval/data/
-!src/genai/sandbox/signals/data/
-src/genai/sandbox/signals/data/signals_2024.json
-src/genai/sandbox/signals/illustrations/*
+.dvc/cache
+.dvc/cache
+data/recipe_qa.csv
+data/*.csv

@@ -91,7 +91,9 @@ async def main() -> None:
 
         for future in asyncio.as_completed(tasks):
             result = await future  # Get the result (waits if not ready)
-            await EYFSClassifier.write_line_to_file(result, OUTPUT_FILENAME)  # Write to the file
+            await EYFSClassifier.write_line_to_file(
+                result, OUTPUT_FILENAME
+            )  # Write to the file
 
         time.sleep(2)
 

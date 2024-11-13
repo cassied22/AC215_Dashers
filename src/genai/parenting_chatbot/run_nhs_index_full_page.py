@@ -21,7 +21,9 @@ ENCODER_NAME = "text-embedding-ada-002"
 
 if "__main__" == __name__:
     df = pd.read_csv(os.environ["PATH_TO_NHS_DATA"])
-    df = df.groupby("URL").apply(lambda group: "\n\n".join(group["header"] + "\n" + group["content"]))
+    df = df.groupby("URL").apply(
+        lambda group: "\n\n".join(group["header"] + "\n" + group["content"])
+    )
     df = df.reset_index()
     df.columns = ["URL", "content"]
 
@@ -42,13 +44,18 @@ if "__main__" == __name__:
         docs.append(doc)
 
     # Build the index
-    conn = PineconeIndex(api_key=os.environ["PINECONE_API_KEY"], environment=os.environ["PINECONE_REGION"])
+    conn = PineconeIndex(
+        api_key=os.environ["PINECONE_API_KEY"],
+        environment=os.environ["PINECONE_REGION"],
+    )
 
     conn.build_and_upsert(
         index_name=INDEX_NAME,
         dimension=1536,
         metric="euclidean",
         docs=docs,
-        metadata_config={"indexed": ["areas_of_learning", "source", "type_", "age_group"]},
+        metadata_config={
+            "indexed": ["areas_of_learning", "source", "type_", "age_group"]
+        },
         batch_size=40,
     )

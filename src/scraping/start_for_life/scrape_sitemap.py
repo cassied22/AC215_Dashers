@@ -67,7 +67,9 @@ def scrape_urls(base_url: str, csv_filename: str, timeout: float = 10) -> None:
             # Get the href attribute (the URL)
             url = link.get("href")
             # Check if the URL starts with 'http' or 'https' to ignore relative URLs
-            if url and (url.startswith("http") or url.startswith("https") or url.startswith("/")):
+            if url and (
+                url.startswith("http") or url.startswith("https") or url.startswith("/")
+            ):
                 unique_urls.append(url)
                 if type(link.text) is str:
                     url_titles.append(link.text.strip())
@@ -82,7 +84,9 @@ def scrape_urls(base_url: str, csv_filename: str, timeout: float = 10) -> None:
         for i, url in enumerate(unique_urls):
             csv_writer.writerow([url_titles[i], url])
 
-    logging.info(f"Scraping complete. {len(unique_urls)} unique URLs have been saved to {csv_filename}.")
+    logging.info(
+        f"Scraping complete. {len(unique_urls)} unique URLs have been saved to {csv_filename}."
+    )
 
 
 if __name__ == "__main__":
