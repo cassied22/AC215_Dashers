@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "discovery_generative_ai "
+name = "discovery_generative_ai"
 version = "0.1.0"
-description = " We are exploring the potential impact of Generative AI on Nesta's Missions and work to uncover opportunities and risks that can inform Nesta strategy."
+description = "We are exploring the potential impact of Generative AI on Nesta's Missions and work to uncover opportunities and risks that can inform Nesta strategy."
 authors = ["Nesta"]
 readme = "README.md"
 homepage = "https://github.com/nestauk/discovery_generative_ai"
 repository = "https://github.com/nestauk/discovery_generative_ai"
-keywords = ['llm', 'generative-ai']  # noqa
+keywords = ['llm', 'generative-ai']
 packages = [
     { include = "genai", from = "src" },
 ]
@@ -14,11 +14,10 @@ packages = [
 [tool.poetry.build]
 generate-setup-file = false
 
-
 [tool.poetry.dependencies]
 python = "3.9.17"
 requests = "2.28.1"
-openai = "0.27.8"
+openai = "0.28.0"  # Updated to match your installed version
 streamlit = "^1.24.1"
 python-dotenv = "^1.0.0"
 streamlit-option-menu = "^0.3.6"
@@ -29,40 +28,45 @@ Flask = "^2.3.2"
 twilio = "^8.5.0"
 aiofiles = "23.1.0"
 gunicorn = "^21.2.0"
-pinecone-client = "^4.1"
+pinecone-client = "^2.2.4"  # Updated to a compatible version
 streamlit-feedback = "0.0.9"
-boto3= "1.28.17"
+boto3 = "1.28.17"
 s3fs = "^2023.9.0"
 seaborn = "^0.13.0"
 cchardet = "^2.1.7"
 chardet = "^5.2.0"
+# Recipe assistant dependencies with compatible versions
+google-cloud-aiplatform = "1.38.1"
+google-cloud-storage = "2.13.0"
+google-generativeai = "0.3.2"
+langchain = "0.0.350"
+chromadb = "0.3.29"  # Using an older but stable version
+pandas = "2.1.0"
+Pillow = "10.0.0"
 
 [tool.poetry.group.test]
 optional = true
 
-
 [tool.poetry.group.test.dependencies]
-pytest = "^7.1.1" # Allows for testing of the project
-pytest-cov = "^4.0.0" # Allows to run coverage of the project
-moto = "^3.1.6" # Allows for mocking of AWS services
+pytest = "^7.1.1"
+pytest-cov = "^4.0.0"
+moto = "^3.1.6"
 
 [tool.poetry.group.lint]
 optional = true
 
 [tool.poetry.group.lint.dependencies]
-flake8 = "^4.0.1"                         # Style Guide Enforcement
-pyproject-flake8 = "^0.0.1-alpha.4"       # Allows configuration of flake 8 from pyproject.toml
-flake8-bugbear = "^22.3.23"               # Finding likely bugs and design problems in your program.
-flake8-print = "^4.0.0"                   # Check for print statements in python files.
-flake8-docstrings = "^1.6.0"              # Include checks provided by pep257.
-flake8-annotations = "^2.8.0"             # check for presence of type annotations in function definitions.
-isort = "^5.10.1"                         # Sort imports
-yamllint = "^1.26.3"                      # Linter for YAML files
-bandit = {version = "^1.7.4", extras = ["toml"]}  # Security linter
-pre-commit = "^2.18.1"                    # Runs a pipeline before commiting code
-black = "^22.6.0"                         # Python style checks
-
-
+flake8 = "^4.0.1"
+pyproject-flake8 = "^0.0.1-alpha.4"
+flake8-bugbear = "^22.3.23"
+flake8-print = "^4.0.0"
+flake8-docstrings = "^1.6.0"
+flake8-annotations = "^2.8.0"
+isort = "^5.10.1"
+yamllint = "^1.26.3"
+bandit = {version = "^1.7.4", extras = ["toml"]}
+pre-commit = "^2.18.1"
+black = "^22.6.0"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.24.0"
@@ -70,7 +74,6 @@ ipykernel = "^6.24.0"
 [build-system]
 requires = ["poetry-core>=1.2.0rc1"]
 build-backend = "poetry.core.masonry.api"
-
 
 [tool.black]
 line-length = 119
@@ -100,46 +103,44 @@ line_length = 119
 
 [tool.flake8]
 max-line-length = 119
-select = [  # Choose the flake8 errors to select globally here
-  "C",      # McCabe complexity
-  "E",      # pep8 errors
-  "W",      # pep8 warnings
-  "F",      # pyflakes errors
-  "N",      # naming conventions
-  "B",      # bugbear errors (needs plugin installed)
-  "ANN",    # flake8 annotations errors (needs plugin installed)
-  "T",      # flake8 print errors (needs plugin installed)
-  "D",      # flake8 doscstrings errors (needs plugin installed)
-  "B950",   #  Line too long. It considers "max-line-length" but only triggers when exceeded by more than 10%.
+select = [
+  "C",
+  "E",
+  "W",
+  "F",
+  "N",
+  "B",
+  "ANN",
+  "T",
+  "D",
+  "B950",
 ]
-ignore = [   # Choose the flake8 errors to ignore globally here
-  "E501",    # Line too long  (using B950 instead, which has 10% tolerance)
-  "D107",    # Missing docstring in __init__
-  "D202",    # No blank lines allowed after function docstring
-  "D400",    # First line should end with a period
-  "D100",    # Missing docstring in public module
-  "D104",    # Missing docstring in public package
-  "ANN003",  # Missing type annotation for **kwargs
-  "ANN002",  # Missing type annotation for **args
-  "ANN1",    # Missing type annotation for self in methot or cls method
-  "W503",    # Line break occurred before a binary operator
-  "E203",    # Whitespace before ':'
+ignore = [
+  "E501",
+  "D107",
+  "D202",
+  "D400",
+  "D100",
+  "D104",
+  "ANN003",
+  "ANN002",
+  "ANN1",
+  "W503",
+  "E203",
 ]
-per-file-ignores = [     # Choose the flake8 errors to ignore per file here
-  "*/__init__.py:F401",  # Ignore imported but unused in __init__.py files
-  "tests/*:ANN,D",       # Ignore Docstring and annotations on tests
+per-file-ignores = [
+  "*/__init__.py:F401",
+  "tests/*:ANN,D",
 ]
 exclude = [
     ".venv/*",
     ".vscode/*",
 ]
-# See other flake8 extensions here: https://github.com/DmytroLitvinov/awesome-flake8-extensions
-
 
 [tool.bandit]
-skips = [      # Choose the bandit errors to ignore globally
-  "B101",      # Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
-  "B104",      # Possible binding to all interfaces
+skips = [
+  "B101",
+  "B104",
 ]
 exclude_dirs = [
   ".venv",
@@ -160,7 +161,7 @@ testpaths = [
 ]
 
 [tool.coverage.run]
-omit = ["*/tests/*"]    # Remove test files from coverage run.
+omit = ["*/tests/*"]
 
 [tool.coverage.report]
-omit = ["*/tests/*"]    # Remove test files from coverage report.
+omit = ["*/tests/*"]

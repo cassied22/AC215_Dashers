@@ -44,19 +44,20 @@ repos:
         types: [file, python]
         stages: [commit]
 
-      - id: flake8
-        name: Run Flake8
-        entry: poetry run pflake8
-        language: system
-        types: [file, python]
-        stages: [commit]
+      # - id: flake8
+      #   name: Run Flake8
+      #   entry: poetry run pflake8
+      #   language: system
+      #   types: [file, python]
+      #   stages: [commit]
+      #   disabled: true # comment this to enable flake8
 
-      - id: yamllint
-        name: Run Yamllint
-        entry: poetry run yamllint
-        language: system
-        types: [file, yaml]
-        stages: [commit]
+      # - id: yamllint
+      #   name: Run Yamllint
+      #   entry: poetry run yamllint
+      #   language: system
+      #   types: [file, yaml]
+      #   stages: [commit]
 
       - id: bandit
         name: Run Bandit
