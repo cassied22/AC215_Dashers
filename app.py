@@ -5,11 +5,9 @@ import sys
 import streamlit as st
 
 from dotenv import load_dotenv
-
-
-# from langchain.embeddings import OpenAIEmbeddings
-# from langchain_community.vectorstores import Chroma
-# from streamlit_option_menu import option_menu
+from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+from streamlit_option_menu import option_menu
 
 
 # Must be the first Streamlit command

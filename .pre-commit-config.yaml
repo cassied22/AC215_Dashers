@@ -37,12 +37,12 @@ repos:
         types: [file, python]
         stages: [commit]
 
-      - id: isort
-        name: Run Isort
-        entry: poetry run isort
-        language: system
-        types: [file, python]
-        stages: [commit]
+      # - id: isort
+      #   name: Run Isort
+      #   entry: poetry run isort
+      #   language: system
+      #   types: [file, python]
+      #   stages: [commit]
 
       # - id: flake8
       #   name: Run Flake8
