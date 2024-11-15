@@ -12,6 +12,7 @@ services:
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT
+            GCS_BUCKET_NAME: $GCS_BUCKET_NAME
         depends_on:
             - chromadb
 

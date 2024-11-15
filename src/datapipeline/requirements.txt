@@ -1,6 +1,0 @@
-# TO BE UPDATED
-numpy
-pandas
-matplotlib
-seaborn
-json

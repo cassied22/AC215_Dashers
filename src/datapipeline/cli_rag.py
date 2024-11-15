@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import glob
 import chromadb
+import subprocess
 
 # Vertex AI
 import vertexai
@@ -49,6 +50,7 @@ INPUT_FOLDER = "input-datasets"
 OUTPUT_FOLDER = "outputs"
 CHROMADB_HOST = "recipe-rag-chromadb"
 CHROMADB_PORT = 8000
+GCS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
 # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048"
 MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/7256513960042561536"
 # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/8362147668562018304"
@@ -226,6 +228,11 @@ def load(batch_size=500):
             )
             total_inserted += len(batch)
             print(f"Inserted {total_inserted} items...")
+        
+        # Save the Chromadb collection to GCS
+        print("Uploading ChromaDB to GCS bucket...")
+        subprocess.run(["gcloud", "storage", "cp", "-r", "docker-volumes/chromadb", f"gs://{GCS_BUCKET_NAME}/chromadb"], check=True)
+        print("ChromaDB uploaded to GCS bucket.")
 
         print(
             f"Finished inserting {total_inserted} items into collection '{collection.name}'"
@@ -242,6 +249,12 @@ def query(query_input):
     Returns:
 		results: dict, retrieved relevant recipe samples from ChromaDB
     """
+    if not os.listdir("docker-volumes/chromadb"):
+        print("ChromaDB is empty. Downloading from GCS bucket...")
+        subprocess.run(["gcloud", "storage", "cp", "-r", f"gs://{GCS_BUCKET_NAME}/chromadb", "docker-volumes/chromadb"], check=True)
+    else:
+        print("ChromaDB is not empty. Skipping download from GCS bucket.")
+
     # Connect to chroma DB
     client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
     collection_name = "recipe-small-collection"
@@ -346,6 +359,7 @@ Input ingredients the user has: [chicken, broccoli, cheese], create a recipe'''
     print("Candidates:\n",response)
     # for part in response:
     #     print(part)
+
 
 def main(args=None):
     print("CLI Arguments:", args)
