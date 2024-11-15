@@ -1,3 +1,4 @@
+---
 networks:
     default:
         name: recipe-rag-network
@@ -26,4 +27,3 @@ services:
             - IS_PERSISTENT=TRUE
             - ANONYMIZED_TELEMETRY=FALSE
             - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"] # This is not recommended for production environments.
-
