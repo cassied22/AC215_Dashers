@@ -21,5 +21,5 @@ async def get_index():
     return {"message": "Welcome to Daily Meal Assistant"}
 
 # Additional routers here
-# app.include_router(llm_chat.router, prefix="/llm")
+app.include_router(llm_chat.router, prefix="/llm")
 app.include_router(llm_rag_chat.router, prefix="/llm-rag")

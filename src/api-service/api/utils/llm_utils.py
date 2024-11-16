@@ -23,19 +23,16 @@ generation_config = {
 }
 # Initialize the GenerativeModel with specific system instructions
 SYSTEM_INSTRUCTION = """
-You are an AI assistant specialized in cheese knowledge.
+You are an AI assistant specialized in food recipes knowledge.
 
 When answering a query:
-1. Demonstrate expertise in cheese, including aspects like:
-  - Production methods and techniques
-  - Flavor profiles and characteristics
-  - Aging processes and requirements
-  - Regional varieties and traditions
-  - Pairing recommendations
-  - Storage and handling best practices
-2. Always maintain a professional and knowledgeable tone, befitting a cheese expert.
+1. Demonstrate expertise in recipe generation from food ingredient lists.
+2. Your recipe response should include ingredients, directions to make a meal. 
+3. Use user provided ingredients as much as possible, but you can also suggest additional ingredients if necessary to create a complete recipe. 
+4. Identify any additional ingredients in your response other than the user provided ones and highlight these ingredients in your response to notify the user. 
+5. Always maintain a friendly and knowledgeable tone, befitting an expert cook who helps the user to cook.
 
-Your goal is to provide accurate, helpful information about cheese for each query.
+Your goal is to provide accurate, helpful information about meal recipe generation for each query.
 """
 generative_model = GenerativeModel(
 	GENERATIVE_MODEL,
@@ -61,78 +58,16 @@ def generate_chat_response(chat_session: ChatSession, message: Dict) -> str:
     Returns:
         str: The model's response
     """
-    # response = chat_session.send_message(
-    #     message,
-    #     generation_config=generation_config
-    # )
-    # return response.text
     try:
         # Initialize parts list for the message
         message_parts = []
-        
-        
-        # Process image if present
-        if message.get("image"):
-            try:
-                # Extract the actual base64 data and mime type
-                base64_string = message.get("image")
-                if ',' in base64_string:
-                    header, base64_data = base64_string.split(',', 1)
-                    mime_type = header.split(':')[1].split(';')[0]
-                else:
-                    base64_data = base64_string
-                    mime_type = 'image/jpeg'  # default to JPEG if no header
-                
-                # Decode base64 to bytes
-                image_bytes = base64.b64decode(base64_data)
-                
-                # Create an image Part using FileData
-                image_part = Part.from_data(image_bytes, mime_type=mime_type)
-                message_parts.append(image_part)
 
-                # Add text content if present
-                if message.get("content"):
-                    message_parts.append(message["content"])
-                else:
-                    message_parts.append("Name the cheese in the image, no descriptions needed")
-                
-            except ValueError as e:
-                print(f"Error processing image: {str(e)}")
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Image processing failed: {str(e)}"
-                )
-        elif message.get("image_path"):
-            # Read the image file
-            image_path = os.path.join("chat-history","llm",message.get("image_path"))
-            with Path(image_path).open('rb') as f:
-                image_bytes = f.read()
-
-            # Determine MIME type based on file extension
-            mime_type = {
-                '.jpg': 'image/jpeg',
-                '.jpeg': 'image/jpeg',
-                '.png': 'image/png',
-                '.gif': 'image/gif'
-            }.get(Path(image_path).suffix.lower(), 'image/jpeg')
-
-            # Create an image Part using FileData
-            image_part = Part.from_data(image_bytes, mime_type=mime_type)
-            message_parts.append(image_part)
-
-            # Add text content if present
-            if message.get("content"):
-                message_parts.append(message["content"])
-            else:
-                message_parts.append("Name the cheese in the image, no descriptions needed")
-        else:
-            # Add text content if present
-            if message.get("content"):
-                message_parts.append(message["content"])
-                    
+        # Add text content if present
+        if message.get("content"):
+            message_parts.append(message["content"])
         
         if not message_parts:
-            raise ValueError("Message must contain either text content or image")
+            raise ValueError("Message must contain food list from food detection api")
 
         # Send message with all parts to the model
         response = chat_session.send_message(
@@ -157,10 +92,5 @@ def rebuild_chat_session(chat_history: List[Dict]) -> ChatSession:
     for message in chat_history:
         if message["role"] == "user":
             generate_chat_response(new_session, message)
-        # 
-        #     response = new_session.send_message(
-        #         message["content"],
-        #         generation_config=generation_config
-        #     )
     
     return new_session
