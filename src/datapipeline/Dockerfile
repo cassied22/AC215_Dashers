@@ -1,7 +1,7 @@
 # Use the official Debian-hosted Python image
 FROM python:3.12-slim-bookworm
 
-ARG DEBIAN_PACKAGES="build-essential git screen vim"
+ARG DEBIAN_PACKAGES="build-essential git screen vim curl"
 
 # Prevent apt from showing prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -32,6 +32,18 @@ RUN set -ex; \
     mkdir -p /persistent && \
     chown app:app /persistent && \
     chown app:app /app
+
+
+# Downloading gcloud package
+RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
+
+# Installing the package
+RUN mkdir -p /usr/local/gcloud \
+  && tar -C /usr/local/gcloud -xvf /tmp/google-cloud-sdk.tar.gz \
+  && /usr/local/gcloud/google-cloud-sdk/install.sh
+
+# Adding the package path to local
+ENV PATH="${PATH}:/usr/local/gcloud/google-cloud-sdk/bin"
 
 
 # Switch to the new user

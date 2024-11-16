@@ -6,17 +6,17 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-user-agent = "*"
-requests = "*"
-google-cloud-storage = "*"
-google-generativeai = "*"
-google-cloud-aiplatform = "*"
-pandas = "*"
-langchain = "*"
-llama-index = "*"
-chromadb = "*"
-langchain-community = "*"
-pyarrow = "*"
+user-agent = "0.1.10"
+requests = "2.32.3"
+google-cloud-storage = "2.18.2"
+google-generativeai = "0.8.3"
+google-cloud-aiplatform = "1.72.0"
+pandas = "2.2.3"
+langchain = "0.3.7"
+llama-index = "0.11.23"
+langchain-community = "0.3.7"
+pyarrow = "18.0.0"
+chromadb = "0.5.18"
 
 [requires]
 python_version = "3.12"
