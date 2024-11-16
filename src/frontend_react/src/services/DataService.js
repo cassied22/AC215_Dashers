@@ -25,28 +25,15 @@ const DataService = {
             results: [
                 {
                     class_index: 1,
-                    class_name: "Golden Retriever",
-                    probability: 0.92
+                    class_name: "Broccoli"
                 },
                 {
                     class_index: 2,
-                    class_name: "Labrador",
-                    probability: 0.85
+                    class_name: "Chicken"
                 },
                 {
                     class_index: 3,
-                    class_name: "German Shepherd",
-                    probability: 0.67
-                },
-                {
-                    class_index: 4,
-                    class_name: "Beagle",
-                    probability: 0.45
-                },
-                {
-                    class_index: 5,
-                    class_name: "Poodle",
-                    probability: 0.23
+                    class_name: "Cheese"
                 }
             ],
             processing_time: "0.845 seconds",

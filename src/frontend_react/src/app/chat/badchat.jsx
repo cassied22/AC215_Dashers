@@ -15,6 +15,8 @@ export default function ChatPage({ searchParams }) {
     const chat_id = params.id;
     const model = params.model || 'llm';
     console.log(chat_id, model);
+    
+
     // Component States
     const [chatId, setChatId] = useState(params.id);
     const [hasActiveChat, setHasActiveChat] = useState(false);
@@ -23,6 +25,9 @@ export default function ChatPage({ searchParams }) {
     const [isTyping, setIsTyping] = useState(false);
     const [selectedModel, setSelectedModel] = useState(model);
     const router = useRouter();
+
+    const ingredients = router.query.ingredients ? router.query.ingredients.split(',') : [];
+
 
     const fetchChat = async (id) => {
         try {
@@ -49,6 +54,14 @@ export default function ChatPage({ searchParams }) {
     useEffect(() => {
         setSelectedModel(model);
     }, [model]);
+
+    useEffect(() => {
+        if (ingredients.length > 0) {
+            // Automatically set up a new chat with ingredients if passed
+            setHasActiveChat(true);
+            appendChat(ingredients);
+        }
+    }, [ingredients]);
 
     function tempChatMessage(message) {
         // Set temp values
@@ -99,10 +112,11 @@ export default function ChatPage({ searchParams }) {
         startChat(message);
 
     };
+
     const appendChat = (message) => {
         console.log(message);
-        // Append message and submit to LLM
 
+        // Append message and submit to LLM
         const continueChat = async (id, message) => {
             try {
                 // Show typing indicator
@@ -110,14 +124,17 @@ export default function ChatPage({ searchParams }) {
                 setHasActiveChat(true);
                 tempChatMessage(message);
 
-                // Submit chat
+                // Submit chat to LLM and handle response
                 const response = await DataService.ContinueChatWithLLM(model, id, message);
                 console.log(response.data);
 
-                // Hide typing indicator and add response
+                // Hide typing indicator and update chat state
                 setIsTyping(false);
-
-                setChat(response.data);
+                setChat((prevChat) => [
+                    ...prevChat,
+                    { role: 'user', content: message },
+                    ...response.data,
+                ]);
                 forceRefresh();
             } catch (error) {
                 console.error('Error fetching chat:', error);
@@ -126,8 +143,52 @@ export default function ChatPage({ searchParams }) {
                 setHasActiveChat(false);
             }
         };
-        continueChat(chat_id, message);
+    
+        // Handle different message types (ingredients initialization vs user message)
+        if (Array.isArray(message)) {
+            // If message is an array, it's from ingredients initialization
+            message.forEach((ingredient) => {
+                continueChat(chat_id, `Ingredient: ${ingredient}`);
+            });
+        } else {
+            // Normal message input from user
+            continueChat(chat_id, message);
+        }
     };
+    
+
+    // const appendChat = (message) => {
+    //     console.log(message);
+    //     // Append message and submit to LLM
+
+    //     const continueChat = async (id, message) => {
+    //         try {
+    //             // Show typing indicator
+    //             setIsTyping(true);
+    //             setHasActiveChat(true);
+    //             tempChatMessage(message);
+
+    //             // Submit chat
+    //             const response = await DataService.ContinueChatWithLLM(model, id, message);
+    //             console.log(response.data);
+
+    //             // Hide typing indicator and add response
+    //             setIsTyping(false);
+
+    //             setChat(response.data);
+    //             forceRefresh();
+    //         } catch (error) {
+    //             console.error('Error fetching chat:', error);
+    //             setIsTyping(false);
+    //             setChat(null);
+    //             setHasActiveChat(false);
+    //         }
+    //     };
+    //     continueChat(chat_id, message);
+    // };
+
+
+
     // Force re-render by updating the key
     const forceRefresh = () => {
         setRefreshKey(prevKey => prevKey + 1);
@@ -143,7 +204,7 @@ export default function ChatPage({ searchParams }) {
     };
 
     return (
-        <div className="h-screen flex flex-col pt-16">
+        <div>
             {!hasActiveChat ? (
                 <>
                     {/* Hero Section */}
@@ -156,9 +217,7 @@ export default function ChatPage({ searchParams }) {
                                 </h1>
                                 <div className="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg p-6">
                                     <ChatInput
-                                        onSendMessage={newChat}
-                                        selectedModel={selectedModel}
-                                        onModelChange={handleModelChange}
+                                        onSendMessage={appendChat}
                                     />
                                 </div>
                             </div>
@@ -167,14 +226,14 @@ export default function ChatPage({ searchParams }) {
 
                     {/* Chat History Section */}
                     <div className="flex-1 container mx-auto px-4 py-12 overflow-auto z-10">
-                        <ChatHistory model={model} />
+                        <ChatHistory />
                     </div>
                 </>
             ) : (
                 <div className="flex h-[calc(100vh-64px)]">
                     {/* Sidebar */}
                     <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
-                        <ChatHistorySidebar chat_id={chat_id} model={model} />
+                        <ChatHistorySidebar />
                     </div>
 
                     {/* Main Chat Area */}
@@ -182,18 +241,13 @@ export default function ChatPage({ searchParams }) {
                         <div className="flex-1 overflow-y-auto">
                             <ChatMessage
                                 chat={chat}
-                                key={refreshKey}
-                                isTyping={isTyping}
-                                model={model}
+                                isTyping={false}
                             />
                         </div>
                         <div className="flex-shrink-0 border-t border-gray-200 bg-white">
                             <ChatInput
                                 onSendMessage={appendChat}
                                 chat={chat}
-                                selectedModel={selectedModel}
-                                onModelChange={setSelectedModel}
-                                disableModelSelect={true}
                             />
                         </div>
                     </div>
@@ -201,4 +255,64 @@ export default function ChatPage({ searchParams }) {
             )}
         </div>
     );
+
+    // return (
+    //     <div className="h-screen flex flex-col pt-16">
+    //         {!hasActiveChat ? (
+    //             <>
+    //                 {/* Hero Section */}
+    //                 <section className="flex-shrink-0 min-h-[400px] flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-orange-50">
+    //                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-500/10 to-orange-400/10" />
+    //                     <div className="container mx-auto px-4 max-w-3xl relative z-10 pt-20">
+    //                         <div className="text-center">
+    //                             <h1 className="text-4xl md:text-6xl font-bold gradient-text mb-6">
+    //                                 Upload an image here
+    //                             </h1>
+    //                             <div className="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg p-6">
+    //                                 <ChatInput
+    //                                     onSendMessage={newChat}
+    //                                     selectedModel={selectedModel}
+    //                                     onModelChange={handleModelChange}
+    //                                 />
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                 </section>
+
+    //                 {/* Chat History Section */}
+    //                 <div className="flex-1 container mx-auto px-4 py-12 overflow-auto z-10">
+    //                     <ChatHistory model={model} />
+    //                 </div>
+    //             </>
+    //         ) : (
+    //             <div className="flex h-[calc(100vh-64px)]">
+    //                 {/* Sidebar */}
+    //                 <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
+    //                     <ChatHistorySidebar chat_id={chat_id} model={model} />
+    //                 </div>
+
+    //                 {/* Main Chat Area */}
+    //                 <div className="flex-1 flex flex-col h-full overflow-hidden">
+    //                     <div className="flex-1 overflow-y-auto">
+    //                         <ChatMessage
+    //                             chat={chat}
+    //                             key={refreshKey}
+    //                             isTyping={isTyping}
+    //                             model={model}
+    //                         />
+    //                     </div>
+    //                     <div className="flex-shrink-0 border-t border-gray-200 bg-white">
+    //                         <ChatInput
+    //                             onSendMessage={appendChat}
+    //                             chat={chat}
+    //                             selectedModel={selectedModel}
+    //                             onModelChange={setSelectedModel}
+    //                             disableModelSelect={true}
+    //                         />
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         )}
+    //     </div>
+    // );
 }

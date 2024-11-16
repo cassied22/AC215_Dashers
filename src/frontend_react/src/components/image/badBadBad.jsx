@@ -6,6 +6,8 @@ import {
     CameraAlt
 } from '@mui/icons-material';
 import DataService from '@/services/DataService';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function ImageClassification() {
     // Component States
@@ -13,6 +15,9 @@ export default function ImageClassification() {
     const [image, setImage] = useState(null);
     const [prediction, setPrediction] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+
+    const ingredients = "chicken, cheese, broccoli";
 
     // Handlers
     const handleImageUploadClick = () => {
@@ -159,6 +164,19 @@ export default function ImageClassification() {
                     Continue
                 </button>
             )} */}
+
+            {/* Link to Chat Page */}
+            <Link
+                to={{
+                    pathname: '/chat',
+                    state: { ingredients },
+                }}
+                className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded"
+            >
+                Go to Chat with Ingredients
+            </Link>
+
+            
         </div>
     );
 }

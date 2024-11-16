@@ -1,8 +1,14 @@
 'use client';
 
-import Link from 'next/link';
+import React from 'react';
+import ImageClassification from '@/components/image/ImageClassification';
 
 export default function Home() {
+
+    const scrollToContent = () => {
+        document.getElementById('content-section').scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
         <div className="page-wrapper">
             {/* Hero Section */}
@@ -17,7 +23,13 @@ export default function Home() {
                         Empty your fridge, cook amazing food, and wow all your family and friends.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <button className="button-primary">Get Started</button>
+                        {/* <button className="button-primary">Get Started</button> */}
+                        <button
+                            className="button-primary"
+                            onClick={scrollToContent}
+                        >
+                            Get Started
+                        </button>
                         <button className="button-secondary">Learn More</button>
                     </div>
                 </div>
@@ -29,54 +41,19 @@ export default function Home() {
                     {/* Header */}
                     <div className="mb-8">
                         <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 font-montserrat">
-                            Image Classification
+                            Let's see what's in your fridge!
                         </h1>
                         <p className="text-gray-600 mt-2">
-                            Upload an image to classify its contents using AI.
+                            Take a picture or upload an image for recognition using AI.
                         </p>
                     </div>
 
                     {/* Image Classification Component */}
-                    <div className="border border-gray-300 p-4 rounded-lg shadow-md text-center">
-                        <p className="text-gray-500 italic">[Image Classification Component Placeholder]</p>
-                    </div>
+                    <ImageClassification />
+
+                    
                 </div>
             </section>
-            {/* </> */}
-
-            {/* Content Section */}
-            {/* <section className="content-section"> */}
-
-                {/* <div className="content-grid"> */}
-
-                    {/* <Link href="/image" className="block">
-                        <div className="feature-card">
-                            <h3 className="feature-card-title">Capture your Fridge</h3>
-                            <p className="feature-card-description">
-                                Lorem ipsum dolor sit amet, consectetusr adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </p>
-                        </div>
-                    </Link> */}
-
-                    {/* <Link href="/audio" className="block">
-                        <div className="feature-card">
-                            <h3 className="feature-card-title">Audio 2 Text</h3>
-                            <p className="feature-card-description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </p>
-                        </div>
-                    </Link>
-
-                    <Link href="/text" className="block">
-                        <div className="feature-card">
-                            <h3 className="feature-card-title">Text 2 Audio</h3>
-                            <p className="feature-card-description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </p>
-                        </div>
-                    </Link> */}
-                {/* </div> */}
-            {/* </section> */}
         </div>
     );
 }
