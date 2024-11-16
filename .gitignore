@@ -1,5 +1,6 @@
 **/docker-volumes/
 **/secrets
+**/persistent-folder
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
