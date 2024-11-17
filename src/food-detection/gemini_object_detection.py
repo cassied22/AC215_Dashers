@@ -16,12 +16,13 @@ def main():
     if len(sys.argv) != 2:
         print("Usage: python food_item_identifier.py <image_path>")
         sys.exit(1)
+    else:
+        image_path = sys.argv[1]
+        api_key = os.getenv("GEMINI_API_KEY")
 
-    image_path = sys.argv[1]
-    api_key = os.getenv("GEMINI_API_KEY")
+        result = identify_food_gemini(image_path, api_key)
+        print(result)
 
-    result = identify_food_gemini(image_path, api_key)
-    print(result)
 
 if __name__ == "__main__":
     main()
