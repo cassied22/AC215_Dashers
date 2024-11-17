@@ -1,6 +1,4 @@
-## Milestone 3
-
-#### Project Milestone 3 Organization
+#### Project Milestone 4 Organization
 
 ```
 ├── .dvc
@@ -134,7 +132,9 @@
         └── .gitkeep
 ```
 
-# AC215 - Milestone3 - Daily Meal Assistant - "What to Eat Today"
+# AC215 - Milestone4 - Daily Meal Assistant - "What to Eat Today"
+
+Archived `README.md` in Milestone3 can be found [here](https://github.com/cassied22/AC215_Dashers/tree/milestone3).
 
 **Team Members**
 
@@ -151,77 +151,46 @@ Dashers
 **Project**
 In this project, we aim to develop an app that serves as a personal meal assistant, helping users track their available ingredients, suggest healthy recipes, and recommend nearby restaurants based on user preferences and current inventory. The app will combine advanced AI tools like object detection and large language models (LLMs) to provide tailored meal recommendations and route suggestions for dining out. <br/>
 
-The app pipeline flow is as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/Prototype_v2.pdf).
+----
+### Milestone4 ###
 
-### Milestone3 ###
+In this milestone, we have the components for frontend, API service, also components from previous milestones for data management, including versioning, as well as the computer vision and language models.
 
-In this milestone, we make the following modifications:
-1. Add our midterm presentation to the midterm_presentation folder [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/midterm_presentation/slides.pdf).
-2. Add our integration plan to the Google Cloud Platform as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/GCP_integration.png).
-3. Update a shorter version of the app pipeline flow as shown [here](https://github.com/cassied22/AC215_Dashers/blob/milestone3/reports/Prototype_shorten.png).
-4. Create a user interface demo of our app as shown [here](https://www.youtube.com/shorts/qZ1eMskElWo).
-5. Updated the [`cli_rag.py`](https://github.com/cassied22/AC215_Dashers/blob/milestone3/src/datapipeline/cli_rag.py) to solve the GCP authentification issue when deploying the finetuned model.
-6. Replaced original notebook files to markdown files([`container_screenshot.md`](https://github.com/cassied22/AC215_Dashers/blob/milestone3/notebooks/container_screenshot.md) and [`llm_performance.md`](https://github.com/cassied22/AC215_Dashers/blob/milestone3/notebooks/llm_performance.md)) to avoid picuture rendering issues.
+After completions of building a robust ML Pipeline in our previous milestone we have built a backend api service and frontend app. This will be our user-facing application that ties together the various components built in previous milestones.
 
-The content below is the same as **Milestone2**.
+**Application Design**
 
-**Data**
-We gathered a dataset of 2,231,150 recipes including title (dish name), ingredients, directions, retrieved link, source type, and named entity recognition (NER) for food items. The ingredients are listed as an array of strings. The directions are provided as an array of strings, with each string representing a step in the cooking process. The NER data consists of an array of food item names extracted from the recipe. The dataset, approximately 2.29 GB in size, was collected from the following source: https://huggingface.co/datasets/mbien/recipe_nlg. We have stored it in a private Google Cloud Bucket.
+Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
 
+Here is our Solution Architecture:
 
-**Containers**
+<img src="images/solution-arch.png"  width="800">
 
-1. **Data Pipeline Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/datapipeline): The container prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe. 
-2. **Date Versioning Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/data-versioning) :The container controls data versioning using DVC. The DVC was chosen because it provides a robust and scalable solution for managing large datasets and machine learning models, which is particularly important for our project as we plan on incorporating larger recipe dataset for future steps. (with .dvc stored here:
-https://github.com/cassied22/AC215_Dashers/tree/milestone2/.dvc)
-3. **Object  Container** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/food-detection) :The container includes all codes conducting the object detection functionality: given a picture, output list of detected food.
-4. **LLM Finetuning** (https://github.com/cassied22/AC215_Dashers/tree/milestone2/src/llm_finetuning) :The container performs LLM finetuning task.
+Here is our Technical Architecture:
+
+<img src="images/technical-arch.png"  width="800">
 
 
-## Instructions for Running Containers
-Go to a terminal inside each folder
-- Build docker image by using:
-```sudo docker build -t XXX -f Dockerfile .```
-- Run docker container by using:
-```chmod +x docker-shell.s```
-```sh docker-shell.sh```
-```sh docker-shell.sh```
+**Backend API**
+
+We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data. 
+
+<img src="images/api-list.png"  width="800">
+
+**Frontend**
+
+A user friendly React app was built to identify various species of mushrooms in the wild using computer vision models from the backend. Using the app a user can take a picture of a mushroom and upload it. The app will send the image to the backend api to get prediction results on weather the mushroom is poisonous or not. 
+
+Here are some screenshots of our app:
+
+```Add screenshots here```
+
+## Running Dockerfile
+Instructions for running the Dockerfile can be added here.
+To run Dockerfile - `Instructions here`
 
 
-## Documentations
-1. **Data Version Control**: (https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_tracked_history_logs.png; https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/dvc_retrieval.ipynb) We control data versions using DVC. The DVC was chosen because it provides a robust and scalable solution for managing large datasets and machine learning models, which is particularly important for our project as we plan on incorporating larger recipe dataset for future steps. Currently we are tracking only the one version of training data used for fine-tunning LLM (data/recipe_qa.csv, remotely tracked on GCP), and plan on tracking more data in the future milestones as needed.  
-2. **fine-tuning process**：https://github.com/cassied22/AC215_Dashers/blob/milestone2/src/llm_finetuning/README.md
-3. **Experiment logs for llm**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/llm_performance.ipynb)
-4. **Experiment logs for object detection**：(https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/Object_detection_documentation.md)
-5. **Application mock-up**：Front end: https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/front-end.txt; backend interaction: https://github.com/cassied22/AC215_Dashers/blob/milestone2/reports/Prototype_v2.pdf
-6. **Running Docker** https://github.com/cassied22/AC215_Dashers/blob/milestone2/notebooks/fig_container/rag_container.png
+**Notebooks/Reports**
+This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
 
-<!-- **Notebooks/Reports**
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. -->
-## Data Pipeline Overview
-
-1. **`src/datapipeline/cli_rag.py`**
-   This script handles preprocessing on our 2.29 GB dataset in the `input-datasets` folder. It does data cleaning and feature selection to enable faster iteration during processing. The preprocessed dataset is now reduced to 676 MB and stored on GCS. The `outputs` folder is a temperary path where the local copy of the vector database is stored. 
-   This script also prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
-
-2. **`src/datapipeline/Pipfile`**
-   We used the following packages to help with preprocessing:
-   - `user-agent requests google-cloud-storage google-generativeai google-cloud-aiplatform pandas langchain llama-index chromadb langchain-community pyarrow`
-
-3. **`src/preprocessing/Dockerfile(s)`**
-   Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
-
-## Mock Submission
-
-<br/>
-Login GCP, select project id, our "x-goog-project-id", start the VM instance.<br/>
-Open a GCP terminal, change directory into corresponding folder with Dockerfile. <br/>
-Run docker-shell.sh using command: <br/>
-
-```sudo sh docker-shell.sh``` 
-Inside the container, run preprocessing using command: ```python cli_rag.py```. <br/>
-cli_rag.py would run the RAG LLM. You could observe the updates in Cloud Storage - Buckets in your GCP project. <br/>
-
-<!-- **Notebooks/Reports**
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. -->
-
+----
