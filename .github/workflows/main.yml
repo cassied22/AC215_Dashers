@@ -16,11 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    # Install all Python versions needed
     - name: Set up Python 3.12
       uses: actions/setup-python@v2
       with:
-        python-version: '3.12'  # Match datapipeline Dockerfile
+        python-version: '3.12'
     
     - id: 'auth'
       uses: google-github-actions/auth@v1
@@ -41,24 +40,29 @@ jobs:
     - name: Create Docker Network
       run: docker network create recipe-rag-network || true
       
-    # Add permission fix step
-    - name: Fix Permissions
+    # Updated permission fix step
+    - name: Setup directories and permissions
       run: |
-        sudo chown -R 1000:1000 .
-        mkdir -p src/datapipeline/docker-volumes/chromadb
+        # First create all directories with sudo
+        sudo mkdir -p src/datapipeline/docker-volumes/chromadb
+        
+        # Then set permissions for the entire workspace
+        sudo chown -R $USER:$USER .
+        sudo chmod -R 755 .
+        
+        # Give extra permissions to specific directories that need write access
         sudo chmod -R 777 src/datapipeline/docker-volumes
         
     - name: Run Tests
       run: |
         cd tests/integration
-        docker-compose build --no-cache  # Force rebuild to ensure clean state
+        docker-compose build --no-cache
         docker-compose up --abort-on-container-exit --exit-code-from recipe-rag-cli
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
         GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         
-    # Add debug logs step
     - name: Print Docker logs on failure
       if: failure()
       run: |
