@@ -28,7 +28,7 @@ def identify_food_gpt(image_path, api_key):
         "content": [
             {
             "type": "text",
-            "text": "Give me the name of food items shown in this image. Not a full sentense."
+            "text": "Identify the list of food items shown in this image. (Example Output1: ['pear','apple','salt', ...]). If no food is found in the image, output ['None']. (Example Output2: ['None'])"
             },
             {
             "type": "image_url",
