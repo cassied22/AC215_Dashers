@@ -66,21 +66,23 @@ jobs:
         mkdir -p src/secrets
         echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
 
-    # Unit Tests - Fixed path handling
+ # Unit Tests - Fixed dependencies
     - name: Run Unit Tests
       run: |
-        # Install dependencies from correct location
-        pip install -r src/datapipeline/requirements.txt
-        pip install pytest pytest-cov
+        # Install dependencies
+        python -m pip install --upgrade pip
+        python -m pip install -r src/datapipeline/requirements.txt
         
-        # Run tests with correct paths
+        # Add PYTHONPATH and run tests
         cd tests/datapipeline
         PYTHONPATH=$PYTHONPATH:../../src/datapipeline python -m pytest \
           test_cli_rag.py \
           -v \
           --cov=../../src/datapipeline \
           --cov-report=term-missing
-
+      env:
+        PYTHONPATH: ${{ github.workspace }}/src/datapipeline
+        
     # Integration and System Tests
     - name: Run Integration and System Tests
       run: |
