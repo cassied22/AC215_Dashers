@@ -1,18 +1,23 @@
+version: '3.8'
+
 networks:
     recipe-rag-network:
         external: true
+
 services:
     recipe-rag-cli:
-        image: recipe-rag-cli
+        build:
+            context: ../../src/datapipeline
+            dockerfile: Dockerfile
         container_name: recipe-rag-cli
         volumes:
             - ../../src/secrets:/secrets
             - ../../src/datapipeline:/app
             - ../datapipeline:/app/tests
         environment:
-            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
-            GCP_PROJECT: $GCP_PROJECT
-            GCS_BUCKET_NAME: $GCS_BUCKET_NAME
+            GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+            GCP_PROJECT: ${GCP_PROJECT}
+            GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
             PATH: "/home/app/.local/bin:${PATH}"
         networks:
             - recipe-rag-network
@@ -31,17 +36,19 @@ services:
         environment:
             - IS_PERSISTENT=TRUE
             - ANONYMIZED_TELEMETRY=FALSE
-            - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"] # This is not recommended for production environments.
+            - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"]
         networks:
             - recipe-rag-network
-    
+
     food-detection:
-        image: food-detection
+        build:
+            context: ../../src/food-detection
+            dockerfile: Dockerfile
         container_name: food-detection
         volumes:
-          - ../../src/food-detection:/app
-          - ../food-detection:/app/tests
+            - ../../src/food-detection:/app
+            - ../food-detection:/app/tests
         entrypoint: ["/bin/bash", "-c"]
         command: ["pipenv install pytest-cov && pipenv run pytest --cov=./ --cov-config=.coveragerc"]
         networks:
-          - recipe-rag-network
+            - recipe-rag-network
