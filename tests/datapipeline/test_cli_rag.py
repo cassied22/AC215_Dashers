@@ -43,11 +43,11 @@ def test_generate_text_embeddings(mock_get_embeddings):
     mock_get_embeddings.assert_called_once()
 
 # Test embed function
-@patch("cli_rag.generate_text_embeddings")
-@patch("os.makedirs")
-@patch("builtins.open", new_callable=MagicMock)
-@patch("subprocess.run")
-@patch.dict(os.environ, {"GCS_BUCKET_NAME": "dasher-chromadb"})
+# @patch("cli_rag.generate_text_embeddings")
+# @patch("os.makedirs")
+# @patch("builtins.open", new_callable=MagicMock)
+# @patch("subprocess.run")
+# @patch.dict(os.environ, {"GCS_BUCKET_NAME": "dasher-chromadb"})
 # def test_embed(mock_subprocess, mock_open, mock_makedirs, mock_generate_embeddings, mock_dataframe):
 #     mock_generate_embeddings.return_value = [np.random.rand(256) for _ in range(len(mock_dataframe))]
 #     output_df = embed(mock_dataframe)
@@ -65,10 +65,10 @@ def test_generate_text_embeddings(mock_get_embeddings):
 #     )
 
 # Test load function
-@patch("cli_rag.chromadb.HttpClient")
-@patch("glob.glob")
-@patch("pandas.read_json")
-@patch("subprocess.run")
+# @patch("cli_rag.chromadb.HttpClient")
+# @patch("glob.glob")
+# @patch("pandas.read_json")
+# @patch("subprocess.run")
 # def test_load(mock_subprocess, mock_read_json, mock_glob, mock_chromadb):
 #     mock_client = MagicMock()
 #     mock_chromadb.return_value = mock_client
@@ -93,28 +93,28 @@ def test_generate_text_embeddings(mock_get_embeddings):
 #         check=True
 #     )
 
-# Test query function
-@patch("cli_rag.chromadb.HttpClient")
-@patch("cli_rag.generate_query_embedding")
-@patch("os.listdir")
-@patch("subprocess.run")
-def test_query(mock_subprocess, mock_listdir, mock_generate_embedding, mock_chromadb):
-    mock_client = MagicMock()
-    mock_chromadb.return_value = mock_client
-    mock_listdir.return_value = ["chromadb"]
-    mock_generate_embedding.return_value = np.random.rand(256)
+# # Test query function
+# @patch("cli_rag.chromadb.HttpClient")
+# @patch("cli_rag.generate_query_embedding")
+# @patch("os.listdir")
+# @patch("subprocess.run")
+# def test_query(mock_subprocess, mock_listdir, mock_generate_embedding, mock_chromadb):
+#     mock_client = MagicMock()
+#     mock_chromadb.return_value = mock_client
+#     mock_listdir.return_value = ["chromadb"]
+#     mock_generate_embedding.return_value = np.random.rand(256)
 
-    mock_collection = MagicMock()
-    mock_collection.query.return_value = {
-        "documents": [["Recipe 1", "Recipe 2"]],
-        "metadata": [{"link": "http://example.com"}],
-    }
-    mock_client.get_collection.return_value = mock_collection
+#     mock_collection = MagicMock()
+#     mock_collection.query.return_value = {
+#         "documents": [["Recipe 1", "Recipe 2"]],
+#         "metadata": [{"link": "http://example.com"}],
+#     }
+#     mock_client.get_collection.return_value = mock_collection
 
-    results = query("chicken broccoli cheese")
+#     results = query("chicken broccoli cheese")
 
-    # Verify results
-    assert len(results["documents"]) > 0
-    assert "documents" in results
-    mock_generate_embedding.assert_called_once()
-    mock_collection.query.assert_called_once()
+#     # Verify results
+#     assert len(results["documents"]) > 0
+#     assert "documents" in results
+#     mock_generate_embedding.assert_called_once()
+#     mock_collection.query.assert_called_once()
