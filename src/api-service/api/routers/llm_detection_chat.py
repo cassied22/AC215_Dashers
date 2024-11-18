@@ -17,7 +17,7 @@ from api.utils.chat_utils import ChatHistoryManager
 router = APIRouter()
 
 # Initialize chat history manager and sessions
-chat_manager = ChatHistoryManager(model="llm-cnn")
+chat_manager = ChatHistoryManager(model="llm-food-detection")
 
 @router.get("/chats")
 async def get_chats(x_session_id: str = Header(None, alias="X-Session-ID"), limit: Optional[int] = None):

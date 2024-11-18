@@ -82,7 +82,7 @@ def rebuild_chat_session(chat_history: List[Dict]) -> ChatSession:
                 prompt,
                 generation_config=generation_config
             )
-        if message["role"] == 'cnn':
+        if message["role"] == 'gpt':
             prompt = f"We have already identified the list of ingredients in the image as {message['results']['prediction_label']}"
             response = new_session.send_message(
                 prompt,
