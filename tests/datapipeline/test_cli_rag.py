@@ -3,7 +3,6 @@ from unittest.mock import patch, MagicMock
 import pandas as pd
 import numpy as np
 import os
-import subprocess
 
 import sys
 sys.path.append('/app')
@@ -43,78 +42,68 @@ def test_generate_text_embeddings(mock_get_embeddings):
     mock_get_embeddings.assert_called_once()
 
 # Test embed function
-# @patch("cli_rag.generate_text_embeddings")
-# @patch("os.makedirs")
-# @patch("builtins.open", new_callable=MagicMock)
-# @patch("subprocess.run")
-# @patch.dict(os.environ, {"GCS_BUCKET_NAME": "dasher-chromadb"})
-# def test_embed(mock_subprocess, mock_open, mock_makedirs, mock_generate_embeddings, mock_dataframe):
-#     mock_generate_embeddings.return_value = [np.random.rand(256) for _ in range(len(mock_dataframe))]
-#     output_df = embed(mock_dataframe)
-
-#     # Check that embeddings were added to the dataframe
-#     assert "NER_embeddings" in output_df.columns
-#     assert len(output_df["NER_embeddings"]) == len(mock_dataframe)
-#     mock_makedirs.assert_called_once_with("outputs", exist_ok=True)
-#     mock_open.assert_called_once()
-
-#     # Check subprocess call for GCS upload
-#     mock_subprocess.assert_called_once_with(
-#         ["gcloud", "storage", "cp", "outputs/recipe_embeddings.jsonl", "gs://test_bucket/recipe_embeddings.jsonl"],
-#         check=True
-#     )
+@patch("cli_rag.generate_text_embeddings")
+@patch("builtins.open", new_callable=MagicMock)
+@patch("os.makedirs")
+def test_embed(mock_makedirs, mock_open, mock_generate_embeddings, mock_dataframe):
+    mock_generate_embeddings.return_value = [np.random.rand(256)]
+    
+    result_df = embed(mock_dataframe)
+        
+    assert "NER_embeddings" in result_df.columns
+    assert len(result_df["NER_embeddings"]) == len(mock_dataframe)
+    
+    mock_makedirs.assert_called_once_with("outputs", exist_ok=True)
+    mock_open.assert_called_once_with("outputs/recipe_embeddings.jsonl", "w")
 
 # Test load function
-# @patch("cli_rag.chromadb.HttpClient")
-# @patch("glob.glob")
-# @patch("pandas.read_json")
-# @patch("subprocess.run")
-# def test_load(mock_subprocess, mock_read_json, mock_glob, mock_chromadb):
-#     mock_client = MagicMock()
-#     mock_chromadb.return_value = mock_client
-#     mock_glob.return_value = ["test.jsonl"]
-#     mock_read_json.return_value = pd.DataFrame({
-#         "title": ["Test Recipe"],
-#         "ingredients": ["[\"chicken\", \"broccoli\", \"cheese\"]"],
-#         "directions": ["[\"Step 1\", \"Step 2\"]"],
-#         "link": ["http://example.com"],
-#         "NER_embeddings": [np.random.rand(256)]
-#     })
+@patch("cli_rag.chromadb.HttpClient")
+@patch("glob.glob")
+@patch("pandas.read_json")
+def test_load(mock_read_json, mock_glob, mock_chromadb):
+    mock_client = MagicMock()
+    mock_chromadb.return_value = mock_client
+    mock_glob.return_value = ["test.jsonl"]
+    mock_read_json.return_value = pd.DataFrame({
+        "id": ["0"],
+        "title": ["Test Recipe"],
+        "ingredients": ["[\"chicken\", \"broccoli\", \"cheese\"]"],
+        "directions": ["[\"Step 1\", \"Step 2\"]"],
+        "link": ["http://example.com"],
+        "NER_embeddings": [np.random.rand(256)]
+    })
     
-#     load()
+    load()
 
-#     # Check ChromaDB operations
-#     mock_client.create_collection.assert_called_once()
-#     mock_client.get_collection.assert_not_called()
+    mock_client.delete_collection.assert_called_once_with(name="recipe-small-collection")
+    mock_client.create_collection.assert_called_once_with(
+        name="recipe-small-collection", metadata={"hnsw:space": "cosine"}
+    )
+    mock_read_json.assert_called_once_with("test.jsonl", lines=True)
+    mock_glob.assert_called_once_with("outputs/recipe_embeddings.jsonl")
 
-#     # Check if subprocess.run was called once for the expected command
-#     mock_subprocess.assert_called_once_with(
-#         ["gcloud", "storage", "cp", "outputs/recipe_embeddings.jsonl", "gs://test_bucket/recipe_embeddings.jsonl"],
-#         check=True
-#     )
+# Test query function
+@patch("cli_rag.chromadb.HttpClient")
+@patch("cli_rag.generate_query_embedding")
+def test_query(mock_generate_embedding, mock_chromadb):
+    mock_client = MagicMock()
+    mock_chromadb.return_value = mock_client
+    mock_generate_embedding.return_value = np.random.rand(256)
 
-# # Test query function
-# @patch("cli_rag.chromadb.HttpClient")
-# @patch("cli_rag.generate_query_embedding")
-# @patch("os.listdir")
-# @patch("subprocess.run")
-# def test_query(mock_subprocess, mock_listdir, mock_generate_embedding, mock_chromadb):
-#     mock_client = MagicMock()
-#     mock_chromadb.return_value = mock_client
-#     mock_listdir.return_value = ["chromadb"]
-#     mock_generate_embedding.return_value = np.random.rand(256)
+    mock_collection = MagicMock()
+    mock_collection.query.return_value = {
+        "documents": [["Recipe 1", "Recipe 2"]],
+        "metadata": [{"link": "http://example.com"}],
+    }
+    mock_client.get_collection.return_value = mock_collection
 
-#     mock_collection = MagicMock()
-#     mock_collection.query.return_value = {
-#         "documents": [["Recipe 1", "Recipe 2"]],
-#         "metadata": [{"link": "http://example.com"}],
-#     }
-#     mock_client.get_collection.return_value = mock_collection
+    results = query("chicken broccoli cheese")
 
-#     results = query("chicken broccoli cheese")
-
-#     # Verify results
-#     assert len(results["documents"]) > 0
-#     assert "documents" in results
-#     mock_generate_embedding.assert_called_once()
-#     mock_collection.query.assert_called_once()
+    mock_generate_embedding.assert_called_once_with("chicken broccoli cheese")
+    mock_client.get_collection.assert_called_once_with(name="recipe-small-collection")
+    mock_collection.query.assert_called_once_with(query_embeddings=[mock_generate_embedding.return_value], n_results=10)
+    
+    assert len(results["documents"][0]) == 2
+    assert results["documents"][0][0] == "Recipe 1"
+    assert results["documents"][0][1] == "Recipe 2"
+    assert results["metadata"][0]["link"] == "http://example.com"
