@@ -40,9 +40,9 @@ jobs:
     - name: Create Docker Network
       run: docker network create recipe-rag-network || true
       
-    - name: Setup Credentials
+    - name: Setup Directories
       run: |
-        mkdir -p src/secrets
+        mkdir -p src/secrets coverage
         echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
       
     - name: Run Tests
@@ -63,7 +63,7 @@ jobs:
     - name: Upload Coverage Reports
       uses: codecov/codecov-action@v3
       with:
-        files: ./src/datapipeline/coverage.xml,./src/food-detection/coverage.xml
+        files: ./coverage/datapipeline-coverage.xml,./coverage/food-detection-coverage.xml
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: true

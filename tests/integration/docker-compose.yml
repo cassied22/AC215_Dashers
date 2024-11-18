@@ -14,6 +14,7 @@ services:
             - ../../src/secrets:/secrets:ro
             - ../../src/datapipeline:/app
             - ../datapipeline:/app/tests
+            - ../../coverage:/coverage  # Add volume for coverage reports
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
             GCP_PROJECT: ${GCP_PROJECT}
@@ -25,7 +26,7 @@ services:
         command: |
             pip install -r requirements.txt && \
             pip install pytest pytest-cov && \
-            python -m pytest --cov=./ --cov-config=.coveragerc -v
+            python -m pytest --cov=./ --cov-config=.coveragerc --cov-report=xml:/coverage/datapipeline-coverage.xml -v
 
     chromadb:
         image: chromadb/chroma:latest
@@ -49,6 +50,7 @@ services:
         volumes:
             - ../../src/food-detection:/app
             - ../food-detection:/app/tests
+            - ../../coverage:/coverage
         environment:
             PYTHONPATH: /app
         networks:
@@ -57,4 +59,4 @@ services:
         command: |
             pip install -r requirements.txt && \
             pip install pytest pytest-cov && \
-            python -m pytest --cov=./ --cov-config=.coveragerc -v
+            python -m pytest --cov=./ --cov-config=.coveragerc --cov-report=xml:/coverage/food-detection-coverage.xml -v
