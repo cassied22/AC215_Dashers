@@ -27,13 +27,11 @@ jobs:
         
     - name: Run Flake8
       run: |
-        # Stop the build if there are Python syntax errors or undefined names
         flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        # Exit-zero treats all errors as warnings
         flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   test:
-    needs: lint  # Run tests only if linting passes
+    needs: lint
     runs-on: ubuntu-latest
     
     steps:
@@ -68,13 +66,20 @@ jobs:
         mkdir -p src/secrets
         echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
 
-    # Unit Tests
+    # Unit Tests - Fixed path handling
     - name: Run Unit Tests
       run: |
+        # Install dependencies from correct location
+        pip install -r src/datapipeline/requirements.txt
+        pip install pytest pytest-cov
+        
+        # Run tests with correct paths
         cd tests/datapipeline
-        python -m pip install -r ../../src/datapipeline/requirements.txt
-        python -m pip install pytest pytest-cov
-        python -m pytest test_cli_rag.py -v --cov=../../src/datapipeline --cov-report=term-missing
+        PYTHONPATH=$PYTHONPATH:../../src/datapipeline python -m pytest \
+          test_cli_rag.py \
+          -v \
+          --cov=../../src/datapipeline \
+          --cov-report=term-missing
 
     # Integration and System Tests
     - name: Run Integration and System Tests

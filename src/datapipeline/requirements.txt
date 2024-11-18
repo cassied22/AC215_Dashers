@@ -1,0 +1,19 @@
+# Core dependencies
+numpy
+pandas
+chromadb
+
+# Google Cloud/Vertex AI
+google-cloud-storage
+vertexai
+
+# For argument parsing and file operations
+argparse
+glob
+
+# Test dependencies
+pytest
+pytest-cov
+flake8
+
+python-dotenv
