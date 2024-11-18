@@ -1,0 +1,57 @@
+name: CI/CD Pipeline
+run-name: ${{ github.actor }} submitted a CI CD Action
+
+on:
+  push:
+    branches: 
+      - 'hanna/ci'
+  pull_request:
+    branches: 
+      - 'hanna/ci'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    
+    # Google Cloud Authentication
+    - id: 'auth'
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+    
+    - name: Configure Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+    
+    - name: Create Docker Network
+      run: docker network create recipe-rag-network || true
+      
+    - name: Run Tests
+      run: |
+        cd tests/integration
+        docker-compose up --build --exit-code-from recipe-rag-cli
+      env:
+        GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+        GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+        
+    - name: Upload Coverage Reports
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./src/datapipeline/coverage.xml,./src/food-detection/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
+
+    - name: Clean up
+      if: always()
+      run: |
+        docker-compose -f tests/integration/docker-compose.yml down
+        docker network rm recipe-rag-network || true
