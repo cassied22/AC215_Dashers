@@ -10,7 +10,30 @@ on:
       - 'hanna/ci'
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+        
+    - name: Install Flake8
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+        
+    - name: Run Flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
   test:
+    needs: lint  # Run tests only if linting passes
     runs-on: ubuntu-latest
     
     steps:
@@ -44,16 +67,30 @@ jobs:
       run: |
         mkdir -p src/secrets
         echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
-      
-    - name: Run Tests
-      run: |
-            cd tests/integration
-            docker-compose build --no-cache
-            docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection
-      env:
-            GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-            GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
 
+    # Unit Tests
+    - name: Run Unit Tests
+      run: |
+        cd tests/datapipeline
+        python -m pip install -r ../../src/datapipeline/requirements.txt
+        python -m pip install pytest pytest-cov
+        python -m pytest test_cli_rag.py -v --cov=../../src/datapipeline --cov-report=term-missing
+
+    # Integration and System Tests
+    - name: Run Integration and System Tests
+      run: |
+        cd tests/integration
+        docker-compose build --no-cache
+        docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection
+      env:
+        GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+        GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+        
+    - name: Print Docker logs on failure
+      if: failure()
+      run: |
+        cd tests/integration
+        docker-compose logs
 
     - name: Clean up
       if: always()

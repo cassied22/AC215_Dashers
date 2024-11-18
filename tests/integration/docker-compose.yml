@@ -19,19 +19,19 @@ services:
             GCP_PROJECT: ${GCP_PROJECT}
             GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
             PYTHONPATH: /app
-            PYTEST_ADDOPTS: "-v --color=yes"
         networks:
             - recipe-rag-network
         entrypoint: ["/bin/bash", "-c"]
         command: |
-            pip install -r requirements.txt && \
-            pip install pytest pytest-cov && \
-            echo "Running tests with coverage for datapipeline..." && \
-            python -m pytest --cov=./ --cov-config=.coveragerc \
-                --cov-report=term-missing \
-                -v \
-                --capture=no \
-                --verbosity=2
+            echo "Installing dependencies..." && \
+            python -m pip install -r requirements.txt && \
+            python -m pip install pytest pytest-cov && \
+            echo "Running unit tests..." && \
+            python -m pytest tests/test_cli_rag.py -v --cov=./ --cov-report=term-missing && \
+            echo "Running integration tests..." && \
+            python -m pytest tests/integration -v --cov=./ --cov-report=term-missing && \
+            echo "Running system tests..." && \
+            python -m pytest tests/system -v --cov=./ --cov-report=term-missing --cov-fail-under=50
 
     chromadb:
         image: chromadb/chroma:latest
@@ -57,16 +57,16 @@ services:
             - ../food-detection:/app/tests
         environment:
             PYTHONPATH: /app
-            PYTEST_ADDOPTS: "-v --color=yes" 
         networks:
             - recipe-rag-network
         entrypoint: ["/bin/bash", "-c"]
         command: |
-            pip install -r requirements.txt && \
-            pip install pytest pytest-cov && \
-            echo "Running tests with coverage for food-detection..." && \
-            python -m pytest --cov=./ --cov-config=.coveragerc \
-                --cov-report=term-missing \
-                -v \
-                --capture=no \
-                --verbosity=2
+            echo "Installing dependencies..." && \
+            python -m pip install -r requirements.txt && \
+            python -m pip install pytest pytest-cov && \
+            echo "Running unit tests..." && \
+            python -m pytest tests/test_gemini_object_detection.py -v --cov=./ --cov-report=term-missing && \
+            echo "Running integration tests..." && \
+            python -m pytest tests/integration -v --cov=./ --cov-report=term-missing && \
+            echo "Running system tests..." && \
+            python -m pytest tests/system -v --cov=./ --cov-report=term-missing --cov-fail-under=50
