@@ -14,19 +14,24 @@ services:
             - ../../src/secrets:/secrets:ro
             - ../../src/datapipeline:/app
             - ../datapipeline:/app/tests
-            - ../../coverage:/coverage  # Add volume for coverage reports
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
             GCP_PROJECT: ${GCP_PROJECT}
             GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
             PYTHONPATH: /app
+            PYTEST_ADDOPTS: "-v --color=yes"
         networks:
             - recipe-rag-network
         entrypoint: ["/bin/bash", "-c"]
         command: |
             pip install -r requirements.txt && \
             pip install pytest pytest-cov && \
-            python -m pytest --cov=./ --cov-config=.coveragerc --cov-report=xml:/coverage/datapipeline-coverage.xml -v
+            echo "Running tests with coverage for datapipeline..." && \
+            python -m pytest --cov=./ --cov-config=.coveragerc \
+                --cov-report=term-missing \
+                -v \
+                --capture=no \
+                --verbosity=2
 
     chromadb:
         image: chromadb/chroma:latest
@@ -50,13 +55,18 @@ services:
         volumes:
             - ../../src/food-detection:/app
             - ../food-detection:/app/tests
-            - ../../coverage:/coverage
         environment:
             PYTHONPATH: /app
+            PYTEST_ADDOPTS: "-v --color=yes" 
         networks:
             - recipe-rag-network
         entrypoint: ["/bin/bash", "-c"]
         command: |
             pip install -r requirements.txt && \
             pip install pytest pytest-cov && \
-            python -m pytest --cov=./ --cov-config=.coveragerc --cov-report=xml:/coverage/food-detection-coverage.xml -v
+            echo "Running tests with coverage for food-detection..." && \
+            python -m pytest --cov=./ --cov-config=.coveragerc \
+                --cov-report=term-missing \
+                -v \
+                --capture=no \
+                --verbosity=2

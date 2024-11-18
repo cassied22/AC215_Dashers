@@ -42,31 +42,25 @@ jobs:
       
     - name: Setup Directories
       run: |
-        mkdir -p src/secrets coverage
+        mkdir -p src/secrets
         echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
       
     - name: Run Tests
       run: |
         cd tests/integration
+        # Run tests and send output directly to GitHub Actions log
         docker-compose build --no-cache
-        docker-compose up --abort-on-container-exit --exit-code-from recipe-rag-cli
+        docker-compose up --abort-on-container-exit --exit-code-from recipe-rag-cli 2>&1 | tee test_output.log
+        # Check if tests passed
+        if [ ${PIPESTATUS[0]} -eq 0 ]; then
+          echo "Tests passed successfully!"
+        else
+          echo "Tests failed!"
+          exit 1
+        fi
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
-        
-    - name: Print Docker logs on failure
-      if: failure()
-      run: |
-        cd tests/integration
-        docker-compose logs
-        
-    - name: Upload Coverage Reports
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage/datapipeline-coverage.xml,./coverage/food-detection-coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: true
 
     - name: Clean up
       if: always()
