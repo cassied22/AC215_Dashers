@@ -165,10 +165,14 @@ def embed(df):
     print(df.head())
 
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-    jsonl_filename = os.path.join(OUTPUT_FOLDER, f"recipe_small.jsonl")
+    jsonl_filename = os.path.join(OUTPUT_FOLDER, f"recipe_embeddings.jsonl")
     with open(jsonl_filename, "w") as json_file:
         json_file.write(df.to_json(orient="records", lines=True))
 
+    # Upload to GCS bucket
+    print("Uploading embeddings to GCS bucket...")
+    subprocess.run(["gcloud","storage","cp",jsonl_filename,f"gs://{GCS_BUCKET_NAME}/recipe_embeddings.jsonl",], check=True)
+    
     return df
 
 
@@ -198,7 +202,7 @@ def load(batch_size=500):
     print(f"Created new empty collection '{collection_name}'")
     print("Collection:", collection)
     # Get the list of embedding files
-    jsonl_files = glob.glob(os.path.join(OUTPUT_FOLDER, f"recipe_small.jsonl"))
+    jsonl_files = glob.glob(os.path.join(OUTPUT_FOLDER, f"recipe_embeddings.jsonl"))
     print("Number of files to process:", len(jsonl_files))
 
     # Process
@@ -229,10 +233,10 @@ def load(batch_size=500):
             total_inserted += len(batch)
             print(f"Inserted {total_inserted} items...")
         
-        # Save the Chromadb collection to GCS
-        print("Uploading ChromaDB to GCS bucket...")
-        subprocess.run(["gcloud", "storage", "cp", "-r", "docker-volumes/chromadb", f"gs://{GCS_BUCKET_NAME}/chromadb"], check=True)
-        print("ChromaDB uploaded to GCS bucket.")
+        # # Archieved code: Save the Chromadb collection to GCS
+        # print("Uploading ChromaDB to GCS bucket...")
+        # subprocess.run(["gcloud", "storage", "cp", "-r", "docker-volumes/chromadb", f"gs://{GCS_BUCKET_NAME}/chromadb"], check=True)
+        # print("ChromaDB uploaded to GCS bucket.")
 
         print(
             f"Finished inserting {total_inserted} items into collection '{collection.name}'"
@@ -249,11 +253,12 @@ def query(query_input):
     Returns:
 		results: dict, retrieved relevant recipe samples from ChromaDB
     """
-    if not os.listdir("docker-volumes/chromadb"):
-        print("ChromaDB is empty. Downloading from GCS bucket...")
-        subprocess.run(["gcloud", "storage", "cp", "-r", f"gs://{GCS_BUCKET_NAME}/chromadb", "docker-volumes/chromadb"], check=True)
-    else:
-        print("ChromaDB is not empty. Skipping download from GCS bucket.")
+    # # Archieved code: Download ChromaDB from GCS bucket if not present
+    # if not os.listdir("docker-volumes/chromadb"):
+    #     print("ChromaDB is empty. Downloading from GCS bucket...")
+    #     subprocess.run(["gcloud", "storage", "cp", "-r", f"gs://{GCS_BUCKET_NAME}/chromadb", "docker-volumes/chromadb"], check=True)
+    # else:
+    #     print("ChromaDB is not empty. Skipping download from GCS bucket.")
 
     # Connect to chroma DB
     client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
@@ -343,6 +348,19 @@ def chat(generative_model = "raw"):
         print("Conversation ended. Enjoy your meal!")
 
 
+def download():
+    """
+    Function to download the recipe embeddings from the GCS bucket
+    """
+    if not os.path.exists(OUTPUT_FOLDER):
+        os.makedirs(OUTPUT_FOLDER)
+    if not os.path.exists("outputs/recipe_embeddings.jsonl"):
+        print("Downloading recipe embeddings from GCS bucket...")
+        subprocess.run(["gcloud", "storage", "cp", "-r", f"gs://{GCS_BUCKET_NAME}/recipe_embeddings.jsonl", "outputs/recipe_embeddings.jsonl"], check=True)
+    else:
+        print("recipe_embeddings.jsonl already exists in outputs folder.")
+
+
 def test():
     generative_model = finetuned_model
     # PROMPT = "Input ingredients the user has: [chicken], create a recipe"
@@ -387,6 +405,9 @@ def main(args=None):
         model_type = args.chat[0] if args.chat else "raw"
         chat(generative_model=model_type)
         print("Chat complete")
+    elif args.download:
+        download()
+        print("Download embeddings complete")
     elif args.test:
         test()
     else:
@@ -404,6 +425,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--chat", nargs="*", help="Chat with the model, specify 'finetuned' or 'raw' model (default is raw)"
     )
+    parser.add_argument("--download", action="store_true", help="Download embeddings from GCS bucket")
     parser.add_argument("--test", action="store_true", help="Test the model")
     args = parser.parse_args()
 
