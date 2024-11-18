@@ -43,18 +43,21 @@ def test_generate_text_embeddings(mock_get_embeddings):
 
 # Test embed function
 @patch("cli_rag.generate_text_embeddings")
+@patch("cli_rag.subprocess")
 @patch("builtins.open", new_callable=MagicMock)
 @patch("os.makedirs")
-def test_embed(mock_makedirs, mock_open, mock_generate_embeddings, mock_dataframe):
+def test_embed(mock_makedirs, mock_open, mock_subprocess, mock_generate_embeddings, mock_dataframe):
     mock_generate_embeddings.return_value = [np.random.rand(256)]
-    
+    mock_subprocess.run.return_value = MagicMock(returncode=0)
+
     result_df = embed(mock_dataframe)
-        
+
     assert "NER_embeddings" in result_df.columns
     assert len(result_df["NER_embeddings"]) == len(mock_dataframe)
-    
+
     mock_makedirs.assert_called_once_with("outputs", exist_ok=True)
     mock_open.assert_called_once_with("outputs/recipe_embeddings.jsonl", "w")
+    mock_subprocess.run.assert_called_once()
 
 # Test load function
 @patch("cli_rag.chromadb.HttpClient")
@@ -63,7 +66,7 @@ def test_embed(mock_makedirs, mock_open, mock_generate_embeddings, mock_datafram
 def test_load(mock_read_json, mock_glob, mock_chromadb):
     mock_client = MagicMock()
     mock_chromadb.return_value = mock_client
-    mock_glob.return_value = ["test.jsonl"]
+    mock_glob.return_value = ["outputs/recipe_embeddings.jsonl"]
     mock_read_json.return_value = pd.DataFrame({
         "id": ["0"],
         "title": ["Test Recipe"],
@@ -79,7 +82,7 @@ def test_load(mock_read_json, mock_glob, mock_chromadb):
     mock_client.create_collection.assert_called_once_with(
         name="recipe-small-collection", metadata={"hnsw:space": "cosine"}
     )
-    mock_read_json.assert_called_once_with("test.jsonl", lines=True)
+    mock_read_json.assert_called_once_with("outputs/recipe_embeddings.jsonl", lines=True)
     mock_glob.assert_called_once_with("outputs/recipe_embeddings.jsonl")
 
 # Test query function
