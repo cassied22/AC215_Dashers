@@ -40,19 +40,11 @@ jobs:
     - name: Create Docker Network
       run: docker network create recipe-rag-network || true
       
-    # Updated permission fix step
-    - name: Setup directories and permissions
+    - name: Setup Credentials
       run: |
-        # First create all directories with sudo
-        sudo mkdir -p src/datapipeline/docker-volumes/chromadb
-        
-        # Then set permissions for the entire workspace
-        sudo chown -R $USER:$USER .
-        sudo chmod -R 755 .
-        
-        # Give extra permissions to specific directories that need write access
-        sudo chmod -R 777 src/datapipeline/docker-volumes
-        
+        mkdir -p src/secrets
+        echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
+      
     - name: Run Tests
       run: |
         cd tests/integration
@@ -61,7 +53,6 @@ jobs:
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         
     - name: Print Docker logs on failure
       if: failure()

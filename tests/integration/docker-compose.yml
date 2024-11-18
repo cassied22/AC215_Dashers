@@ -15,17 +15,17 @@ services:
             - ../../src/datapipeline:/app
             - ../datapipeline:/app/tests
         environment:
-            GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+            GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
             GCP_PROJECT: ${GCP_PROJECT}
             GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+            PYTHONPATH: /app
         networks:
             - recipe-rag-network
-        command: >
-            /bin/bash -c "
-            pip install -r requirements.txt &&
-            pip install pytest pytest-cov &&
-            pytest --cov=./ --cov-config=.coveragerc -v
-            "
+        entrypoint: ["/bin/bash", "-c"]
+        command: |
+            pip install -r requirements.txt && \
+            pip install pytest pytest-cov && \
+            python -m pytest --cov=./ --cov-config=.coveragerc -v
 
     chromadb:
         image: chromadb/chroma:latest
@@ -53,9 +53,8 @@ services:
             PYTHONPATH: /app
         networks:
             - recipe-rag-network
-        command: >
-            /bin/bash -c "
-            pip install -r requirements.txt &&
-            pip install pytest pytest-cov &&
-            pytest --cov=./ --cov-config=.coveragerc -v
-            "
+        entrypoint: ["/bin/bash", "-c"]
+        command: |
+            pip install -r requirements.txt && \
+            pip install pytest pytest-cov && \
+            python -m pytest --cov=./ --cov-config=.coveragerc -v
