@@ -47,20 +47,13 @@ jobs:
       
     - name: Run Tests
       run: |
-        cd tests/integration
-        # Run tests and send output directly to GitHub Actions log
-        docker-compose build --no-cache
-        docker-compose up --abort-on-container-exit --exit-code-from recipe-rag-cli 2>&1 | tee test_output.log
-        # Check if tests passed
-        if [ ${PIPESTATUS[0]} -eq 0 ]; then
-          echo "Tests passed successfully!"
-        else
-          echo "Tests failed!"
-          exit 1
-        fi
+            cd tests/integration
+            docker-compose build --no-cache
+            docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection
       env:
-        GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-        GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+            GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+            GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+
 
     - name: Clean up
       if: always()
