@@ -289,15 +289,18 @@ def chat(generative_model = "raw"):
     )
     query_input = user_input if user_input.strip() else default_query_input
     results = query(query_input)
-    print(f"\nCount of queried recipes: {len(results["documents"][0])}")
+    print(f'\nCount of queried recipes: {len(results["documents"][0])}')
 
     # Generate initial response based on retrieved recipes
     conversation_history = [f"User input ingredients: {query_input}"]
     # Currently using the first 3 recipes as sample recipes
+    sample_recipes = "\n".join([f'\nSample recipe:\n{recipe}' for recipe in results["documents"][0][0:10]])
     INPUT_PROMPT = f"""
-{"\n".join([f'\nSample recipe:\n{recipe}' for recipe in results["documents"][0][0:10]])}
-How can I make a dish from these ingredients: {query_input}?
-"""
+    {sample_recipes}
+    How can I make a dish from these ingredients: {query_input}?
+    """
+
+
     # Archived prompt: Input ingredients the user has: {query_input}, create a recipe
     #                  How can I make a dish from these ingredients: {query_input}?
     print("\n\nINPUT_PROMPT: ", INPUT_PROMPT)
@@ -323,12 +326,15 @@ How can I make a dish from these ingredients: {query_input}?
             )
             conversation_history.append(f"User feedback: {feedback}")
             # Regenerate response from LLM based on conversation history
+            formatted_conversation_history = "\n".join(conversation_history)
+
+            # Build the input prompt
             INPUT_PROMPT = f"""
-Current conversation history:
-{"\n".join(conversation_history)}
-User requested changes: {feedback}.
-Generate a new recipe based on these changes.
-"""
+            Current conversation history:
+            {formatted_conversation_history}
+            User requested changes: {feedback}.
+            Generate a new recipe based on these changes.
+            """
             response = generative_model.generate_content(
                 [INPUT_PROMPT], 
                 generation_config=generation_config, 
