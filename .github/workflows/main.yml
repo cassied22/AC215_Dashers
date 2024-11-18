@@ -29,6 +29,15 @@ jobs:
     
     - name: Configure Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
+
+    # add steps to install Docker and Docker Compose
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
     
     - name: Create Docker Network
       run: docker network create recipe-rag-network || true
