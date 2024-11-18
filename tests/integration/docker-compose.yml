@@ -11,20 +11,26 @@ services:
             dockerfile: Dockerfile
         container_name: recipe-rag-cli
         volumes:
-            - ../../src/secrets:/secrets
+            - ../../src/secrets:/secrets:ro
             - ../../src/datapipeline:/app
             - ../datapipeline:/app/tests
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
             GCP_PROJECT: ${GCP_PROJECT}
             GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
-            PATH: "/home/app/.local/bin:${PATH}"
+            PIPENV_DONT_LOAD_ENV: 1
+            PIPENV_VENV_IN_PROJECT: 1
         networks:
             - recipe-rag-network
-        entrypoint: ["/bin/bash", "-c"]
-        command: ["pipenv install pytest-cov && pipenv run pytest --cov=./ --cov-config=.coveragerc"]
-        depends_on:
-            - chromadb
+        entrypoint: []
+        command: >
+            /bin/bash -c "
+            mkdir -p /app/.venv &&
+            chmod -R 777 /app/.venv &&
+            pipenv install --dev &&
+            pipenv install pytest-cov &&
+            pipenv run pytest --cov=./ --cov-config=.coveragerc -v
+            "
 
     chromadb:
         image: chromadb/chroma:latest
@@ -48,7 +54,17 @@ services:
         volumes:
             - ../../src/food-detection:/app
             - ../food-detection:/app/tests
-        entrypoint: ["/bin/bash", "-c"]
-        command: ["pipenv install pytest-cov && pipenv run pytest --cov=./ --cov-config=.coveragerc"]
+        environment:
+            PIPENV_DONT_LOAD_ENV: 1
+            PIPENV_VENV_IN_PROJECT: 1
         networks:
             - recipe-rag-network
+        entrypoint: []
+        command: >
+            /bin/bash -c "
+            mkdir -p /app/.venv &&
+            chmod -R 777 /app/.venv &&
+            pipenv install --dev &&
+            pipenv install pytest-cov &&
+            pipenv run pytest --cov=./ --cov-config=.coveragerc -v
+            "

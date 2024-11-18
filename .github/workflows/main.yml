@@ -16,12 +16,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Set up Python
+    # Install all Python versions needed
+    - name: Set up Python 3.12
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.12'  # Match datapipeline Dockerfile
     
-    # Google Cloud Authentication
     - id: 'auth'
       uses: google-github-actions/auth@v1
       with:
@@ -30,7 +30,6 @@ jobs:
     - name: Configure Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
-    # add steps to install Docker and Docker Compose
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
@@ -42,14 +41,29 @@ jobs:
     - name: Create Docker Network
       run: docker network create recipe-rag-network || true
       
+    # Add permission fix step
+    - name: Fix Permissions
+      run: |
+        sudo chown -R 1000:1000 .
+        mkdir -p src/datapipeline/docker-volumes/chromadb
+        sudo chmod -R 777 src/datapipeline/docker-volumes
+        
     - name: Run Tests
       run: |
         cd tests/integration
-        docker-compose up --build --exit-code-from recipe-rag-cli
+        docker-compose build --no-cache  # Force rebuild to ensure clean state
+        docker-compose up --abort-on-container-exit --exit-code-from recipe-rag-cli
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
         GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+        
+    # Add debug logs step
+    - name: Print Docker logs on failure
+      if: failure()
+      run: |
+        cd tests/integration
+        docker-compose logs
         
     - name: Upload Coverage Reports
       uses: codecov/codecov-action@v3
@@ -62,5 +76,6 @@ jobs:
     - name: Clean up
       if: always()
       run: |
-        docker-compose -f tests/integration/docker-compose.yml down
+        cd tests/integration
+        docker-compose down -v
         docker network rm recipe-rag-network || true
