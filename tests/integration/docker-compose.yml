@@ -10,10 +10,12 @@ services:
             context: ../../src/datapipeline
             dockerfile: Dockerfile
         container_name: recipe-rag-cli
+        user: "1000:1000"
         volumes:
             - ../../src/secrets:/secrets:ro
             - ../../src/datapipeline:/app
             - ../datapipeline:/app/tests
+            - recipe_rag_venv:/app/.venv
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
             GCP_PROJECT: ${GCP_PROJECT}
@@ -25,8 +27,6 @@ services:
         entrypoint: []
         command: >
             /bin/bash -c "
-            mkdir -p /app/.venv &&
-            chmod -R 777 /app/.venv &&
             pipenv install --dev &&
             pipenv install pytest-cov &&
             pipenv run pytest --cov=./ --cov-config=.coveragerc -v
@@ -51,9 +51,11 @@ services:
             context: ../../src/food-detection
             dockerfile: Dockerfile
         container_name: food-detection
+        user: "1000:1000" 
         volumes:
             - ../../src/food-detection:/app
             - ../food-detection:/app/tests
+            - food_detection_venv:/app/.venv
         environment:
             PIPENV_DONT_LOAD_ENV: 1
             PIPENV_VENV_IN_PROJECT: 1
@@ -62,9 +64,11 @@ services:
         entrypoint: []
         command: >
             /bin/bash -c "
-            mkdir -p /app/.venv &&
-            chmod -R 777 /app/.venv &&
             pipenv install --dev &&
             pipenv install pytest-cov &&
             pipenv run pytest --cov=./ --cov-config=.coveragerc -v
             "
+
+volumes:
+    recipe_rag_venv:  # Define named volume
+    food_detection_venv:  # Define named volume
