@@ -47,7 +47,7 @@ def test_generate_text_embeddings(mock_get_embeddings):
 @patch("os.makedirs")
 @patch("builtins.open", new_callable=MagicMock)
 @patch("subprocess.run")
-@patch.dict(os.environ, {"GCS_BUCKET_NAME": "test_bucket"})
+@patch.dict(os.environ, {"GCS_BUCKET_NAME": "dasher-chromadb"})
 def test_embed(mock_subprocess, mock_open, mock_makedirs, mock_generate_embeddings, mock_dataframe):
     mock_generate_embeddings.return_value = [np.random.rand(256) for _ in range(len(mock_dataframe))]
     output_df = embed(mock_dataframe)
