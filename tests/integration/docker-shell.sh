@@ -11,6 +11,8 @@ export GCP_PROJECT="brilliant-lens-421801" # CHANGE TO YOUR PROJECT ID
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/llm-service-account-cassie.json"
 #export IMAGE_NAME="recipe-rag-cli"
 export GCS_BUCKET_NAME="dasher-chromadb"
+export GOOGLE_API_KEY="/secrets/gemini-key.json"
+export OPENAI_API_KEY="/secrets/openai-key.json"
 
 
 # Create the network if we don't have it yet

@@ -1,6 +1,7 @@
 import google.generativeai as genai
 import sys
 import os
+import json
 
 def identify_food_gemini(image_path, api_key):
     genai.configure(api_key=api_key)
@@ -18,7 +19,9 @@ def main():
         sys.exit(1)
     else:
         image_path = sys.argv[1]
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key_path = os.getenv("GOOGLE_API_KEY")
+        with open(api_key_path, 'r') as file:
+            api_key = json.load(file).get('GOOGLE_API_KEY')
 
         result = identify_food_gemini(image_path, api_key)
         print(result)
