@@ -9,6 +9,17 @@ const api = axios.create({
     baseURL: BASE_API_URL
 });
 
+// Add request interceptor to include session ID in headers
+api.interceptors.request.use((config) => {
+    const sessionId = localStorage.getItem('userSessionId');
+    if (sessionId) {
+        config.headers['X-Session-ID'] = sessionId;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
 const DataService = {
     Init: function () {
         // Any application initialization logic comes here
@@ -151,31 +162,35 @@ const DataService = {
         }
         return Promise.resolve({ data: chat });
     },
+    // StartChatWithLLM: async function (model, message) {
+    //     await new Promise(resolve => setTimeout(resolve, 1000));
+
+    //     const newChat = {
+    //         chat_id: uuid(),
+    //         title: message.content.slice(0, 20) + "...",
+    //         dts: Date.now(),
+    //         messages: [
+    //             {
+    //                 message_id: uuid(),
+    //                 role: "user",
+    //                 content: message.content,
+    //                 image_path: message.image_path
+    //             },
+    //             {
+    //                 message_id: uuid(),
+    //                 role: "assistant",
+    //                 content: `Mock response to: ${message.content}`
+    //             }
+    //         ]
+    //     };
+
+    //     mockChats.unshift(newChat);
+    //     return Promise.resolve({ data: newChat });
+    // },
     StartChatWithLLM: async function (model, message) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const newChat = {
-            chat_id: uuid(),
-            title: message.content.slice(0, 20) + "...",
-            dts: Date.now(),
-            messages: [
-                {
-                    message_id: uuid(),
-                    role: "user",
-                    content: message.content,
-                    image_path: message.image_path
-                },
-                {
-                    message_id: uuid(),
-                    role: "assistant",
-                    content: `Mock response to: ${message.content}`
-                }
-            ]
-        };
-
-        mockChats.unshift(newChat);
-        return Promise.resolve({ data: newChat });
+        return await api.post(BASE_API_URL + "/" + model + "/chats/", message);
     },
+    
     ContinueChatWithLLM: async function (model, chat_id, message) {
         await new Promise(resolve => setTimeout(resolve, 1000));
 
