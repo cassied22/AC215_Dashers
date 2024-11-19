@@ -126,7 +126,7 @@ export default function ChatInput({
                     className="w-full bg-gray-100 border-0 rounded-lg px-4 py-3 pr-12 text-gray-800 
                              placeholder-gray-500 focus:ring-2 focus:ring-purple-500 min-h-[24px] 
                              max-h-[400px] resize-none overflow-hidden leading-relaxed"
-                    placeholder="How can AI Assistant help you today?"
+                    placeholder="What ingredient do you have?"
                     value={message}
                     onChange={handleMessageChange}
                     onKeyDown={handleKeyPress}
