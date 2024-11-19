@@ -190,35 +190,38 @@ const DataService = {
     StartChatWithLLM: async function (model, message) {
         return await api.post(BASE_API_URL + "/" + model + "/chats/", message);
     },
-    
+
+    // ContinueChatWithLLM: async function (model, chat_id, message) {
+    //     await new Promise(resolve => setTimeout(resolve, 1000));
+
+    //     const chat = mockChats.find(c => c.chat_id === chat_id);
+    //     if (!chat) {
+    //         throw new Error('Chat not found');
+    //     }
+
+    //     const newMessages = [
+    //         {
+    //             message_id: uuid(),
+    //             role: "user",
+    //             content: message.content,
+    //             image_path: message.image_path
+    //         },
+    //         {
+    //             message_id: uuid(),
+    //             role: "assistant",
+    //             content: `Mock response to: ${message.content}`
+    //         }
+    //     ];
+
+    //     chat.messages.push(...newMessages);
+    //     return Promise.resolve({ data: chat });
+    // },
+    // GetChatMessageImage: function (model, image_path) {
+    //     // For testing, return a placeholder image
+    //     return `https://picsum.photos/800/600?random=${encodeURIComponent(image_path)}`;
+    // },
     ContinueChatWithLLM: async function (model, chat_id, message) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const chat = mockChats.find(c => c.chat_id === chat_id);
-        if (!chat) {
-            throw new Error('Chat not found');
-        }
-
-        const newMessages = [
-            {
-                message_id: uuid(),
-                role: "user",
-                content: message.content,
-                image_path: message.image_path
-            },
-            {
-                message_id: uuid(),
-                role: "assistant",
-                content: `Mock response to: ${message.content}`
-            }
-        ];
-
-        chat.messages.push(...newMessages);
-        return Promise.resolve({ data: chat });
-    },
-    GetChatMessageImage: function (model, image_path) {
-        // For testing, return a placeholder image
-        return `https://picsum.photos/800/600?random=${encodeURIComponent(image_path)}`;
+        return await api.post(BASE_API_URL + "/" + model + "/chats/" + chat_id, message);
     },
 }
 

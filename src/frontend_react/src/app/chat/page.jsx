@@ -12,7 +12,7 @@ export default function ChatPage() {
     // Extract the query parameters
     const searchParams = useSearchParams();
     const ingredient = searchParams.get('ingredient'); // Extract the ingredient from the URL
-    const model = searchParams.get('model') || 'llm-rag';
+    const model = searchParams.get('model') || 'llm';
 
     // Component States
     const [chat, setChat] = useState(null);
