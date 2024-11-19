@@ -20,45 +20,51 @@ api.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
-const DataService = {
-    Init: function () {
-        // Any application initialization logic comes here
+const DataService ={
+
+    Init: function(){
+        // any initializatino logic
     },
-    ImageClassificationPredict: async function (formData) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Mock response data
-        const mockResults = {
-            success: true,
-            model: "MockNet v1.0",
-            timestamp: new Date().toISOString(),
-            results: [
-                {
-                    class_index: 1,
-                    class_name: "Broccoli"
-                },
-                {
-                    class_index: 2,
-                    class_name: "Chicken"
-                },
-                {
-                    class_index: 3,
-                    class_name: "Cheese"
-                }
-            ],
-            processing_time: "0.845 seconds",
-            image_size: "800x600",
-            format: "jpeg"
-        };
-
-        // Randomly fail sometimes to test error handling (10% chance)
-        if (Math.random() < 0.1) {
-            throw new Error('Mock classification failed');
-        }
-
-        return Promise.resolve({ data: mockResults });
+    ImageClassificationPredict: async function(message){
+        return await api.post(BASE_API_URL + "/llm-food-detection/chats", message)
+        // return Promise.resolve({ data: mockResults });
     },
+    
+    // ImageClassificationPredict: async function (formData) {
+    //     // Simulate API delay
+    //     await new Promise(resolve => setTimeout(resolve, 1500));
+
+    //     // Mock response data
+    //     const mockResults = {
+    //         success: true,
+    //         model: "MockNet v1.0",
+    //         timestamp: new Date().toISOString(),
+    //         results: [
+    //             {
+    //                 class_index: 1,
+    //                 class_name: "Broccoli"
+    //             },
+    //             {
+    //                 class_index: 2,
+    //                 class_name: "Chicken"
+    //             },
+    //             {
+    //                 class_index: 3,
+    //                 class_name: "Cheese"
+    //             }
+    //         ],
+    //         processing_time: "0.845 seconds",
+    //         image_size: "800x600",
+    //         format: "jpeg"
+    //     };
+
+    //     // Randomly fail sometimes to test error handling (10% chance)
+    //     if (Math.random() < 0.1) {
+    //         throw new Error('Mock classification failed');
+    //     }
+
+    //     return Promise.resolve({ data: mockResults });
+    // },
     Audio2Text: async function (formData) {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 2000));

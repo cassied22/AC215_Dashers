@@ -22,26 +22,76 @@ export default function ImageClassification() {
     const handleImageUploadClick = () => {
         inputFile.current.click();
     };
+
     const handleOnChange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+    
+        // Set loading state to true as processing starts
+        setIsLoading(true);
+    
         try {
-            const file = event.target.files[0];
-            if (!file) return;
-
+            // Update the UI with image preview
             setImage(URL.createObjectURL(file));
-            setIsLoading(true);
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            const response = await DataService.ImageClassificationPredict(formData);
-            setPrediction(response.data);
-            console.log(response.data);
+    
+            // Convert the file to Base64
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+    
+            reader.onload = async () => {
+                try {
+                    // Extract the Base64 content from the reader result
+                    const base64String = reader.result.split(',')[1]; // Extracting only the Base64 part
+    
+                    // Prepare the payload for the API request
+                    const payload = {
+                        content: 'user upload',
+                        image: `data:image/jpeg;base64,${base64String}`,
+                    };
+    
+                    // Send request to the API
+                    const response = await DataService.ImageClassificationPredict(payload);
+    
+                    // Transform API response to match mock format
+                    const apiMessages = response.data.messages;
+                    if (apiMessages && apiMessages.length > 1) {
+                        const gptResponse = apiMessages.find((msg) => msg.role === 'gpt');
+    
+                        // Fix: Replace single quotes with double quotes to convert to valid JSON
+                        const jsonString = gptResponse.results.replace(/'/g, '"');
+                        const resultItems = JSON.parse(jsonString); // Parsing to JavaScript array
+    
+                        const mockResults = {
+                            results: resultItems.map((item, index) => ({
+                                class_index: index + 1,
+                                class_name: item,
+                            })),
+                        };
+    
+                        // Update state with the transformed mock output
+                        setPrediction(mockResults);
+                        console.log(mockResults);
+                    }
+                } catch (error) {
+                    console.error('Error fetching classification results:', error);
+                } finally {
+                    // Set loading state to false once API call completes
+                    setIsLoading(false);
+                }
+            };
+    
+            // Handle error during file reading
+            reader.onerror = (error) => {
+                console.error('Error reading file as Base64:', error);
+                setIsLoading(false); // Set loading state to false if reading fails
+            };
         } catch (error) {
             console.error('Error processing image:', error);
-        } finally {
-            setIsLoading(false);
+            setIsLoading(false); // Set loading state to false if any other error occurs
         }
     };
+    
+    
     const handleButtonClick = () => {
         const ingredients = prediction.results?.map(item => item.class_name).join(',');
         // Navigate to ChatPage with the ingredient as a parameter
@@ -147,14 +197,14 @@ export default function ImageClassification() {
                 )}
             </div>
 
-            {/* Debug Output */}
+            {/* Debug Output
             {prediction && (
                 <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-sm font-mono text-gray-600 overflow-x-auto">
                         {JSON.stringify(prediction, null, 2)}
                     </p>
                 </div>
-            )}
+            )} */}
 
             {/* Continue Button */}
             {/* {prediction && (
