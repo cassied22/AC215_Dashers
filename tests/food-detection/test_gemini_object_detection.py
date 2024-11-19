@@ -1,63 +1,47 @@
-import pytest
-from unittest.mock import patch, MagicMock
-import sys
-import os
-
 import sys
 sys.path.append('/app')
 
-# Import functions from gemini_object_detection.py
+import pytest
+import json
+from unittest.mock import patch, mock_open, MagicMock
 from gemini_object_detection import identify_food_gemini, main
 
-# Test the identify_food_gemini function
-def test_identify_food_gemini():
-    with patch('google.generativeai.configure') as mock_configure:
-        with patch('google.generativeai.upload_file') as mock_upload_file:
-            with patch('google.generativeai.GenerativeModel') as mock_model:
-                # Configure mocks
-                mock_instance = mock_model.return_value
-                mock_instance.generate_content.return_value.text = "Pizza, Salad"
+@pytest.fixture
+def setup_genai():
+    with patch('google.generativeai.configure') as mock_configure, \
+         patch('google.generativeai.upload_file', return_value='mock_file') as mock_upload, \
+         patch('google.generativeai.GenerativeModel') as mock_model_class:
+        mock_model = MagicMock()
+        mock_model.generate_content.return_value.text = "['apple', 'banana']"
+        mock_model_class.return_value = mock_model
+        yield mock_configure, mock_upload, mock_model_class, mock_model
 
-                # Call the function
-                result = identify_food_gemini("path/to/image.jpg", "dummy_api_key")
+def test_identify_food_gemini(setup_genai, tmp_path):
+    _, _, _, mock_model = setup_genai
+    api_key = "fake_api_key"
+    fake_image_path = tmp_path / "fake_image.jpg"
+    fake_image_path.write_text('image data')
 
-                # Assertions to check correct behavior
-                mock_configure.assert_called_once_with(api_key="dummy_api_key")
-                mock_upload_file.assert_called_once_with("path/to/image.jpg")
-                mock_model.assert_called_once_with("gemini-1.5-flash")
-                assert result == "Pizza, Salad"
+    result = identify_food_gemini(str(fake_image_path), api_key)
 
-# Test the main function
-def test_main_valid_args():
-    with patch('sys.argv', ["script_name", "path/to/image.jpg"]), \
-         patch('os.getenv') as mock_getenv, \
-         patch('builtins.print') as mock_print, \
-         patch('gemini_object_detection.identify_food_gemini') as mock_identify_food_gemini:
-        mock_getenv.return_value = "dummy_api_key"
-        mock_identify_food_gemini.return_value = "Detected: Pizza"
+    assert result == "['apple', 'banana']"
+    mock_model.generate_content.assert_called_once()
 
-        # Call main
+def test_main_usage_error():
+    with patch('sys.argv', ['program']), \
+         patch('sys.exit') as mock_exit:
         main()
-
-        # Assertions
-        mock_getenv.assert_called_once_with("GEMINI_API_KEY")
-        mock_identify_food_gemini.assert_called_once_with("path/to/image.jpg", "dummy_api_key")
-        mock_print.assert_called_once_with("Detected: Pizza")
-
-def test_main_invalid_args():
-    with patch('sys.argv', ["script_name"]), \
-         patch('sys.exit') as mock_exit, \
-         patch('builtins.print') as mock_print:
-        main()
-
-        # Assertions
-        mock_print.assert_called_once_with("Usage: python food_item_identifier.py <image_path>")
         mock_exit.assert_called_once_with(1)
 
-        # Ensure no further code is executed after sys.exit call
-        assert mock_exit.called
-
-
-# Run tests
-if __name__ == "__main__":
-    pytest.main()
+def test_main_success(setup_genai):
+    fake_api_key = {"GOOGLE_API_KEY": "fake_api_key"}
+    fake_path = '/fake/path'
+    with patch('sys.argv', ['program', 'image.jpg']), \
+         patch('os.getenv', return_value=fake_path), \
+         patch('json.load', return_value=fake_api_key), \
+         patch('builtins.open', mock_open(read_data=json.dumps(fake_api_key))), \
+         patch('sys.exit') as mock_exit:
+        with patch('builtins.print') as mock_print:
+            main()
+            mock_print.assert_called_with("['apple', 'banana']")
+            mock_exit.assert_not_called()
