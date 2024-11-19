@@ -6,6 +6,8 @@ import {
     CameraAlt
 } from '@mui/icons-material';
 import DataService from '@/services/DataService';
+import { useRouter } from 'next/navigation';
+
 
 export default function ImageClassification() {
     // Component States
@@ -13,6 +15,8 @@ export default function ImageClassification() {
     const [image, setImage] = useState(null);
     const [prediction, setPrediction] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const router = useRouter();
 
     // Handlers
     const handleImageUploadClick = () => {
@@ -38,9 +42,10 @@ export default function ImageClassification() {
             setIsLoading(false);
         }
     };
-    // const handleContinueClick = () => {
-    //     router.push('/chat?hasActiveChat=true');
-    // };
+    const handleButtonClick = (ingredient) => {
+        // Navigate to ChatPage with the ingredient as a parameter
+        router.push(`/chat?ingredient=${encodeURIComponent(ingredient)}`);
+    };
 
     // UI View
     return (
@@ -159,6 +164,18 @@ export default function ImageClassification() {
                     Continue
                 </button>
             )} */}
+
+            {prediction && (
+                <div>
+                    <button 
+                        onClick={handleButtonClick}
+                        className="button-primary"
+                    >
+                        Continue
+                    </button>
+                </div>
+            )}  
+
         </div>
     );
 }

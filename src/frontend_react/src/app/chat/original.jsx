@@ -17,7 +17,7 @@ export default function ChatPage({ searchParams }) {
     console.log(chat_id, model);
     // Component States
     const [chatId, setChatId] = useState(params.id);
-    // const [hasActiveChat, setHasActiveChat] = useState(false);
+    const [hasActiveChat, setHasActiveChat] = useState(false);
     const [chat, setChat] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
     const [isTyping, setIsTyping] = useState(false);
@@ -40,10 +40,10 @@ export default function ChatPage({ searchParams }) {
     useEffect(() => {
         if (chat_id) {
             fetchChat(chat_id);
-            // setHasActiveChat(true);
+            setHasActiveChat(true);
         } else {
             setChat(null);
-            // setHasActiveChat(false);
+            setHasActiveChat(false);
         }
     }, [chat_id]);
     useEffect(() => {
@@ -74,7 +74,7 @@ export default function ChatPage({ searchParams }) {
             try {
                 // Show typing indicator
                 setIsTyping(true);
-                // setHasActiveChat(true);
+                setHasActiveChat(true);
                 setChat(tempChatMessage(message)); // Show the user input message while LLM is invoked
 
                 // Submit chat
@@ -92,7 +92,7 @@ export default function ChatPage({ searchParams }) {
                 setIsTyping(false);
                 setChat(null);
                 setChatId(null);
-                // setHasActiveChat(false);
+                setHasActiveChat(false);
                 router.push('/chat?model=' + selectedModel)
             }
         };
@@ -107,7 +107,7 @@ export default function ChatPage({ searchParams }) {
             try {
                 // Show typing indicator
                 setIsTyping(true);
-                // setHasActiveChat(true);
+                setHasActiveChat(true);
                 tempChatMessage(message);
 
                 // Submit chat
@@ -123,7 +123,7 @@ export default function ChatPage({ searchParams }) {
                 console.error('Error fetching chat:', error);
                 setIsTyping(false);
                 setChat(null);
-                // setHasActiveChat(false);
+                setHasActiveChat(false);
             }
         };
         continueChat(chat_id, message);
@@ -144,34 +144,61 @@ export default function ChatPage({ searchParams }) {
 
     return (
         <div className="h-screen flex flex-col pt-16">
-            <div className="flex h-[calc(100vh-64px)]">
-                {/* Sidebar */}
-                <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
-                    <ChatHistorySidebar chat_id={chat_id} model={model} />
-                </div>
+            {!hasActiveChat ? (
+                <>
+                    {/* Hero Section */}
+                    <section className="flex-shrink-0 min-h-[400px] flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-orange-50">
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-500/10 to-orange-400/10" />
+                        <div className="container mx-auto px-4 max-w-3xl relative z-10 pt-20">
+                            <div className="text-center">
+                                <h1 className="text-4xl md:text-6xl font-bold gradient-text mb-6">
+                                    Upload an image here
+                                </h1>
+                                <div className="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg p-6">
+                                    <ChatInput
+                                        onSendMessage={newChat}
+                                        selectedModel={selectedModel}
+                                        onModelChange={handleModelChange}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-                {/* Main Chat Area */}
-                <div className="flex-1 flex flex-col h-full overflow-hidden">
-                    <div className="flex-1 overflow-y-auto">
-                        <ChatMessage
-                            chat={chat}
-                            key={refreshKey}
-                            isTyping={isTyping}
-                            model={model}
-                        />
+                    {/* Chat History Section */}
+                    <div className="flex-1 container mx-auto px-4 py-12 overflow-auto z-10">
+                        <ChatHistory model={model} />
                     </div>
-                    <div className="flex-shrink-0 border-t border-gray-200 bg-white">
-                        <ChatInput
-                            onSendMessage={appendChat}
-                            chat={chat}
-                            selectedModel={selectedModel}
-                            onModelChange={setSelectedModel}
-                            disableModelSelect={true}
-                        />
+                </>
+            ) : (
+                <div className="flex h-[calc(100vh-64px)]">
+                    {/* Sidebar */}
+                    <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
+                        <ChatHistorySidebar chat_id={chat_id} model={model} />
+                    </div>
+
+                    {/* Main Chat Area */}
+                    <div className="flex-1 flex flex-col h-full overflow-hidden">
+                        <div className="flex-1 overflow-y-auto">
+                            <ChatMessage
+                                chat={chat}
+                                key={refreshKey}
+                                isTyping={isTyping}
+                                model={model}
+                            />
+                        </div>
+                        <div className="flex-shrink-0 border-t border-gray-200 bg-white">
+                            <ChatInput
+                                onSendMessage={appendChat}
+                                chat={chat}
+                                selectedModel={selectedModel}
+                                onModelChange={setSelectedModel}
+                                disableModelSelect={true}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-
+            )}
         </div>
     );
 }
