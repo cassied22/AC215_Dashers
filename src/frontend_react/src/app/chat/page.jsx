@@ -25,7 +25,7 @@ export default function ChatPage() {
     const startChatWithIngredient = async (message) => {
         try {
             setIsTyping(true);
-            setHasActiveChat(true);
+            setHasActiveChat(false);
 
             // Set initial message with a unique message ID
             message["message_id"] = uuid();
@@ -36,6 +36,7 @@ export default function ChatPage() {
             const response = await DataService.StartChatWithLLM(model, message);
             setIsTyping(false);
             setChat(response.data);
+            setHasActiveChat(true);
             router.push('/chat?model=' + selectedModel + '&id=' + response.data["chat_id"]);
         } catch (error) {
             console.error('Error fetching chat:', error);
@@ -45,7 +46,52 @@ export default function ChatPage() {
             router.push('/chat?model=' + selectedModel);
         }
     };
+    const appendChat = (message) => {
+        if (!chat?.chat_id) {
+            console.error('No active chat session found. Start a chat first.');
+            return;
+        }
     
+        const chat_id = chat.chat_id; // Extract chat_id from the chat state
+    
+        const continueChat = async (id, message) => {
+            try {
+                // Show typing indicator
+                setIsTyping(true);
+    
+                // Add the user's message temporarily to the chat
+                const tempMessages = [...chat.messages, { ...message, role: 'user', message_id: uuid() }];
+                setChat({ ...chat, messages: tempMessages });
+    
+                // Submit chat to the server
+                const response = await DataService.ContinueChatWithLLM(model, id, message);
+    
+                // Update the chat state with the server response
+                setChat(response.data);
+    
+                // Hide typing indicator
+                setIsTyping(false);
+            } catch (error) {
+                console.error('Error appending chat:', error);
+                setIsTyping(false);
+            }
+        };
+    
+        continueChat(chat_id, message);
+    };    
+    // Force re-render by updating the key
+    const forceRefresh = () => {
+        setRefreshKey(prevKey => prevKey + 1);
+    };
+    const handleModelChange = (newValue) => {
+
+        setSelectedModel(newValue);
+        var path = '/chat?model=' + newValue;
+        if (chat_id) {
+            path = path + '&id=' + chat_id;
+        }
+        router.push(path)
+    };
 
     // Use Effect to start the conversation if an ingredient is provided
     useEffect(() => {
@@ -58,27 +104,6 @@ export default function ChatPage() {
     return (
         <div className="h-screen flex flex-col pt-16">
             {!hasActiveChat ? (
-                <>
-                    {/* Hero Section */}
-                    <section className="flex-shrink-0 min-h-[400px] flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-orange-50">
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-500/10 to-orange-400/10" />
-                        <div className="container mx-auto px-4 max-w-3xl relative z-10 pt-20">
-                            <div className="text-center">
-                                <h1 className="text-4xl md:text-6xl font-bold gradient-text mb-6">
-                                    Upload an image here
-                                </h1>
-                                <div className="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg p-6">
-                                    <ChatInput
-                                        onSendMessage={startChatWithIngredient}
-                                        selectedModel={selectedModel}
-                                        onModelChange={setSelectedModel}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </>
-            ) : (
                 <div className="flex h-[calc(100vh-64px)]">
                     {/* Sidebar */}
                     <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
@@ -97,6 +122,33 @@ export default function ChatPage() {
                         <div className="flex-shrink-0 border-t border-gray-200 bg-white">
                             <ChatInput
                                 onSendMessage={startChatWithIngredient}
+                                chat={chat}
+                                selectedModel={selectedModel}
+                                onModelChange={setSelectedModel}
+                                disableModelSelect={true}
+                            />
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="flex h-[calc(100vh-64px)]">
+                    {/* Sidebar */}
+                    <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
+                        <ChatHistorySidebar chat_id={chat?.chat_id} model={model} />
+                    </div>
+
+                    {/* Main Chat Area */}
+                    <div className="flex-1 flex flex-col h-full overflow-hidden">
+                        <div className="flex-1 overflow-y-auto">
+                            <ChatMessage
+                                chat={chat}
+                                isTyping={isTyping}
+                                model={model}
+                            />
+                        </div>
+                        <div className="flex-shrink-0 border-t border-gray-200 bg-white">
+                            <ChatInput
+                                onSendMessage={appendChat}
                                 chat={chat}
                                 selectedModel={selectedModel}
                                 onModelChange={setSelectedModel}
