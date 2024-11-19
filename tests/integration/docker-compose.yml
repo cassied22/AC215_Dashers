@@ -31,7 +31,8 @@ services:
             echo "Running integration tests..." && \
             python -m pytest tests/integration -v --cov=./ --cov-report=term-missing && \
             echo "Running system tests..." && \
-            python -m pytest tests/system -v --cov=./ --cov-report=term-missing --cov-fail-under=50
+            python cli_rag.py --download --load && \
+            python -m pytest tests/system/test_api_service.py -v --cov=./ --cov-report=term-missing --cov-fail-under=50
 
     chromadb:
         image: chromadb/chroma:latest
