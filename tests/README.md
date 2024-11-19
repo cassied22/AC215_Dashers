@@ -38,12 +38,8 @@ Our project aims to maintain a minimum code coverage of 50%. The coverage report
 ### Run Tests Manually
 1. Ensure that you have Python installed on your system.
 2. Clone the project repository
-3. Navigate to the project directory
-4. Install the required dependencies:
-   ```pip install -r requirements.txt```
-5. Run the tests using pytest:
-   ```pytest tests/```
+3. Navigate to the project directory/test/integration, run ```sh docker-shell.sh```
    This will run all the tests located in the tests/ directory and its subdirectories.
-6. To generate a coverage report, type the following command:
-   ```pytest --cov=src/ --cov-report=html tests/```
-    This will run the tests and generate an HTML coverage report in the htmlcov/ directory. You can view the generated html coverage report in htmlcov/index.html in a web browser.
+4. To generate a coverage report, type the following command:
+   ```pytest --cov=src/ --cov-report=html <YOUR PATH TO THE TEST FILE>```
+    This will run the tests and generate an HTML coverage report. You can view the generated html coverage report in a web browser.
