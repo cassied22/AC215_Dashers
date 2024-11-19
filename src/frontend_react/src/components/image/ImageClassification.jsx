@@ -42,9 +42,10 @@ export default function ImageClassification() {
             setIsLoading(false);
         }
     };
-    const handleButtonClick = (ingredient) => {
+    const handleButtonClick = () => {
+        const ingredients = prediction.results?.map(item => item.class_name).join(',');
         // Navigate to ChatPage with the ingredient as a parameter
-        router.push(`/chat?ingredient=${encodeURIComponent(ingredient)}`);
+        router.push(`/chat?ingredient=${encodeURIComponent(ingredients)}`);
     };
 
     // UI View
