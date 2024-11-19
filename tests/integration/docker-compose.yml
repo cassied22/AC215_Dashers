@@ -1,25 +1,37 @@
+version: '3.8'
+
 networks:
     recipe-rag-network:
         external: true
+
 services:
     recipe-rag-cli:
-        image: recipe-rag-cli
+        build:
+            context: ../../src/datapipeline
+            dockerfile: Dockerfile
         container_name: recipe-rag-cli
         volumes:
-            - ../../src/secrets:/secrets
+            - ../../src/secrets:/secrets:ro
             - ../../src/datapipeline:/app
             - ../datapipeline:/app/tests
         environment:
-            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
-            GCP_PROJECT: $GCP_PROJECT
-            GCS_BUCKET_NAME: $GCS_BUCKET_NAME
-            PATH: "/home/app/.local/bin:${PATH}"
+            GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
+            GCP_PROJECT: ${GCP_PROJECT}
+            GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+            PYTHONPATH: /app
         networks:
             - recipe-rag-network
         entrypoint: ["/bin/bash", "-c"]
-        command: ["pipenv install pytest-cov && pipenv run pytest --cov=./ --cov-config=.coveragerc"]
-        depends_on:
-            - chromadb
+        command: |
+            echo "Installing dependencies..." && \
+            python -m pip install -r requirements.txt && \
+            python -m pip install pytest pytest-cov && \
+            echo "Running unit tests..." && \
+            python -m pytest tests/test_cli_rag.py -v --cov=./ --cov-report=term-missing && \
+            echo "Running integration tests..." && \
+            python -m pytest tests/integration -v --cov=./ --cov-report=term-missing && \
+            echo "Running system tests..." && \
+            python -m pytest tests/system -v --cov=./ --cov-report=term-missing --cov-fail-under=50
 
     chromadb:
         image: chromadb/chroma:latest
@@ -31,17 +43,32 @@ services:
         environment:
             - IS_PERSISTENT=TRUE
             - ANONYMIZED_TELEMETRY=FALSE
-            - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"] # This is not recommended for production environments.
+            - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"]
         networks:
             - recipe-rag-network
-    
+
     food-detection:
-        image: food-detection
+        build:
+            context: ../../src/food-detection
+            dockerfile: Dockerfile
         container_name: food-detection
         volumes:
-          - ../../src/food-detection:/app
-          - ../food-detection:/app/tests
-        entrypoint: ["/bin/bash", "-c"]
-        command: ["pipenv install pytest-cov && pipenv run pytest --cov=./ --cov-config=.coveragerc"]
+            - ../../src/food-detection:/app
+            - ../food-detection:/app/tests
+        environment:
+            PYTHONPATH: /app
+            GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+            OPENAI_API_KEY: ${OPENAI_API_KEY}
         networks:
-          - recipe-rag-network
+            - recipe-rag-network
+        entrypoint: ["/bin/bash", "-c"]
+        command: |
+            echo "Installing dependencies..." && \
+            python -m pip install -r requirements.txt && \
+            python -m pip install pytest pytest-cov && \
+            echo "Running unit tests..." && \
+            python -m pytest tests/test_gemini_object_detection.py -v --cov=./ --cov-report=term-missing && \
+            echo "Running integration tests..." && \
+            python -m pytest tests/integration -v --cov=./ --cov-report=term-missing && \
+            echo "Running system tests..." && \
+            python -m pytest tests/system -v --cov=./ --cov-report=term-missing --cov-fail-under=50
