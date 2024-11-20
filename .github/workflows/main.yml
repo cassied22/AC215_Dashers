@@ -67,7 +67,7 @@ jobs:
             test_cli_rag.py \
             -v \
             --cov=../../src/datapipeline \
-            --cov-report=term-missing
+            --cov-report=html:htmlcov
         env:
           PYTHONPATH: ${{ github.workspace }}/src/datapipeline
       - name: Run Integration and System Tests
@@ -98,3 +98,8 @@ jobs:
         with:
           name: ci-cd-pipeline
           path: ci-cd-pipeline.zip
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: htmlcov
