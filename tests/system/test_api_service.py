@@ -49,41 +49,51 @@ def api_service():
 @pytest.mark.usefixtures("api_service")
 class TestAPIService:
     def test_get_chats(self):
-        response = make_request("GET", "/llm/chats")
-        assert response.status == 200
-        data = json.loads(response.read())
-        assert isinstance(data, list)
+        # List of endpoints to test
+        endpoints = ["/llm/chats", "/llm-rag/chats"]
+
+        for endpoint in endpoints:
+            response = make_request("GET", endpoint)
+            assert response.status == 200, f"Failed at endpoint {endpoint} with status {response.status}"
+            data = json.loads(response.read())
+            assert isinstance(data, list), f"Expected data to be a list at endpoint {endpoint}"
 
     def test_start_chat(self):
-        payload = {
-            "content": "What are healthy breakfast options?"
-        }
-        response = make_request("POST", "/llm/chats", data=payload)
-        assert response.status == 200
-        data = json.loads(response.read())
-        assert "chat_id" in data
-        assert "messages" in data
-        assert len(data["messages"]) == 2
-        assert data["messages"][0]["role"] == "user"
-        assert data["messages"][1]["role"] == "assistant"
-        return data["chat_id"]
+        endpoints = ["/llm/chats", "/llm-rag/chats"]
+        for endpoint in endpoints:
+            payload = {
+                "content": "What are healthy breakfast options?"
+            }
+            response = make_request("POST", endpoint, data=payload)
+            assert response.status == 200, f"Failed at endpoint {endpoint} with status {response.status}"
+            data = json.loads(response.read())
+            assert "chat_id" in data
+            assert "messages" in data
+            assert len(data["messages"]) == 2
+            assert data["messages"][0]["role"] == "user"
+            assert data["messages"][1]["role"] == "assistant"
+            return data["chat_id"]
 
     def test_continue_chat(self):
-        chat_id = self.test_start_chat()
-        payload = {
-            "content": "What about lunch options?"
-        }
-        response = make_request("POST", f"/llm/chats/{chat_id}", data=payload)
-        assert response.status == 200
-        data = json.loads(response.read())
-        assert len(data["messages"]) == 4
+        endpoints = ["/llm/chats"]
+        for endpoint in endpoints:
+            chat_id = self.test_start_chat()
+            payload = {
+                "content": "What about lunch options?"
+            }
+            response = make_request("POST", f"{endpoint}/{chat_id}", data=payload)
+            assert response.status == 200, f"Failed at endpoint {endpoint} with status {response.status}"
+            data = json.loads(response.read())
+            assert len(data["messages"]) == 4
 
     def test_get_specific_chat(self):
-        chat_id = self.test_start_chat()
-        response = make_request("GET", f"/llm/chats/{chat_id}")
-        assert response.status == 200
-        data = json.loads(response.read())
-        assert data["chat_id"] == chat_id
+        endpoints = ["/llm/chats"]
+        for endpoint in endpoints:
+            chat_id = self.test_start_chat()
+            response = make_request("GET", f"{endpoint}/{chat_id}")
+            assert response.status == 200, f"Failed at endpoint {endpoint} with status {response.status}"
+            data = json.loads(response.read())
+            assert data["chat_id"] == chat_id
 
     def test_invalid_chat_id(self):
         invalid_id = str(uuid.uuid4())
