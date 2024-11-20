@@ -89,6 +89,17 @@ jobs:
           cd tests/integration
           docker-compose down -v
           docker network rm recipe-rag-network || true
+      - name: Create test reports directory
+        run: |
+          mkdir -p test-reports
+      - name: Copy test reports
+        run: |
+          docker cp recipe-rag-cli:/app/unit-tests.xml test-reports/recipe-rag-cli-unit-tests.xml
+          docker cp recipe-rag-cli:/app/integration-tests.xml test-reports/recipe-rag-cli-integration-tests.xml
+          docker cp recipe-rag-cli:/app/system-tests.xml test-reports/recipe-rag-cli-system-tests.xml
+          docker cp food-detection:/app/unit-tests.xml test-reports/food-detection-unit-tests.xml
+          docker cp food-detection:/app/integration-tests.xml test-reports/food-detection-integration-tests.xml
+          docker cp food-detection:/app/system-tests.xml test-reports/food-detection-system-tests.xml
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
