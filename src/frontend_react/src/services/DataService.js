@@ -27,7 +27,6 @@ const DataService ={
     },
     ImageClassificationPredict: async function(message){
         return await api.post(BASE_API_URL + "/llm-food-detection/chats", message)
-        // return Promise.resolve({ data: mockResults });
     },
     
     // ImageClassificationPredict: async function (formData) {
