@@ -1,36 +1,21 @@
-version: '3.8'
-
 networks:
-    recipe-rag-network:
+    default:
+        name: recipe-rag-network
         external: true
-
 services:
     recipe-rag-cli:
-        build:
-            context: ../../src/datapipeline
-            dockerfile: Dockerfile
+        image: recipe-rag-cli
         container_name: recipe-rag-cli
         volumes:
-            - ../../src/secrets:/secrets:ro
-            - ../../src/datapipeline:/app
-            - ../datapipeline:/app/tests
+            - ../secrets:/secrets
+            - ../datapipeline:/app
+            - ../../tests/datapipeline:/app/tests
         environment:
-            GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
-            GCP_PROJECT: ${GCP_PROJECT}
-            GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
-            PYTHONPATH: /app
-        networks:
-            - recipe-rag-network
-        entrypoint: ["/bin/bash", "-c"]
-        command: |
-            python -m pip install -r requirements.txt && \
-            python -m pip install pytest pytest-cov && \
-            echo "Running tests with coverage for datapipeline..." && \
-            python -m pytest --cov=./ --cov-config=.coveragerc \
-                --cov-report=term-missing \
-                -v \
-                --capture=no \
-                --verbosity=2
+            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
+            GCP_PROJECT: $GCP_PROJECT
+            GCS_BUCKET_NAME: $GCS_BUCKET_NAME
+        depends_on:
+            - chromadb
 
     chromadb:
         image: chromadb/chroma:latest
@@ -38,33 +23,9 @@ services:
         ports:
             - 8000:8000
         volumes:
-            - ../../src/datapipeline/docker-volumes/chromadb:/chroma/chroma
+            - ./docker-volumes/chromadb:/chroma/chroma
         environment:
             - IS_PERSISTENT=TRUE
             - ANONYMIZED_TELEMETRY=FALSE
-            - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"]
-        networks:
-            - recipe-rag-network
+            - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"] # This is not recommended for production environments.
 
-    food-detection:
-        build:
-            context: ../../src/food-detection
-            dockerfile: Dockerfile
-        container_name: food-detection
-        volumes:
-            - ../../src/food-detection:/app
-            - ../food-detection:/app/tests
-        environment:
-            PYTHONPATH: /app
-        networks:
-            - recipe-rag-network
-        entrypoint: ["/bin/bash", "-c"]
-        command: |
-            python -m pip install -r requirements.txt && \
-            python -m pip install pytest pytest-cov && \
-            echo "Running tests with coverage for food-detection..." && \
-            python -m pytest --cov=./ --cov-config=.coveragerc \
-                --cov-report=term-missing \
-                -v \
-                --capture=no \
-                --verbosity=2
