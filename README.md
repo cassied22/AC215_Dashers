@@ -98,13 +98,11 @@
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── cli_rag.py
-    │   ├── dataloader.py
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
     │   ├── input-datasets
     │   ├── outputs
-    │   ├── preprocess_cv.py
     │   └── requirements.txt
     ├── food-detection
     │   ├── Dockerfile
@@ -115,19 +113,6 @@
     │   ├── gemini-object-detection.py
     │   ├── gpt-object-detection.py
     │   └── requirements.txt
-    ├── llm_finetuning
-    │   ├── .gitignore
-    │   ├── README.md
-    │   ├── dataset-creator
-    │   ├── env.dev
-    │   ├── gemini-finetuner
-    │   └── images
-    ├── models
-    │   ├── Dockerfile
-    │   ├── docker-shell.sh
-    │   ├── infer_model.py
-    │   ├── model_rag.py
-    │   └── train_model.py
     └── secrets
         └── .gitkeep
 ```
@@ -188,10 +173,31 @@ Essentially, there are 2 components in our App:
 2. The LLM Chat Component
     In the path: /Users/qjy/Harvard/2024fall/ac215/AC215_Dashers/src/frontend_react/src/app/chat
     We used StartChatWithLLM to take food ingredients from the image recognition component as input and generate the recommended recipes. Then, we used ContinueChatWithLLM to generate further conversations entered by user in the chat box.
+More components (chat history) will be finalized in the next milestone.
+
 
 Here are some screenshots of our app:
+The start of the page: click on "Get Started" to go to the image upload page.
+<img src="images/frontend/1.png"  width="800">
+Upload image here:
+<img src="images/frontend/2.png"  width="800">
+<img src="images/frontend/3.png"  width="800">
+See the results here:
+<img src="images/frontend/4.png"  width="800">
+Get recipe in the chat box page:
+<img src="images/frontend/5.png"  width="800">
+See the sample recipies and detail use of ingredients:
+<img src="images/frontend/6.png"  width="800">
+<img src="images/frontend/7.png"  width="800">
+Continue chatting with the AI for additional requirements:
+<img src="images/frontend/8.png"  width="800">
 
-```Add screenshots here```
+**CI and Test**
+
+We have a functioning CI pipeline that runs on every push or merge. It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. Also, the CI pipeline runs automated testing by executing unit, integration, and systems tests with test results reported.
+
+See the detailed description of Test [here](https://github.com/cassied22/AC215_Dashers/edit/milestone4/tests). 
+
 
 ## Setup Instructions
 ### Build Recipe Vector Database
