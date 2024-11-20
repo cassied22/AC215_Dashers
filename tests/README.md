@@ -15,7 +15,7 @@ The linting process ensures that the codebase adheres to consistent coding stand
 - Integration Tests(System Tests):
   - Since we only have two components, our integration tests serve the same purpose as system tests. 
   - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory.
-  - In this integrated environment, recipe-rag-cli service, chromadb, and food-detection service all have their containers running. We test the interaction between LLM's API endpoint by checking the response code of these APIs using our mock input to verify the interaction and integration between different application components.
+  - In this integrated environment, the container for recipe-rag-cli service, chromadb, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
   - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run.
 
 **Automated Testing Implementation**
@@ -27,7 +27,8 @@ The tests are organized into separate directories based on their type:
 
 - tests/datapipeline: Contains unit tests for the data pipeline component.
 - tests/food-detection: Contains unit tests for the food detection component.
-- tests/integration: Contains integration(system) tests that verify the interaction between different components.
+- tests/integration: Contains environment for integration(system) tests that run containers for all components.
+- tests/system: Contains integration(system) tests script that verifies the interaction between different components.
   
 **Test Coverage Reports**
 Our project aims to maintain a minimum code coverage of 50%. The coverage reports are generated using the pytest-cov plugin and are included in the CI pipeline output.
