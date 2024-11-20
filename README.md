@@ -192,15 +192,11 @@ See the sample recipies and detail use of ingredients:
 Continue chatting with the AI for additional requirements:
 <img src="images/frontend/8.png"  width="800">
 
-```Add screenshots here```
+**CI and Test**
 
-**Test**
+We have a functioning CI pipeline that runs on every push or merge. It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. Also, the CI pipeline runs automated testing by executing unit, integration, and systems tests with test results reported.
 
 See the detailed description of Test [here](https://github.com/cassied22/AC215_Dashers/edit/milestone4/tests). 
-
-## Running Dockerfile
-Instructions for running the Dockerfile can be added here.
-To run Dockerfile - `Instructions here`
 
 
 **Notebooks/Reports**
