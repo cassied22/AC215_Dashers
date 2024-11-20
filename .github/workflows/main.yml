@@ -1,135 +1,99 @@
 name: CI/CD Pipeline
+
 run-name: ${{ github.actor }} submitted a CI CD Action
 
 on:
   push:
-    branches: 
+    branches:
       - 'hanna/ci'
   pull_request:
-    branches: 
+    branches:
       - 'hanna/ci'
 
 jobs:
+
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.12'
-        
-    - name: Install Flake8
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8
-        
-    - name: Run Flake8
-      run: |
-        flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+      - name: Install Flake8
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+      - name: Run Flake8
+        run: |
+          flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   test:
     needs: lint
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.12'
-    
-    - id: 'auth'
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
-    
-    - name: Configure Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Install Docker Compose
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y docker-compose
-    
-    - name: Create Docker Network
-      run: docker network create recipe-rag-network || true
-      
-    - name: Setup Directories
-      run: |
-        mkdir -p src/secrets
-        echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
-
- # Unit Tests - Fixed dependencies
-    - name: Run Unit Tests
-      run: |
-        # Install dependencies
-        python -m pip install --upgrade pip
-        python -m pip install -r src/datapipeline/requirements.txt
-        python -m pip install pytest pytest-cov
-        
-        # Add PYTHONPATH and run tests
-        cd tests/datapipeline
-        PYTHONPATH=$PYTHONPATH:../../src/datapipeline python -m pytest \
-          test_cli_rag.py \
-          -v \
-          --cov=../../src/datapipeline \
-          --cov-report=term-missing
-      env:
-        PYTHONPATH: ${{ github.workspace }}/src/datapipeline
-        
-    # Integration and System Tests
-    - name: Run Integration and System Tests
-      run: |
-        cd tests/integration
-        docker-compose build --no-cache
-        docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection > test_output.log
-      continue-on-error: true
-      env:
-        GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-        GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
-    
-    # Display Test Output
-    - name: Display Test Output
-      if: always()
-      run: |
-        cat tests/integration/test_output.log
-
-    # Retrieve Test Reports
-    - name: Retrieve Test Reports
-      if: always()
-      run: |
-        mkdir -p test-reports
-        docker cp recipe-rag-cli:/app/unit-tests.xml test-reports/recipe-rag-cli-unit-tests.xml
-        docker cp recipe-rag-cli:/app/integration-tests.xml test-reports/recipe-rag-cli-integration-tests.xml
-        docker cp recipe-rag-cli:/app/system-tests.xml test-reports/recipe-rag-cli-system-tests.xml
-        docker cp food-detection:/app/unit-tests.xml test-reports/food-detection-unit-tests.xml
-        docker cp food-detection:/app/integration-tests.xml test-reports/food-detection-integration-tests.xml
-        docker cp food-detection:/app/system-tests.xml test-reports/food-detection-system-tests.xml
-
-    # Upload Test Reports
-    - name: Upload Test Reports
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-reports
-        path: test-reports
-
-    - name: Print Docker logs on failure
-      if: failure()
-      run: |
-        cd tests/integration
-        docker-compose logs
-
-    - name: Clean up
-      if: always()
-      run: |
-        cd tests/integration
-        docker-compose down -v
-        docker network rm recipe-rag-network || true
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+      - id: 'auth'
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+      - name: Configure Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+      - name: Create Docker Network
+        run: docker network create recipe-rag-network || true
+      - name: Setup Directories
+        run: |
+          mkdir -p src/secrets
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
+      - name: Run Unit Tests
+        run: |
+          # Install dependencies
+          python -m pip install --upgrade pip
+          python -m pip install -r src/datapipeline/requirements.txt
+          # Add PYTHONPATH and run tests
+          cd tests/datapipeline
+          PYTHONPATH=$PYTHONPATH:../../src/datapipeline python -m pytest \
+            test_cli_rag.py \
+            -v \
+            --cov=../../src/datapipeline \
+            --cov-report=term-missing
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src/datapipeline
+      - name: Run Integration and System Tests
+        run: |
+          cd tests/integration
+          docker-compose build --no-cache
+          docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+      - name: Print Docker logs on failure
+        if: failure()
+        run: |
+          cd tests/integration
+          docker-compose logs
+      - name: Clean up
+        if: always()
+        run: |
+          cd tests/integration
+          docker-compose down -v
+          docker network rm recipe-rag-network || true
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: CI/CD Pipeline
+          path: |
+            test-reports
+            src/datapipeline
+            src/food-detection
