@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+
+[packages]
+user-agent = "0.1.10"
+requests = "2.32.3"
+google-cloud-storage = "2.18.2"
+google-generativeai = "0.8.3"
+google-cloud-aiplatform = "1.72.0"
+pandas = "2.2.3"
+langchain = "0.3.7"
+llama-index = "0.11.23"
+langchain-community = "0.3.7"
+pyarrow = "18.0.0"
+chromadb = "0.5.18"
+pytest-cov = "*"
+
+[requires]
+python_version = "3.12"
