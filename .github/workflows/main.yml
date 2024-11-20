@@ -67,7 +67,8 @@ jobs:
             test_cli_rag.py \
             -v \
             --cov=../../src/datapipeline \
-            --cov-report=term-missing
+            --cov-report=term-missing \
+            --log-file=test_output.log
         env:
           PYTHONPATH: ${{ github.workspace }}/src/datapipeline
       - name: Run Integration and System Tests
@@ -97,9 +98,11 @@ jobs:
           docker cp recipe-rag-cli:/app/unit-tests.xml test-reports/recipe-rag-cli-unit-tests.xml
           docker cp recipe-rag-cli:/app/integration-tests.xml test-reports/recipe-rag-cli-integration-tests.xml
           docker cp recipe-rag-cli:/app/system-tests.xml test-reports/recipe-rag-cli-system-tests.xml
+          docker cp recipe-rag-cli:/app/test_output.log test-reports/recipe-rag-cli-test-output.log
           docker cp food-detection:/app/unit-tests.xml test-reports/food-detection-unit-tests.xml
           docker cp food-detection:/app/integration-tests.xml test-reports/food-detection-integration-tests.xml
           docker cp food-detection:/app/system-tests.xml test-reports/food-detection-system-tests.xml
+          docker cp food-detection:/app/test_output.log test-reports/food-detection-test-output.log
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
