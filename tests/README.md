@@ -34,7 +34,9 @@ The tests are organized into separate directories based on their type:
   
 **Test Coverage Reports**
 Our project aims to maintain a minimum code coverage of 50%. The coverage reports are generated using the pytest-cov plugin and are included in the CI pipeline output.
-<img width="840" alt="test_coverage" src="https://github.com/user-attachments/assets/2130bd1f-747c-4bec-a915-818ecc89d379">
+<img width="795" alt="Screenshot 2024-11-19 at 11 54 30 PM" src="https://github.com/user-attachments/assets/68839d2f-d780-4b1d-b7c5-d21b5b1757cf">
+<img width="787" alt="Screenshot 2024-11-19 at 11 54 05 PM" src="https://github.com/user-attachments/assets/d55207b4-38ae-4589-b10d-1d5f6fbc8bec">
+
 
 
 ### Run Tests Manually
