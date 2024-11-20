@@ -173,7 +173,7 @@ Here is our Technical Architecture:
 
 **Backend API**
 
-We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data. 
+We built backend api service using fast API to expose model functionality to the frontend. The backend includes three APIs: the Food Detection GPT API, the LLM Chat API, and the LLM-RAG Chat API. Each of these APIs supports both GET and POST methods for fetching and storing chat histories. Below is a screenshot of the FastAPI documentation displaying all the available endpoints. To setup the API documentation, you can follow the instructions [here](#setup-instructions).
 
 <img src="images/api-list2.png"  width="800">
 
@@ -193,12 +193,53 @@ Here are some screenshots of our app:
 
 ```Add screenshots here```
 
-## Running Dockerfile
-Instructions for running the Dockerfile can be added here.
-To run Dockerfile - `Instructions here`
+## Setup Instructions
+### Build Recipe Vector Database
+Navigate to src/datapipeline directory:
+```bash
+cd src/datapipeline
+```
+Build container:
+```bash
+sh docker-shell.sh
+```
+Run cli_rag.py to download recipe vector database and build Chromadb:
+```bash
+python cli_rag.py --download --load
+```
+Note: Keep this container running while proceding to the next container.
+### Run API Server
+Navigate to src/api-service:
+```bash
+cd src/api-service
+```
+Build container:
+```bash
+sh docker-shell.sh
+```
+Start server:
+```bash
+uvicorn-server
+```
+Note: Keep this container running while proceding to the next container.
+### Run Frontend 
+Navigate to src/frontend_react:
+```bash
+cd src/frontend_react
+```
+Build container:
+```bash
+sh docker-shell.sh
+```
+Start frontend:
+```bash
+npm install
+npm run dev
+```
 
+
+----
 
 **Notebooks/Reports**
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
 
-----
