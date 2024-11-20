@@ -5,10 +5,10 @@ run-name: ${{ github.actor }} submitted a CI CD Action
 on:
   push:
     branches:
-      - 'hanna/ci'
+      - 'milestone4'
   pull_request:
     branches:
-      - 'hanna/ci'
+      - 'milestone4'
 
 jobs:
 
