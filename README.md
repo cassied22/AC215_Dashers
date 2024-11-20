@@ -98,13 +98,11 @@
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── cli_rag.py
-    │   ├── dataloader.py
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
     │   ├── docker-shell.sh
     │   ├── input-datasets
     │   ├── outputs
-    │   ├── preprocess_cv.py
     │   └── requirements.txt
     ├── food-detection
     │   ├── Dockerfile
@@ -115,19 +113,6 @@
     │   ├── gemini-object-detection.py
     │   ├── gpt-object-detection.py
     │   └── requirements.txt
-    ├── llm_finetuning
-    │   ├── .gitignore
-    │   ├── README.md
-    │   ├── dataset-creator
-    │   ├── env.dev
-    │   ├── gemini-finetuner
-    │   └── images
-    ├── models
-    │   ├── Dockerfile
-    │   ├── docker-shell.sh
-    │   ├── infer_model.py
-    │   ├── model_rag.py
-    │   └── train_model.py
     └── secrets
         └── .gitkeep
 ```
