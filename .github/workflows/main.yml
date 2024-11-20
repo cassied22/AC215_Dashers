@@ -61,7 +61,7 @@ jobs:
           # Install dependencies
           python -m pip install --upgrade pip
           python -m pip install -r src/datapipeline/requirements.txt
-          # Add PYTHONPATH and run tests
+          # Add PYTHONPATH and run tests with coverage
           cd tests/datapipeline
           PYTHONPATH=$PYTHONPATH:../../src/datapipeline python -m pytest \
             test_cli_rag.py \
@@ -89,15 +89,11 @@ jobs:
           cd tests/integration
           docker-compose down -v
           docker network rm recipe-rag-network || true
-      - name: Create artifact archive
-        run: |
-          cd ${{ github.workspace }}
-          zip -r ci-cd-pipeline.zip .
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ci-cd-pipeline
-          path: ci-cd-pipeline.zip
+          name: tests
+          path: tests
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
