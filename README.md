@@ -173,8 +173,24 @@ Essentially, there are 2 components in our App:
 2. The LLM Chat Component
     In the path: /Users/qjy/Harvard/2024fall/ac215/AC215_Dashers/src/frontend_react/src/app/chat
     We used StartChatWithLLM to take food ingredients from the image recognition component as input and generate the recommended recipes. Then, we used ContinueChatWithLLM to generate further conversations entered by user in the chat box.
+More components (chat history) will be finalized in the next milestone.
+
 
 Here are some screenshots of our app:
+The start of the page: click on "Get Started" to go to the image upload page.
+<img src="images/frontend/1.png"  width="800">
+Upload image here:
+<img src="images/frontend/2.png"  width="800">
+<img src="images/frontend/3.png"  width="800">
+See the results here:
+<img src="images/frontend/4.png"  width="800">
+Get recipe in the chat box page:
+<img src="images/frontend/5.png"  width="800">
+See the sample recipies and detail use of ingredients:
+<img src="images/frontend/6.png"  width="800">
+<img src="images/frontend/7.png"  width="800">
+Continue chatting with the AI for additional requirements:
+<img src="images/frontend/8.png"  width="800">
 
 ```Add screenshots here```
 
