@@ -18,6 +18,8 @@ The linting process ensures that the codebase adheres to consistent coding stand
   - In this integrated environment, the container for recipe-rag-cli service, chromadb, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
   - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run.
 
+    <img width="619" alt="183a0b8194ec25401c0306466465b881" src="https://github.com/user-attachments/assets/5fcd9708-50f4-4769-8392-1beaaf57e585">
+
 **Automated Testing Implementation**
 The specific testing frameworks and tools used are:
 
@@ -32,6 +34,8 @@ The tests are organized into separate directories based on their type:
   
 **Test Coverage Reports**
 Our project aims to maintain a minimum code coverage of 50%. The coverage reports are generated using the pytest-cov plugin and are included in the CI pipeline output.
+<img width="840" alt="test_coverage" src="https://github.com/user-attachments/assets/2130bd1f-747c-4bec-a915-818ecc89d379">
+
 
 ### Run Tests Manually
 1. Ensure that you have Python installed on your system.
