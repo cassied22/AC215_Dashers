@@ -79,6 +79,7 @@ jobs:
           cd tests/food-detection
           PYTHONPATH=$PYTHONPATH:../../src/food-detection python -m pytest \
             test_gemini_object_detection.py \
+            test_gpt_object_detection.py \
             -v \
             --cov=../../src/food-detection \
             --cov-report=html:../../tests/coverage-report/food-detection
