@@ -56,7 +56,7 @@ jobs:
         run: |
           mkdir -p src/secrets
           echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
-      - name: Run Unit Tests
+      - name: Run Unit Tests (datapipeline)
         run: |
           # Install dependencies
           python -m pip install --upgrade pip
@@ -67,9 +67,23 @@ jobs:
             test_cli_rag.py \
             -v \
             --cov=../../src/datapipeline \
-            --cov-report=html:../../tests/coverage-report
+            --cov-report=html:../../tests/coverage-report/datapipeline
         env:
           PYTHONPATH: ${{ github.workspace }}/src/datapipeline
+      - name: Run Unit Tests (food-detection)
+        run: |
+          # Install dependencies
+          python -m pip install --upgrade pip
+          python -m pip install -r src/food-detection/requirements.txt
+          # Add PYTHONPATH and run tests with coverage
+          cd tests/food-detection
+          PYTHONPATH=$PYTHONPATH:../../src/food-detection python -m pytest \
+            test_gemini_object_detection.py \
+            -v \
+            --cov=../../src/food-detection \
+            --cov-report=html:../../tests/coverage-report/food-detection
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src/food-detection
       - name: Run Integration and System Tests
         run: |
           cd tests/integration
@@ -98,4 +112,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
-          path: htmlcov
+          path: tests/coverage-report
