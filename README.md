@@ -178,6 +178,10 @@ Here are some screenshots of our app:
 
 ```Add screenshots here```
 
+**Test**
+
+See detailed description of Test [here]([https://github.com/cassied22/AC215_Dashers/edit/milestone4/tests/README.md]). 
+
 ## Running Dockerfile
 Instructions for running the Dockerfile can be added here.
 To run Dockerfile - `Instructions here`
