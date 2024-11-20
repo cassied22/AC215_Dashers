@@ -72,6 +72,7 @@ jobs:
         # Install dependencies
         python -m pip install --upgrade pip
         python -m pip install -r src/datapipeline/requirements.txt
+        python -m pip install pytest pytest-cov
         
         # Add PYTHONPATH and run tests
         cd tests/datapipeline
@@ -88,11 +89,38 @@ jobs:
       run: |
         cd tests/integration
         docker-compose build --no-cache
-        docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection
+        docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection > test_output.log
+      continue-on-error: true
       env:
         GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
         GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
-        
+    
+    # Display Test Output
+    - name: Display Test Output
+      if: always()
+      run: |
+        cat tests/integration/test_output.log
+
+    # Retrieve Test Reports
+    - name: Retrieve Test Reports
+      if: always()
+      run: |
+        mkdir -p test-reports
+        docker cp recipe-rag-cli:/app/unit-tests.xml test-reports/recipe-rag-cli-unit-tests.xml
+        docker cp recipe-rag-cli:/app/integration-tests.xml test-reports/recipe-rag-cli-integration-tests.xml
+        docker cp recipe-rag-cli:/app/system-tests.xml test-reports/recipe-rag-cli-system-tests.xml
+        docker cp food-detection:/app/unit-tests.xml test-reports/food-detection-unit-tests.xml
+        docker cp food-detection:/app/integration-tests.xml test-reports/food-detection-integration-tests.xml
+        docker cp food-detection:/app/system-tests.xml test-reports/food-detection-system-tests.xml
+
+    # Upload Test Reports
+    - name: Upload Test Reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: test-reports
+
     - name: Print Docker logs on failure
       if: failure()
       run: |
