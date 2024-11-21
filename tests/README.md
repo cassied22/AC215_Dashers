@@ -15,8 +15,10 @@ The linting process ensures that the codebase adheres to consistent coding stand
 - Integration Tests(System Tests):
   - Since we only have two components, our integration tests serve the same purpose as system tests. 
   - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory.
-  - In this integrated environment, recipe-rag-cli service, chromadb, and food-detection service all have their containers running. We test the interaction between LLM's API endpoint by checking the response code of these APIs using our mock input to verify the interaction and integration between different application components.
+  - In this integrated environment, the container for recipe-rag-cli service, chromadb, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
   - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run.
+
+    <img width="619" alt="183a0b8194ec25401c0306466465b881" src="https://github.com/user-attachments/assets/5fcd9708-50f4-4769-8392-1beaaf57e585">
 
 **Automated Testing Implementation**
 The specific testing frameworks and tools used are:
@@ -27,10 +29,15 @@ The tests are organized into separate directories based on their type:
 
 - tests/datapipeline: Contains unit tests for the data pipeline component.
 - tests/food-detection: Contains unit tests for the food detection component.
-- tests/integration: Contains integration(system) tests that verify the interaction between different components.
+- tests/integration: Contains environment for integration(system) tests that run containers for all components.
+- tests/system: Contains integration(system) tests script that verifies the interaction between different components.
   
 **Test Coverage Reports**
 Our project aims to maintain a minimum code coverage of 50%. The coverage reports are generated using the pytest-cov plugin and are included in the CI pipeline output.
+<img width="795" alt="test1" src="https://github.com/user-attachments/assets/68839d2f-d780-4b1d-b7c5-d21b5b1757cf">
+<img width="787" alt="test2" src="https://github.com/user-attachments/assets/d55207b4-38ae-4589-b10d-1d5f6fbc8bec">
+
+
 
 ### Run Tests Manually
 1. Ensure that you have Python installed on your system.
