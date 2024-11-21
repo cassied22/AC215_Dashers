@@ -1,17 +1,17 @@
 import pytest
 import time
 import subprocess
-import os
 from pathlib import Path
 import http.client
 import json
 import uuid
 import docker
+import base64
 
 BASE_URL = "localhost"
 PORT = 9000
 CONTAINER_NAME = "daily-meal-api-service"
-TEST_IMAGE_PATH = str(Path(__file__).parent.parent / "image.jpg")
+TEST_IMAGE_PATH = str(Path(__file__).parent / "food_pic.jpeg")
 TEST_SESSION_ID = str(uuid.uuid4())
 
 def make_request(method, path, data=None, headers=None):
@@ -21,7 +21,6 @@ def make_request(method, path, data=None, headers=None):
             'Content-Type': 'application/json',
             'X-Session-ID': TEST_SESSION_ID
         }
-    
     conn.request(method, path, body=json.dumps(data) if data else None, headers=headers)
     return conn.getresponse()
 
@@ -50,7 +49,7 @@ def api_service():
 class TestAPIService:
     def test_get_chats(self):
         # List of endpoints to test
-        endpoints = ["/llm/chats", "/llm-rag/chats"]
+        endpoints = ["/llm/chats", "/llm-rag/chats", "/llm-food-detection/chats"]
 
         for endpoint in endpoints:
             response = make_request("GET", endpoint)
@@ -59,7 +58,7 @@ class TestAPIService:
             assert isinstance(data, list), f"Expected data to be a list at endpoint {endpoint}"
 
     def test_start_chat(self):
-        endpoints = ["/llm/chats", "/llm-rag/chats"]
+        endpoints = ["/llm-rag/chats"]
         for endpoint in endpoints:
             payload = {
                 "content": "What are healthy breakfast options?"
@@ -75,7 +74,7 @@ class TestAPIService:
             return data["chat_id"]
 
     def test_continue_chat(self):
-        endpoints = ["/llm/chats"]
+        endpoints = ["/llm-rag/chats"]
         for endpoint in endpoints:
             chat_id = self.test_start_chat()
             payload = {
@@ -87,7 +86,7 @@ class TestAPIService:
             assert len(data["messages"]) == 4
 
     def test_get_specific_chat(self):
-        endpoints = ["/llm/chats"]
+        endpoints = ["/llm-rag/chats"]
         for endpoint in endpoints:
             chat_id = self.test_start_chat()
             response = make_request("GET", f"{endpoint}/{chat_id}")
@@ -96,6 +95,40 @@ class TestAPIService:
             assert data["chat_id"] == chat_id
 
     def test_invalid_chat_id(self):
-        invalid_id = str(uuid.uuid4())
-        response = make_request("GET", f"/llm/chats/{invalid_id}")
-        assert response.status == 404
+        endpoints = ["/llm/chats", "/llm-rag/chats", "/llm-food-detection/chats"]
+        for endpoint in endpoints:
+            invalid_id = str(uuid.uuid4())
+            response = make_request("GET", f"{endpoint}/{invalid_id}")
+            assert response.status == 404
+
+    # user input images, llm continues with text chat
+    def test_start_chat_with_image(self):
+        with open(TEST_IMAGE_PATH, "rb") as image_file:
+            image_data = image_file.read()
+        
+        encoded_image = base64.b64encode(image_data).decode('utf-8')
+        payload = {
+            "content": "Identify the list of food items shown in this image",
+            "image": f"data:image/jpeg;base64,{encoded_image}"
+        }
+        headers = {
+            'Content-Type': 'application/json',
+            'X-Session-ID': TEST_SESSION_ID
+        }
+
+        response = make_request("POST", "/llm-food-detection/chats", data=payload, headers=headers)
+        assert response.status == 200, f"Failed to upload image with status {response.status}"
+        
+        data = json.loads(response.read())
+        assert isinstance(data, dict), "Expected data to be a dictionary"
+        assert "messages" in data, "Expected 'messages' field in the response data"
+        assert len(data["messages"]) == 2, "Expected two messages in the response (user and gpt)"
+        assert data["messages"][1]["role"] == "gpt", "Expected the second message to be from 'gpt'"
+        assert "results" in data["messages"][1], "Expected 'results' in the gpt message"
+        return data["chat_id"], data["messages"][0]["message_id"]
+
+    def test_get_chat_image(self):
+        chat_id,message_id = self.test_start_chat_with_image()
+        response = make_request("GET", f"/llm-food-detection/images/{chat_id}/{message_id}.png")
+        assert response.status == 200
+        assert response.getheader('Content-Type') == 'image/png'
