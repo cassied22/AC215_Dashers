@@ -207,7 +207,6 @@ See the sample recipies and detail use of ingredients:
 Continue chatting with the AI for additional requirements:
 <img src="images/frontend/8.png"  width="800">
 
-```Add screenshots here```
 
 ## Running Dockerfile
 Instructions for running the Dockerfile can be added here.
