@@ -1,104 +1,58 @@
 'use client';
+
 import React, { useState } from 'react';
-import { Send, CameraAltOutlined, Restaurant } from '@mui/icons-material';
-import IconButton from '@mui/material/IconButton';
-import DineOutMap from '../../components/chat/DineOutMap';
+import DineOutMap from '@/components/chat/DineOutMap';
 
 export default function DineoutChatTest() {
     const [message, setMessage] = useState('');
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [showDineOutMap, setShowDineOutMap] = useState(false);
     const [messages, setMessages] = useState([]);
 
-    const handleSubmit = () => {
-        if (message.trim() || selectedImage) {
-            const newMessage = {
-                text: message,
-                image: selectedImage,
-                timestamp: new Date(),
-                dineoutLocation: showDineOutMap
-            };
+    const handleSubmit = async () => {
+        if (message.trim()) {
+            try {
+                // Call the API route
+                const response = await fetch(`/api/places?keyword=${message}`);
+                const data = await response.json();
 
-            // Add message to list
-            setMessages(prevMessages => [...prevMessages, newMessage]);
+                if (data.results) {
+                    const newMessages = data.results.map((place) => ({
+                        text: `Found: ${place.name} at ${place.vicinity}`,
+                        dineoutLocation: place.geometry.location,
+                    }));
 
-            // Reset fields
-            setMessage('');
-            setSelectedImage(null);
-            setShowDineOutMap(false);
-        }
-    };
+                    setMessages((prevMessages) => [...prevMessages, ...newMessages]);
+                }
 
-    const toggleDineOutMap = () => {
-        setShowDineOutMap(!showDineOutMap);
-    };
-
-    const handleImageUpload = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setSelectedImage(file);
+                setMessage('');
+            } catch (error) {
+                console.error('Error fetching restaurant data:', error);
+            }
         }
     };
 
     return (
-        <div className="container mx-auto p-6 max-w-2xl">
-            <h1 className="text-2xl font-bold mb-6 text-center">Dine Out</h1>
-
-            {/* Dineout Map Section */}
-            {showDineOutMap && (
-                <div className="mb-4">
-                    <DineOutMap />
-                </div>
-            )}
-
-            {/* Chat Input Area */}
-            <div className="bg-white border rounded-lg p-4 shadow-md">
-                <textarea
+        <div className="dineout-chat-container">
+            <h1>🍴 Daily Food Assistant</h1>
+            <div style={{ height: '400px', marginBottom: '1rem' }}>
+                <DineOutMap
+                    locations={messages
+                        .filter((msg) => msg.dineoutLocation)
+                        .map((msg) => msg.dineoutLocation)}
+                />
+            </div>
+            <div className="chat-input">
+                <input
+                    type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full p-2 border rounded-lg mb-4"
-                    placeholder="Type your message..."
-                    rows={4}
+                    placeholder="Type your query, e.g., 'Pizza' or 'Chinese food'"
                 />
-
-                <div className="flex justify-between items-center">
-                    <div className="flex space-x-2">
-                        <input
-                            type="file"
-                            className="hidden"
-                            id="image-upload"
-                            onChange={handleImageUpload}
-                            accept="image/*"
-                        />
-                        <IconButton
-                            onClick={() => document.getElementById('image-upload').click()}
-                            className="text-gray-600 hover:bg-gray-100"
-                        >
-                            <CameraAltOutlined />
-                        </IconButton>
-                        <IconButton
-                            onClick={toggleDineOutMap}
-                            color={showDineOutMap ? 'primary' : 'default'}
-                            className="text-gray-600 hover:bg-gray-100"
-                        >
-                            <Restaurant />
-                        </IconButton>
-                    </div>
-                    <IconButton
-                        onClick={handleSubmit}
-                        disabled={!message.trim() && !selectedImage}
-                        className="text-blue-600 hover:bg-blue-100"
-                    >
-                        <Send />
-                    </IconButton>
-                </div>
-
-                {/* Image Preview */}
-                {selectedImage && (
-                    <div className="mt-2 text-sm text-gray-500">
-                        Selected Image: {selectedImage.name}
-                    </div>
-                )}
+                <button onClick={handleSubmit}>Search</button>
+            </div>
+            <div className="chat-messages">
+                {messages.map((msg, index) => (
+                    <p key={index}>{msg.text}</p>
+                ))}
             </div>
         </div>
     );
