@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, CameraAltOutlined } from '@mui/icons-material';
+import { Send, CameraAltOutlined, Restaurant } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
+import DineOutMap from './DineOutMap';
 
 export default function ChatInput({
     onSendMessage,
@@ -13,6 +14,7 @@ export default function ChatInput({
     // Component States
     const [message, setMessage] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
+    const [showDineOutMap, setShowDineOutMap] = useState(false);
     const textAreaRef = useRef(null);
     const fileInputRef = useRef(null);
 
@@ -46,7 +48,6 @@ export default function ChatInput({
         }
     };
     const handleSubmit = () => {
-
         if (message.trim() || selectedImage) {
             console.log('Submitting message:', message);
             const newMessage = {
@@ -100,6 +101,10 @@ export default function ChatInput({
         }
     };
 
+    const toggleDineOutMap = () => {
+        setShowDineOutMap(!showDineOutMap);
+    };
+
     // UI View
     return (
         <div className="bg-white/80 backdrop-blur-lg rounded-xl shadow-lg p-6">
@@ -117,6 +122,12 @@ export default function ChatInput({
                     >
                         ×
                     </button>
+                </div>
+            )}
+
+            {showDineOutMap && (
+                <div className="mb-4">
+                    <DineOutMap />
                 </div>
             )}
 
@@ -158,6 +169,12 @@ export default function ChatInput({
                         className="text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                     >
                         <CameraAltOutlined />
+                    </IconButton>
+                    <IconButton
+                        onClick={toggleDineOutMap}
+                        className="text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                        <Restaurant />
                     </IconButton>
                 </div>
 
