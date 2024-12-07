@@ -225,7 +225,7 @@ sh docker-shell.sh
 ```
 Start server:
 ```bash
-uvicorn-server
+uvicorn_server
 ```
 Note: Keep this container running while proceding to the next container.
 ### Run Frontend 
