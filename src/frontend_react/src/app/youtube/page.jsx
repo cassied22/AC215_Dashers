@@ -1,6 +1,6 @@
 'use client'
 
-import DineOutMap from '@/components/googleMap/DineOutMap';
+import fetchVideos from '@/components/youtube/Video';
 
 export default function MapPage() {
     return (
@@ -17,7 +17,7 @@ export default function MapPage() {
                 </div>
 
                 {/* Image Classification Component */}
-                <DineOutMap />
+                <fetchVideos />
             </div>
         </div>
     );
