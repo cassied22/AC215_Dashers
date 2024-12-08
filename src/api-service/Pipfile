@@ -17,6 +17,9 @@ fastapi = "*"
 python-multipart = "*"
 pillow = "*"
 chromadb = "*"
+openai = "*"
+phidata = "*"
+duckduckgo-search = "5.3.1b1"
 
 [requires]
 python_version = "3.12"

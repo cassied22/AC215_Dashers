@@ -10,7 +10,7 @@ export SECRETS_DIR=$(pwd)/../secrets/
 export PERSISTENT_DIR=$(pwd)/../../persistent-folder/
 export GCP_PROJECT="brilliant-lens-421801" # CHANGE TO YOUR PROJECT ID
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/llm-service-account-cassie.json"
-# export GCS_BUCKET_NAME="cheese-app-models"
+export OPENAI_API_KEY="/secrets/openai-key.json"
 export CHROMADB_HOST="recipe-rag-chromadb"
 export CHROMADB_PORT=8000
 
@@ -30,6 +30,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -p 9000:9000 \
 -e DEV=1 \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
+-e OPENAI_API_KEY=$OPENAI_API_KEY \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e CHROMADB_HOST=$CHROMADB_HOST \
 -e CHROMADB_PORT=$CHROMADB_PORT \
