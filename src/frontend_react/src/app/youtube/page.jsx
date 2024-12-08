@@ -1,6 +1,6 @@
 'use client'
 
-import fetchVideos from '@/components/youtube/Video';
+import FetchVideos from '@/components/youtube/Video';
 
 export default function MapPage() {
     return (
@@ -12,12 +12,12 @@ export default function MapPage() {
                         Watch a video on how to cook it 🥣
                     </h1>
                     <p className="text-gray-600 mt-2">
-                        Relax and enjoy! You got it
+                        Relax and enjoy. You got it!
                     </p>
                 </div>
 
                 {/* Image Classification Component */}
-                <fetchVideos />
+                <FetchVideos />
             </div>
         </div>
     );

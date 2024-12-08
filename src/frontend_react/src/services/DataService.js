@@ -42,6 +42,26 @@ const DataService ={
     ContinueChatWithLLM: async function (model, chat_id, message) {
         return await api.post(BASE_API_URL + "/" + model + "/chats/" + chat_id, message);
     },
+
+    // SearchYouTube: async function (recipe_name) {
+    //     return await api.get(BASE_API_URL + "/youtube", {
+    //         params: { recipe_name },
+    //     });
+    // },
+
+    SearchYouTube: async function (recipe_name) {
+        try {
+            const response = await api.get(BASE_API_URL + "/youtube", {
+                params: { recipe_name },
+            });
+            console.log("API Response:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("API Error:", error.message, error.response?.data);
+            throw error;
+        }
+    },
+    
     
     // ImageClassificationPredict: async function (formData) {
     //     // Simulate API delay
