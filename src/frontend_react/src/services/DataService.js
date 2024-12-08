@@ -28,6 +28,20 @@ const DataService ={
     ImageClassificationPredict: async function(message){
         return await api.post(BASE_API_URL + "/llm-food-detection/chats", message)
     },
+
+    GetChats: async function (model, limit) {
+        return await api.get(BASE_API_URL + "/" + model + "/chats?limit=" + limit);
+    },
+    GetChat: async function (model, chat_id) {
+        return await api.get(BASE_API_URL + "/" + model + "/chats/" + chat_id);
+    },
+
+    StartChatWithLLM: async function (model, message) {
+        return await api.post(BASE_API_URL + "/" + model + "/chats/", message);
+    },
+    ContinueChatWithLLM: async function (model, chat_id, message) {
+        return await api.post(BASE_API_URL + "/" + model + "/chats/" + chat_id, message);
+    },
     
     // ImageClassificationPredict: async function (formData) {
     //     // Simulate API delay
@@ -64,109 +78,110 @@ const DataService ={
 
     //     return Promise.resolve({ data: mockResults });
     // },
-    Audio2Text: async function (formData) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+    // Audio2Text: async function (formData) {
+    //     // Simulate API delay
+    //     await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Mock response data
-        const mockResults = [
-            {
-                transcript: "Hello, this is a test recording of the audio to text conversion system.",
-                confidence: 0.95
-            },
-            {
-                transcript: "The quick brown fox jumps over the lazy dog.",
-                confidence: 0.88
-            },
-            {
-                transcript: "This is an example of automated speech recognition.",
-                confidence: 0.92
-            }
-        ];
+    //     // Mock response data
+    //     const mockResults = [
+    //         {
+    //             transcript: "Hello, this is a test recording of the audio to text conversion system.",
+    //             confidence: 0.95
+    //         },
+    //         {
+    //             transcript: "The quick brown fox jumps over the lazy dog.",
+    //             confidence: 0.88
+    //         },
+    //         {
+    //             transcript: "This is an example of automated speech recognition.",
+    //             confidence: 0.92
+    //         }
+    //     ];
 
-        // Randomly fail sometimes (10% chance)
-        if (Math.random() < 0.1) {
-            throw new Error('Mock transcription failed');
-        }
+    //     // Randomly fail sometimes (10% chance)
+    //     if (Math.random() < 0.1) {
+    //         throw new Error('Mock transcription failed');
+    //     }
 
-        return Promise.resolve({ data: mockResults });
-    },
-    Text2Audio: async function (data) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+    //     return Promise.resolve({ data: mockResults });
+    // },
+    // Text2Audio: async function (data) {
+    //     // Simulate API delay
+    //     await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Mock response data
-        const mockResults = {
-            success: true,
-            data: {
-                text: data.text,
-                audio_path: `mock_audio_${Date.now()}.mp3`,
-                duration: "2.5s",
-                format: "mp3",
-                timestamp: new Date().toISOString()
-            }
-        };
+    //     // Mock response data
+    //     const mockResults = {
+    //         success: true,
+    //         data: {
+    //             text: data.text,
+    //             audio_path: `mock_audio_${Date.now()}.mp3`,
+    //             duration: "2.5s",
+    //             format: "mp3",
+    //             timestamp: new Date().toISOString()
+    //         }
+    //     };
 
-        // Randomly fail sometimes (10% chance)
-        if (Math.random() < 0.1) {
-            throw new Error('Text to speech conversion failed');
-        }
+    //     // Randomly fail sometimes (10% chance)
+    //     if (Math.random() < 0.1) {
+    //         throw new Error('Text to speech conversion failed');
+    //     }
 
-        return Promise.resolve({ data: mockResults });
-    },
+    //     return Promise.resolve({ data: mockResults });
+    // },
 
-    Text2AudioGetAudio: function (audioPath) {
-        // For testing, return a sample audio URL
-        return 'https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav';
-    },
+    // Text2AudioGetAudio: function (audioPath) {
+    //     // For testing, return a sample audio URL
+    //     return 'https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav';
+    // },
 
-    StyleTransferGetContentImages: async function () {
-        // Mock content images
-        return {
-            data: Array.from({ length: 12 }, (_, i) => `content-${i + 1}`)
-        };
-    },
-    StyleTransferGetStyleImages: async function () {
-        // Mock style images
-        return {
-            data: Array.from({ length: 12 }, (_, i) => `style-${i + 1}`)
-        };
-    },
-    StyleTransferApplyStyleTransfer: async function (styleImage, contentImage) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+    // StyleTransferGetContentImages: async function () {
+    //     // Mock content images
+    //     return {
+    //         data: Array.from({ length: 12 }, (_, i) => `content-${i + 1}`)
+    //     };
+    // },
+    // StyleTransferGetStyleImages: async function () {
+    //     // Mock style images
+    //     return {
+    //         data: Array.from({ length: 12 }, (_, i) => `style-${i + 1}`)
+    //     };
+    // },
+    // StyleTransferApplyStyleTransfer: async function (styleImage, contentImage) {
+    //     // Simulate API delay
+    //     await new Promise(resolve => setTimeout(resolve, 2000));
 
-        return {
-            data: {
-                stylized_image: 'result-image',
-                style_image: styleImage,
-                content_image: contentImage,
-                processing_time: '2.5s'
-            }
-        };
-    },
-    StyleTransferGetImage: function (imagePath) {
-        // For testing, return a placeholder image
-        return `https://picsum.photos/400/400?random=${imagePath}`;
-    },
+    //     return {
+    //         data: {
+    //             stylized_image: 'result-image',
+    //             style_image: styleImage,
+    //             content_image: contentImage,
+    //             processing_time: '2.5s'
+    //         }
+    //     };
+    // },
+    // StyleTransferGetImage: function (imagePath) {
+    //     // For testing, return a placeholder image
+    //     return `https://picsum.photos/400/400?random=${imagePath}`;
+    // },
 
-    GetChats: async function (model, limit) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
+    // GetChats: async function (model, limit) {
+    //     // Simulate API delay
+    //     await new Promise(resolve => setTimeout(resolve, 500));
 
-        const limitedChats = mockChats.slice(0, limit || mockChats.length);
-        return Promise.resolve({ data: limitedChats });
-    },
-    GetChat: async function (model, chat_id) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 300));
+    //     const limitedChats = mockChats.slice(0, limit || mockChats.length);
+    //     return Promise.resolve({ data: limitedChats });
+    // },
+    // GetChat: async function (model, chat_id) {
+    //     // Simulate API delay
+    //     await new Promise(resolve => setTimeout(resolve, 300));
 
-        const chat = mockChats.find(c => c.chat_id === chat_id);
-        if (!chat) {
-            throw new Error('Chat not found');
-        }
-        return Promise.resolve({ data: chat });
-    },
+    //     const chat = mockChats.find(c => c.chat_id === chat_id);
+    //     if (!chat) {
+    //         throw new Error('Chat not found');
+    //     }
+    //     return Promise.resolve({ data: chat });
+    // },
+
     // StartChatWithLLM: async function (model, message) {
     //     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -192,10 +207,6 @@ const DataService ={
     //     mockChats.unshift(newChat);
     //     return Promise.resolve({ data: newChat });
     // },
-    StartChatWithLLM: async function (model, message) {
-        return await api.post(BASE_API_URL + "/" + model + "/chats/", message);
-    },
-
     // ContinueChatWithLLM: async function (model, chat_id, message) {
     //     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -225,9 +236,6 @@ const DataService ={
     //     // For testing, return a placeholder image
     //     return `https://picsum.photos/800/600?random=${encodeURIComponent(image_path)}`;
     // },
-    ContinueChatWithLLM: async function (model, chat_id, message) {
-        return await api.post(BASE_API_URL + "/" + model + "/chats/" + chat_id, message);
-    },
 }
 
 export default DataService;

@@ -92,10 +92,10 @@ export default function ImageClassification() {
     };
     
     
-    const handleButtonClick = () => {
+    const handleButtonClick = (model) => {
         const ingredients = prediction.results?.map(item => item.class_name).join(',');
         // Navigate to ChatPage with the ingredient as a parameter
-        router.push(`/chat?ingredient=${encodeURIComponent(ingredients)}`);
+        router.push(`/chat?ingredient=${encodeURIComponent(ingredients)}&model=${encodeURIComponent(model)}`);
     };
 
     // UI View
@@ -217,15 +217,20 @@ export default function ImageClassification() {
             )} */}
 
             {prediction && (
-                <div>
+                <div className="flex flex-wrap justify-center gap-4">
                     <button 
-                        onClick={handleButtonClick}
+                        onClick={() => handleButtonClick('llm')}
                         className="button-primary"
                     >
-                        Continue
+                        AI Assistant (LLM)
                     </button>
+                    <button 
+                        onClick={() => handleButtonClick('llm-rag')}
+                        className="button-secondary">
+                    AI Expert (LLM-RAG)
+                        </button>
                 </div>
-            )}  
+            )}
 
         </div>
     );
