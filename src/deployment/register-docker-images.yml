@@ -1,0 +1,81 @@
+---
+- name: Build and push Docker images to GCR
+  hosts: localhost
+  gather_facts: false
+  vars:
+    docker_tag_file: .docker-tag
+
+  tasks:
+    - name: Authenticate GCP with service account
+      shell: gcloud auth activate-service-account --key-file={{ gcp_service_credentials }}
+      register: auth_result
+
+    - name: Configure Docker to use gcloud as credential helper
+      shell: gcloud auth configure-docker us-docker.pkg.dev
+
+    - name: Get timestamp for docker tag
+      shell: "(date +%Y%m%d%H%M%S)"
+      register: tag
+
+    - name: Build and push Docker image for daily-meal-frontend-react
+      block:
+        - name: Build container image for daily-meal-frontend-react
+          shell: |
+            docker build \
+              -t gcr.io/{{ gcp_project }}/daily-meal-frontend-react:{{ tag.stdout }} \
+              --platform=linux/amd64 \
+              --pull \
+              -f ../frontend_react/Dockerfile \
+              ../frontend_react
+          args:
+            chdir: ..
+
+        - name: Push container image for daily-meal-frontend-react
+          shell: |
+            docker push gcr.io/{{ gcp_project }}/daily-meal-frontend-react:{{ tag.stdout }}
+          args:
+            chdir: ..
+
+    - name: Build and push Docker image for daily-meal-api-service
+      block:
+        - name: Build container image for daily-meal-api-service
+          shell: |
+            docker build \
+              -t gcr.io/{{ gcp_project }}/daily-meal-api-service:{{ tag.stdout }} \
+              --platform=linux/amd64 \
+              --pull \
+              -f ../api-service/Dockerfile \
+              ../api-service
+          args:
+            chdir: ..
+
+        - name: Push container image for daily-meal-api-service
+          shell: |
+            docker push gcr.io/{{ gcp_project }}/daily-meal-api-service:{{ tag.stdout }}
+          args:
+            chdir: ..
+
+    - name: Build and push Docker image for daily-meal-vector-db-cli
+      block:
+        - name: Build container image for daily-meal-vector-db-cli
+          shell: |
+            docker build \
+              -t gcr.io/{{ gcp_project }}/daily-meal-vector-db-cli:{{ tag.stdout }} \
+              --platform=linux/amd64 \
+              --pull \
+              -f ../datapipeline/Dockerfile \
+              ../datapipeline
+          args:
+            chdir: ..
+
+        - name: Push container image for daily-meal-vector-db-cli
+          shell: |
+            docker push gcr.io/{{ gcp_project }}/daily-meal-vector-db-cli:{{ tag.stdout }}
+          args:
+            chdir: ..
+
+    - name: Save Docker tag
+      shell: echo {{ tag.stdout }} > {{ docker_tag_file }}
+
+    - name: Remove all unused containers and images
+      shell: docker system prune -af
