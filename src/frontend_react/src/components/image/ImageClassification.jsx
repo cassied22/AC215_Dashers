@@ -95,6 +95,7 @@ export default function ImageClassification() {
     const handleButtonClick = (model) => {
         const ingredients = prediction.results?.map(item => item.class_name).join(',');
         // Navigate to ChatPage with the ingredient as a parameter
+        console.log(`/chat?ingredient=${encodeURIComponent(ingredients)}&model=${encodeURIComponent(model)}`)
         router.push(`/chat?ingredient=${encodeURIComponent(ingredients)}&model=${encodeURIComponent(model)}`);
     };
 
