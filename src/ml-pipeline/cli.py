@@ -31,16 +31,16 @@ GCP_REGION = os.environ["GCP_REGION"]
 GCP_LOCATION = "us-central1"
 
 
-# Read the docker tag file
-with open(".docker-tag-ml") as f:
-    tag = f.read()
+# # Read the docker tag file
+# with open(".docker-tag-ml") as f:
+#     tag = f.read()
 
-tag = tag.strip()
+# tag = tag.strip()
 
-print("Tag>>", tag, "<<")
+# print("Tag>>", tag, "<<")
 
 
-DATA_PROCESSOR_IMAGE = f"gcr.io/{GCP_PROJECT}/food-planner-data-processor:{tag}"
+# DATA_PROCESSOR_IMAGE = f"gcr.io/{GCP_PROJECT}/cheese-app-data-processor:{tag}"
 
 
 def generate_uuid(length: int = 8) -> str:
