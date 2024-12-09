@@ -26,32 +26,28 @@ const DataService ={
         // any initializatino logic
     },
     ImageClassificationPredict: async function(message){
-        return await api.post(BASE_API_URL + "/llm-food-detection/chats", message)
+        return await api.post("/llm-food-detection/chats", message)
+        // console.log(`Final URL: ${BASE_API_URL}/llm-food-detection/chats`);
+        // return await axios.post(`/llm-food-detection/chats`, message)
     },
 
     GetChats: async function (model, limit) {
-        return await api.get(BASE_API_URL + "/" + model + "/chats?limit=" + limit);
+        return await api.get("/" + model + "/chats?limit=" + limit);
     },
     GetChat: async function (model, chat_id) {
-        return await api.get(BASE_API_URL + "/" + model + "/chats/" + chat_id);
+        return await api.get("/" + model + "/chats/" + chat_id);
     },
 
     StartChatWithLLM: async function (model, message) {
-        return await api.post(BASE_API_URL + "/" + model + "/chats/", message);
+        return await api.post(`/${model}/chats`, message);
     },
     ContinueChatWithLLM: async function (model, chat_id, message) {
-        return await api.post(BASE_API_URL + "/" + model + "/chats/" + chat_id, message);
+        return await api.post("/" + model + "/chats/" + chat_id, message);
     },
-
-    // SearchYouTube: async function (recipe_name) {
-    //     return await api.get(BASE_API_URL + "/youtube", {
-    //         params: { recipe_name },
-    //     });
-    // },
 
     SearchYouTube: async function (recipe_name) {
         try {
-            const response = await api.get(BASE_API_URL + "/youtube", {
+            const response = await api.get("/youtube/", {
                 params: { recipe_name },
             });
             console.log("API Response:", response.data);

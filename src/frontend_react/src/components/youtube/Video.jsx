@@ -38,7 +38,7 @@ export default function FetchVideos() {
     return (
         <div className="text-gray-500">
             <div className="text-center mb-6">
-                Let's find videos for: {recipe_name}
+                Let's find videos/posts for: {recipe_name}
                 </div>
 
             {isLoading && (
@@ -54,7 +54,7 @@ export default function FetchVideos() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Video
+                                        Media
                                     </th>
                                 </tr>
                             </thead>
@@ -81,7 +81,7 @@ export default function FetchVideos() {
 
             {!isLoading && videoData.length === 0 && (
                 <div className="text-center py-6">
-                    <p className="text-gray-500">No videos found for the recipe "{recipe_name}".</p>
+                    <p className="text-gray-500">No videos found for the recipe "{recipe_name}" Try reload page.</p>
                 </div>
             )}
         </div>

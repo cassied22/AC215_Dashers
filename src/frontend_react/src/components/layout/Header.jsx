@@ -18,7 +18,7 @@ export default function Header() {
         // { name: 'Todo', path: '/todo', icon: <ListAltIcon fontSize="small" /> },
         // { name: 'Plots', path: '/plots', icon: <InsertChartIcon fontSize="small" /> },
         // { name: 'Grids', path: '/styletransfer', icon: <AppsIcon fontSize="small" /> },
-        { name: 'AI Assistant', path: '/chat', icon: <SmartToy fontSize="small" /> }
+        // { name: 'AI Assistant', path: '/chat', icon: <SmartToy fontSize="small" /> }
     ];
 
     // UI View

@@ -118,43 +118,91 @@ async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, al
 
 
 # @router.post("/chats/{chat_id}")
+# async def continue_chat_with_llm(chat_id: str, message: Dict, x_session_id: str = Header(None, alias="X-Session-ID")):
+#     print("content:", message["content"])
+#     print("x_session_id:", x_session_id)
+#     """Add a message to an existing chat"""
+#     chat = chat_manager.get_chat(chat_id, x_session_id)
+#     if not chat:
+#         raise HTTPException(status_code=404, detail="Chat not found")
+    
+#     # Get or rebuild chat session
+#     chat_session = chat_sessions.get(chat_id)
+#     if not chat_session:
+#         chat_session = rebuild_chat_session(chat["messages"])
+#         chat_sessions[chat_id] = chat_session
+    
+#     # Update timestamp
+#     current_time = int(time.time())
+#     chat["dts"] = current_time
+    
+#     # Add message ID and role
+#     message["message_id"] = str(uuid.uuid4())
+#     message["role"] = "user"
+    
+#     # Generate response
+#     assistant_response = generate_chat_response(chat_session, message)
+    
+#     # Extract title from assistant response (or message content)
+#     extracted_title = extract_title_from_response(assistant_response)
+#     chat["title"] = extracted_title if extracted_title else chat["title"]
+    
+#     # Add messages
+#     chat["messages"].append(message)
+#     chat["messages"].append({
+#         "message_id": str(uuid.uuid4()),
+#         "role": "assistant",
+#         "content": assistant_response
+#     })
+    
+#     # Save updated chat
+#     chat_manager.save_chat(chat, x_session_id)
+#     return chat
+
+@router.post("/chats/{chat_id}")
 async def continue_chat_with_llm(chat_id: str, message: Dict, x_session_id: str = Header(None, alias="X-Session-ID")):
     print("content:", message["content"])
     print("x_session_id:", x_session_id)
     """Add a message to an existing chat"""
+    
+    # Fetch the existing chat
     chat = chat_manager.get_chat(chat_id, x_session_id)
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
     
-    # Get or rebuild chat session
+    # Retrieve or rebuild the chat session
     chat_session = chat_sessions.get(chat_id)
     if not chat_session:
         chat_session = rebuild_chat_session(chat["messages"])
         chat_sessions[chat_id] = chat_session
     
-    # Update timestamp
+    # Update the timestamp
     current_time = int(time.time())
     chat["dts"] = current_time
     
-    # Add message ID and role
+    # Add message ID and role to the user's message
     message["message_id"] = str(uuid.uuid4())
     message["role"] = "user"
     
-    # Generate response
+    # Generate the assistant's response
     assistant_response = generate_chat_response(chat_session, message)
     
-    # Extract title from assistant response (or message content)
+    # Extract the title from the assistant's response or fall back to the existing title
     extracted_title = extract_title_from_response(assistant_response)
-    chat["title"] = extracted_title if extracted_title else chat["title"]
+    chat["title"] = extracted_title if extracted_title else chat.get("title", "Untitled Conversation")
     
-    # Add messages
+    # Append the user's message to the chat
     chat["messages"].append(message)
+    
+    # Append the assistant's response to the chat
     chat["messages"].append({
         "message_id": str(uuid.uuid4()),
         "role": "assistant",
         "content": assistant_response
     })
     
-    # Save updated chat
+    # Save the updated chat
     chat_manager.save_chat(chat, x_session_id)
+    
+    # Return the updated chat
     return chat

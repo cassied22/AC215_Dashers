@@ -1,0 +1,24 @@
+all:
+    vars:
+      ansible_user: sa_101972339031155142508
+      ansible_ssh_private_key_file: "../secrets/ssh-key-deployment"
+      gcp_service_account_file: "../secrets/llm-service-account-cassie.json"
+      gcp_service_account_email: "llm-service-account@brilliant-lens-421801.iam.gserviceaccount.com"
+      gcp_service_credentials: "../secrets/gcp-service-cassie.json"
+      gcp_auth_kind: "serviceaccount"
+      gcp_scopes: "https://www.googleapis.com/auth/compute"
+      gcp_project: "brilliant-lens-421801"
+      gcp_region: "us-central1"
+      gcp_zone: "us-central1-a"
+      docker_network_name: "daily-meal-network"
+      persistent_disk_name: "daily-meal-disk"
+      persistent_disk_size: 50
+      machine_instance_name: "daily-meal-instance"
+      machine_type: "n2d-standard-2"
+      machine_disk_size: 50
+      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+    children:
+        appserver:
+            hosts:
+                104.197.231.22:
