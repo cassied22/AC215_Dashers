@@ -104,32 +104,32 @@ def model_training():
     print(f"Fine-tuned model: {model_name}")
 
 
-def model_deploy():
-    print("Running Model Deployment...")
+# def model_deploy():
+#     print("Running Model Deployment...")
 
-    @dsl.pipeline
-    def model_deploy_pipeline():
-        gemini_deploy_component(
-            project=GCP_PROJECT,
-            location=GCP_LOCATION,
-            model_name="gemini-finetuned-model",  # Update with the actual model name
-        )
+#     @dsl.pipeline
+#     def model_deploy_pipeline():
+#         gemini_deploy_component(
+#             project=GCP_PROJECT,
+#             location=GCP_LOCATION,
+#             model_name="gemini-finetuned-model",  # Update with the actual model name
+#         )
 
-    # Compile and submit pipeline
-    compiler.Compiler().compile(
-        pipeline_func=model_deploy_pipeline,
-        package_path="model_deploy.yaml",
-    )
-    aip.init(project=GCP_PROJECT, staging_bucket=f"gs://{GCS_BUCKET_NAME}")
-    job_id = generate_uuid()
-    DISPLAY_NAME = f"model-deploy-{job_id}"
-    job = aip.PipelineJob(
-        display_name=DISPLAY_NAME,
-        template_path="model_deploy.yaml",
-        pipeline_root=PIPELINE_ROOT,
-        enable_caching=False,
-    )
-    job.run(service_account=GCS_SERVICE_ACCOUNT)
+#     # Compile and submit pipeline
+#     compiler.Compiler().compile(
+#         pipeline_func=model_deploy_pipeline,
+#         package_path="model_deploy.yaml",
+#     )
+#     aip.init(project=GCP_PROJECT, staging_bucket=f"gs://{GCS_BUCKET_NAME}")
+#     job_id = generate_uuid()
+#     DISPLAY_NAME = f"model-deploy-{job_id}"
+#     job = aip.PipelineJob(
+#         display_name=DISPLAY_NAME,
+#         template_path="model_deploy.yaml",
+#         pipeline_root=PIPELINE_ROOT,
+#         enable_caching=False,
+#     )
+#     job.run(service_account=GCS_SERVICE_ACCOUNT)
 
 def pipeline():
     print("Running Entire Pipeline...")
@@ -151,11 +151,11 @@ def pipeline():
             tuned_model_display_name=f"gemini-finetuned-{generate_uuid()}",
         ).after(data_processor_task)
 
-        gemini_deploy_component(
-            project=GCP_PROJECT,
-            location=GCP_LOCATION,
-            model_name=model_training_task.output,
-        ).after(model_training_task)
+        # gemini_deploy_component(
+        #     project=GCP_PROJECT,
+        #     location=GCP_LOCATION,
+        #     model_name=model_training_task.output,
+        # ).after(model_training_task)
 
     # Compile and submit pipeline
     compiler.Compiler().compile(

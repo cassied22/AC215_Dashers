@@ -35,31 +35,31 @@ def gemini_fine_tune_component(
     return sft_tuning_job.tuned_model_name
 
 
-# Deployment Component
-@dsl.component(
-    base_image="python:3.10",
-    packages_to_install=["google-cloud-aiplatform", "vertexai"]
-)
-def gemini_deploy_component(
-    project: str,
-    location: str,
-    model_name: str,
-    machine_type: str = "n1-standard-4",
-    min_replica_count: int = 1,
-    max_replica_count: int = 1
-) -> str:
-    from vertexai.generative_models import GenerativeModel
-    vertexai.init(project=project, location=location)
+# # Deployment Component
+# @dsl.component(
+#     base_image="python:3.10",
+#     packages_to_install=["google-cloud-aiplatform", "vertexai"]
+# )
+# def gemini_deploy_component(
+#     project: str,
+#     location: str,
+#     model_name: str,
+#     machine_type: str = "n1-standard-4",
+#     min_replica_count: int = 1,
+#     max_replica_count: int = 1
+# ) -> str:
+#     from vertexai.generative_models import GenerativeModel
+#     vertexai.init(project=project, location=location)
 
-    print(f"Deploying model: {model_name}")
-    generative_model = GenerativeModel.from_pretrained(model_name)
-    endpoint = generative_model.deploy(
-        machine_type=machine_type,
-        min_replica_count=min_replica_count,
-        max_replica_count=max_replica_count
-    )
+#     print(f"Deploying model: {model_name}")
+#     generative_model = GenerativeModel.from_pretrained(model_name)
+#     endpoint = generative_model.deploy(
+#         machine_type=machine_type,
+#         min_replica_count=min_replica_count,
+#         max_replica_count=max_replica_count
+#     )
 
-    print(f"Model deployed at endpoint: {endpoint.name}")
-    return endpoint.name
+#     print(f"Model deployed at endpoint: {endpoint.name}")
+#     return endpoint.name
 
 
