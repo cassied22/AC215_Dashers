@@ -67,8 +67,9 @@ async def search_youtube(recipe_name: str):
         model=OpenAIChat(id="gpt-4o"),
         tools=[DuckDuckGo()],
         instructions=[
-            "Always include sources",
-            "Include detailed titles summarizing the video content clearly.",
+            "You are an AI assistant specialized in generating informative titles from YouTube videos or websites with graph and texts.",
+            "Always include sources.",
+            "The title should accurately summarize the core idea or theme of the websites and/or videos",
             "Avoid generic titles like 'YouTube' or 'View Recipe'. "
             ],
         show_tool_calls=True,
