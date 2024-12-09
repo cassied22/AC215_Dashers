@@ -23,12 +23,14 @@ export default function ChatPage() {
     const [isTyping, setIsTyping] = useState(false);
     const [selectedModel, setSelectedModel] = useState(model);
     const router = useRouter();
+    const [currentFoodTitle, setCurrentFoodTitle] = useState(null);
 
     const fetchChat = async (id) => {
         try {
             setChat(null);
             const response = await DataService.GetChat(model, id);
             setChat(response.data);
+            setCurrentFoodTitle(response.data?.title || ""); // Update title
             console.log(chat);
         } catch (error) {
             console.error('Error fetching chat:', error);
@@ -59,6 +61,7 @@ export default function ChatPage() {
 
             // Submit chat to start the conversation
             const response = await DataService.StartChatWithLLM(model, message);
+            setCurrentFoodTitle(response.title || ""); // Update title
             setIsTyping(false);
             setChat(response.data);
             setHasActiveChat(true);
@@ -91,6 +94,9 @@ export default function ChatPage() {
     
                 // Submit chat to the server
                 const response = await DataService.ContinueChatWithLLM(model, id, message);
+
+                const newTitle = response.data?.title || chat.title || "Untitled Conversation";
+                setCurrentFoodTitle(newTitle); // Update the title state
     
                 // Update the chat state with the server response
                 setChat(response.data);
@@ -152,6 +158,7 @@ export default function ChatPage() {
                                 selectedModel={selectedModel}
                                 onModelChange={handleModelChange}
                                 disableModelSelect={false}
+                                currentFoodTitle={currentFoodTitle} // Pass the current title
                             />
                         </div>
                     </div>
@@ -179,6 +186,7 @@ export default function ChatPage() {
                                 selectedModel={selectedModel}
                                 onModelChange={handleModelChange}
                                 disableModelSelect={false}
+                                currentFoodTitle={currentFoodTitle} // Pass the current title
                             />
                         </div>
                     </div>

@@ -9,7 +9,8 @@ export default function ChatInput({
     onSendMessage,
     selectedModel,
     onModelChange,
-    disableModelSelect = false
+    disableModelSelect = false,
+    currentFoodTitle, // Add this prop
 }) {
     // Component States
     const [message, setMessage] = useState('');
@@ -76,7 +77,7 @@ export default function ChatInput({
     // };
     const handleVideoPageRedirect = () => {
         console.log('Video display button clicked');
-        router.push('/youtube');
+        router.push(`/youtube?recipe_name=${encodeURIComponent(currentFoodTitle)}`);
     };
     const handleMapPageRedirect = () => {
         console.log('Redirecting to the map page');
@@ -173,7 +174,7 @@ export default function ChatInput({
                     </IconButton>
 
                     <span className="text-sm text-gray-500">
-                        Watch it on YouTube 👀
+                        Watch a video 👀
                     </span>
                 </div>
 

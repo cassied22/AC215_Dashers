@@ -3,6 +3,10 @@
 import DineOutMap from '@/components/googleMap/DineOutMap';
 
 export default function MapPage() {
+    const handleGoBack = () => {
+        window.history.back();
+    };
+    
     return (
         <div className="min-h-screen pt-20 pb-12 px-4">
             <div className="container mx-auto max-w-3xl">
@@ -18,6 +22,14 @@ export default function MapPage() {
 
                 {/* Image Classification Component */}
                 <DineOutMap />
+
+                {/* Navigation Buttons */}
+                <div className="flex flex-wrap justify-center gap-4 mt-8 mb-8">
+                    <button onClick={handleGoBack} className="button-primary">
+                        Go Back
+                    </button>
+                </div>
+
             </div>
         </div>
     );
