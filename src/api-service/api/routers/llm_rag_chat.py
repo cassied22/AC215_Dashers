@@ -79,6 +79,7 @@ async def get_chat(chat_id: str, x_session_id: str = Header(None, alias="X-Sessi
 #     chat_manager.save_chat(chat_response, x_session_id)
 #     return chat_response
 
+@router.post("/chats")
 async def start_chat_with_llm(
     message: Dict, 
     x_session_id: str = Header(None, alias="X-Session-ID"),
