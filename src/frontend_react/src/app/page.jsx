@@ -30,6 +30,13 @@ export default function Home() {
                         >
                             Get Started
                         </button>
+                        <button
+                            className="button-secondary"
+                            onMouseEnter={(e) => e.target.innerText = "Coming Soon"}
+                            onMouseLeave={(e) => e.target.innerText = "Medium Post"}
+                        >
+                            Medium Post
+                        </button>
                     </div>
                 </div>
             </section>
