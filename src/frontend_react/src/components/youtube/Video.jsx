@@ -81,7 +81,7 @@ export default function FetchVideos() {
 
             {!isLoading && videoData.length === 0 && (
                 <div className="text-center py-6">
-                    <p className="text-gray-500">No videos found for the recipe "{recipe_name}".</p>
+                    <p className="text-gray-500">No videos found for the recipe "{recipe_name}" Try reload page.</p>
                 </div>
             )}
         </div>
