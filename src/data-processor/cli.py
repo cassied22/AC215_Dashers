@@ -19,6 +19,7 @@ GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 raw_folder = "raw_data"
 clean_folder = "clean_data"
 training_data_folder = "training_data"
+testing_data_folder = "testing_data"
 
 
 def create_preparation_qa(row):
@@ -123,21 +124,29 @@ def main(args=None):
         recipe = pd.read_csv(raw_csv_path)
         recipe_cleaned = recipe.drop_duplicates().dropna()
         recipe_cleaned = recipe_cleaned[recipe_cleaned['NER'].apply(lambda x: x != '[]')]
-        recipe_cleaned_5000 = recipe_cleaned.head(5000)
+        recipe_cleaned_6000 = recipe_cleaned.head(6000)
 
         # Save the cleaned dataset
         clean_csv_path = os.path.join(clean_folder, "recipe_cleaned.csv")
         os.makedirs(clean_folder, exist_ok=True)
-        recipe_cleaned_5000.to_csv(clean_csv_path, index=False)
+        recipe_cleaned_6000.to_csv(clean_csv_path, index=False)
 
         # Generate QA pairs
-        preparation_qa_data = recipe_cleaned_5000.apply(create_preparation_qa, axis=1)
+        preparation_qa_data = recipe_cleaned_6000.apply(create_preparation_qa, axis=1)
         preparation_qa_df = pd.DataFrame(preparation_qa_data.tolist())
 
         # Save QA pairs
         training_data_csv = os.path.join(training_data_folder, "preparation_qa.csv")
         os.makedirs(training_data_folder, exist_ok=True)
-        preparation_qa_df.to_csv(training_data_csv, index=False)
+        training_data_df = preparation_qa_df.head(5000)
+        training_data_df.to_csv(training_data_csv, index=False)
+
+        testing_data_csv = os.path.join(testing_data_folder, "test_qa.csv")
+        os.makedirs(testing_data_folder, exist_ok=True)
+        testing_data_df = preparation_qa_df.iloc[-1000:]
+        # print(testing_data_df)
+        testing_data_df.to_csv(testing_data_csv, index=False)
+
 
         # Upload cleaned data
         blob = bucket.blob("clean_data/recipe_cleaned.csv")
@@ -149,10 +158,19 @@ def main(args=None):
         print("Uploading preparation QA data to GCP bucket...")
         blob.upload_from_filename(training_data_csv)
 
+        # Upload testing data
+        blob = bucket.blob("testing_data/test_qa.csv")
+        print("Uploading testing QA data to GCP bucket...")
+        blob.upload_from_filename(testing_data_csv)
+
+
+        
+
     if args.prepare:
         print("Prepare dataset for training")
         prepare()
         upload()
+    
 
 
 if __name__ == "__main__":
