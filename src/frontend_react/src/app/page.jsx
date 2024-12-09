@@ -15,7 +15,7 @@ export default function Home() {
             <section className="hero-section">
                 <div className="hero-content">
                     <h1 className="hero-title">
-                        I'm your daily meal assistant!
+                        I'm your daily meal assistant Dasher!
                     </h1>
                     <span className="text-8xl">😉</span>
 
@@ -30,7 +30,6 @@ export default function Home() {
                         >
                             Get Started
                         </button>
-                        <button className="button-secondary">Learn More</button>
                     </div>
                 </div>
             </section>
