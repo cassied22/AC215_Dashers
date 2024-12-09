@@ -1,4 +1,4 @@
-#### Project Milestone 4 Organization
+#### Project Milestone 5 Organization
 
 ```
 ├── .dvc
@@ -117,7 +117,7 @@
         └── .gitkeep
 ```
 
-# AC215 - Milestone4 - Daily Meal Assistant - "What to Eat Today"
+# AC215 - Milestone5 - Daily Meal Assistant - "What to Eat Today"
 
 Archived `README.md` in Milestone3 can be found [here](https://github.com/cassied22/AC215_Dashers/tree/milestone3).
 
@@ -137,7 +137,7 @@ Dashers
 In this project, we aim to develop an app that serves as a personal meal assistant, helping users track their available ingredients, suggest healthy recipes, and recommend nearby restaurants based on user preferences and current inventory. The app will combine advanced AI tools like object detection and large language models (LLMs) to provide tailored meal recommendations and route suggestions for dining out. <br/>
 
 ----
-### Milestone4 ###
+### Milestone5 ###
 
 In this milestone, we have the components for frontend, API service, also components from previous milestones for data management, including versioning, as well as the computer vision and language models.
 
@@ -196,8 +196,54 @@ Continue chatting with the AI for additional requirements:
 
 We have a functioning CI pipeline that runs on every push or merge. It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. Also, the CI pipeline runs automated testing by executing unit, integration, and systems tests with test results reported.
 
-See the detailed description of Test [here](https://github.com/cassied22/AC215_Dashers/edit/milestone4/tests). 
+##### Continuous Integration Setup
+Our project utilizes a CI pipeline that runs on every push or merge to the main branch. The pipeline is implemented using GitHub Actions and includes the following key components:
 
+**Code Build and Linting**
+The CI pipeline incorporates an automated build process and code quality checks using linting tools. The specific tools used are:
+- Flake8: A Python linting tool that checks for code style and potential errors.
+The linting process ensures that the codebase adheres to consistent coding standards and identifies any potential issues or violations.
+
+**Automated Testing**
+- Unit Tests: 
+  - test_cli_rag.py: Tests individual functions in the cli_rag.py module, including generate_query_embedding, generate_text_embeddings, embed, load, and query. It uses mocking to isolate dependencies and ensure the functions behave as expected.
+  - test_gemini_object_detection.py: Tests the identify_food_gemini function and the main function in the gemini_object_detection.py module. It checks the behavior of the functions under different scenarios, such as success and failure cases.
+  - test_gpt_object_detection.py: Tests the encode_image, identify_food_gpt, and main functions in the gpt_object_detection.py module. It verifies the correct encoding of images, the functionality of the GPT object detection, and the handling of command-line arguments.
+- Integration Tests(System Tests):
+  - Since we only have two components, our integration tests serve the same purpose as system tests. 
+  - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory.
+  - In this integrated environment, the container for recipe-rag-cli service, chromadb, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
+  - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run.
+
+    <img width="619" alt="183a0b8194ec25401c0306466465b881" src="images/tests.png">
+
+**Automated Testing Implementation**
+The specific testing frameworks and tools used are:
+
+- pytest: A powerful and flexible testing framework for Python.
+
+The tests are organized into separate directories based on their type:
+
+- tests/datapipeline: Contains unit tests for the data pipeline component.
+- tests/food-detection: Contains unit tests for the food detection component.
+- tests/integration: Contains environment for integration(system) tests that run containers for all components.
+- tests/system: Contains integration(system) tests script that verifies the interaction between different components.
+  
+**Test Coverage Reports**
+Our project aims to maintain a minimum code coverage of 50%. The coverage reports are generated using the pytest-cov plugin and are included in the CI pipeline output.
+<img width="795" alt="test1" src="images/coverage1.png">
+<img width="787" alt="test2" src="images/coverage2.png">
+
+
+
+##### Run Tests Manually
+1. Ensure that you have Python installed on your system.
+2. Clone the project repository
+3. Navigate to the project directory/test/integration, run ```sh docker-shell.sh```
+   This will run all the tests located in the tests/ directory and its subdirectories.
+4. To generate a coverage report, type the following command:
+   ```pytest --cov=src/ --cov-report=html <YOUR PATH TO THE TEST FILE>```
+    This will run the tests and generate an HTML coverage report. You can view the generated html coverage report in a web browser.
 
 ## Setup Instructions
 ### Build Recipe Vector Database
