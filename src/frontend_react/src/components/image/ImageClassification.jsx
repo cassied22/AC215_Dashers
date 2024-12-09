@@ -227,8 +227,8 @@ export default function ImageClassification() {
                     <button 
                         onClick={() => handleButtonClick('llm-rag')}
                         className="button-secondary">
-                    AI Expert (LLM-RAG)
-                        </button>
+                        AI Expert (LLM-RAG)
+                    </button>
                 </div>
             )}
 
