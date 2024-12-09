@@ -119,8 +119,6 @@
 
 # AC215 - Milestone5 - Daily Meal Assistant - "What to Eat Today"
 
-Archived `README.md` in Milestone3 can be found [here](https://github.com/cassied22/AC215_Dashers/tree/milestone3).
-
 **Team Members**
 
 Hanqi(Hanna) Zeng(hanqizeng@hsph.harvard.edu)  <br/> 
@@ -139,9 +137,10 @@ In this project, we aim to develop an app that serves as a personal meal assista
 ----
 ### Milestone5 ###
 
-In this milestone, we have the components for frontend, API service, also components from previous milestones for data management, including versioning, as well as the computer vision and language models.
-
-After completions of building a robust ML Pipeline in our previous milestone we have built a backend api service and frontend app. This will be our user-facing application that ties together the various components built in previous milestones.
+In this final milestone, we focus on three key areas:
+- Production-ready deployment with Kubernetes and Ansible.
+- Project demonstration and documentation.
+- Public communication of results through a live showcase.
 
 **Application Design**
 
@@ -245,7 +244,7 @@ Our project aims to maintain a minimum code coverage of 50%. The coverage report
    ```pytest --cov=src/ --cov-report=html <YOUR PATH TO THE TEST FILE>```
     This will run the tests and generate an HTML coverage report. You can view the generated html coverage report in a web browser.
 
-## Setup Instructions
+## Prerequistes and Setup Instructions
 ### Build Recipe Vector Database
 Navigate to src/datapipeline directory:
 ```bash
@@ -289,6 +288,14 @@ npm install
 npm run dev
 ```
 
+## Deployment instructions
+TODO
+
+## Usage details and examples
+TODO
+
+## Known issues and limitations
+TODO
 
 ----
 
