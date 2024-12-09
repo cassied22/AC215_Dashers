@@ -51,28 +51,47 @@ GENERATION_CONFIG = GenerationConfig(
 
 # Function to extract ingredients based on the corrected pattern
 def extract_ingredients_corrected(question):
+    # Look for ingredients after "using these ingredients:"
     match = re.search(r'using these ingredients:\s*\[(.*?)\]', question, re.IGNORECASE)
     if match:
+        # Split ingredients within the brackets and clean up
         ingredients = re.findall(r'"(.*?)"', match.group(1))
         return [ingredient.strip().lower() for ingredient in ingredients]
     return []
 
 
 def calculate_ingredient_match(question, answer):
+    """
+    Calculate the percentage of ingredients mentioned in the recipe answer.
+
+    Args:
+        question (str): The question containing the list of ingredients.
+        answer (str): The recipe text.
+
+    Returns:
+        float: The percentage of ingredients mentioned in the recipe.
+    """
+    # Extract ingredients from the question
     ingredients = extract_ingredients_corrected(question)
+    # Convert the recipe text to lowercase for case-insensitive matching
     recipe_text = answer.lower()
     if not ingredients:
         return 0
+    # Count how many ingredients appear in the recipe text
     matched_ingredients = [ing for ing in ingredients if ing in recipe_text]
+    # Calculate the percentage of ingredients found
     return len(matched_ingredients) / len(ingredients) * 100
 
 
 def comupute_valid_pair_percentages(data, threshold=25):
+     # Calculate the percentage of rows with more than 25% of ingredients mentioned in the recipe 
     over_threshold_percent = (data['match_percentage'] >= threshold).mean() * 100
     return over_threshold_percent
 
 
 def get_valid_percentages(data):
+    # Given data consisting of question/answer pair, calculate the pertentage of valid receipes generated  
+    # valid recipes are defined by the recipe which contains more than 25% of ingrendients mentioned in the prompt
     data['ingredients'] = data['question'].apply(extract_ingredients_corrected)
     data['match_percentage'] = data.apply(lambda row: calculate_ingredient_match(row['question'], row['answer']), axis=1)
     return comupute_valid_pair_percentages(data)

@@ -188,6 +188,4 @@ if __name__ == "__main__":
     parser.add_argument("--data_processor", action="store_true", help="Run Data Processor")
     parser.add_argument("--model_training", action="store_true", help="Run Model Training")
     parser.add_argument("--model_deploy", action="store_true", help="Run Model Deployment")
-    parser.add_argument("--pipeline", action="store_true", help="Run the Entire Pipeline")
-    args = parser.parse_args()
-    main(args)
+    parser.add_argument("--pipeline", action="store_true", help="Run 
