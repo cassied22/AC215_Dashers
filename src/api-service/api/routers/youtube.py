@@ -66,7 +66,11 @@ async def search_youtube(recipe_name: str):
         name="Web Agent",
         model=OpenAIChat(id="gpt-4o"),
         tools=[DuckDuckGo()],
-        instructions=["Always include sources"],
+        instructions=[
+            "Always include sources",
+            "Include detailed titles summarizing the video content clearly.",
+            "Avoid generic titles like 'YouTube' or 'View Recipe'. "
+            ],
         show_tool_calls=True,
         markdown=True,
     )

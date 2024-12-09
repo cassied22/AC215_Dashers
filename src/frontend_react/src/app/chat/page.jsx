@@ -94,6 +94,9 @@ export default function ChatPage() {
     
                 // Submit chat to the server
                 const response = await DataService.ContinueChatWithLLM(model, id, message);
+
+                const newTitle = response.data?.title || chat.title || "Untitled Conversation";
+                setCurrentFoodTitle(newTitle); // Update the title state
     
                 // Update the chat state with the server response
                 setChat(response.data);
