@@ -39,7 +39,7 @@ const DataService ={
     },
 
     StartChatWithLLM: async function (model, message) {
-        return await api.post("/" + model + "/chats/", message);
+        return await api.post(`/${model}/chats`, message);
     },
     ContinueChatWithLLM: async function (model, chat_id, message) {
         return await api.post("/" + model + "/chats/" + chat_id, message);
@@ -47,7 +47,7 @@ const DataService ={
 
     SearchYouTube: async function (recipe_name) {
         try {
-            const response = await api.get(BASE_API_URL + "/youtube", {
+            const response = await api.get("/youtube/", {
                 params: { recipe_name },
             });
             console.log("API Response:", response.data);

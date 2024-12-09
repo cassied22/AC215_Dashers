@@ -20,6 +20,11 @@
         src: ../secrets/llm-service-account-cassie.json
         dest: "/srv/secrets/llm-service-account-cassie.json"
         mode: 0644
+    - name: Copy OPENAI API key file
+      copy:
+        src: ../secrets/openai-key.json
+        dest: "/srv/secrets/openai-key.json"
+        mode: 0644
     - name: Authenticate gcloud using service account
       shell: "gcloud auth activate-service-account --key-file /srv/secrets/gcp-service-cassie.json"
     
@@ -103,6 +108,7 @@
           - 9000:9000
         env:
           GOOGLE_APPLICATION_CREDENTIALS: "/secrets/llm-service-account-cassie.json"
+          OPENAI_API_KEY: "/secrets/openai-key.json"
           GCP_PROJECT: "{{ gcp_project }}"
           # GCS_BUCKET_NAME: "cheese-app-models"
           CHROMADB_HOST: "recipe-rag-chromadb"
