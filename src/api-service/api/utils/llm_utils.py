@@ -31,6 +31,7 @@ When answering a query:
 3. Use user provided ingredients as much as possible, but you can also suggest additional ingredients if necessary to create a complete recipe. 
 4. Identify any additional ingredients in your response other than the user provided ones and highlight these ingredients in your response to notify the user. 
 5. Always maintain a friendly and knowledgeable tone, befitting an expert cook who helps the user to cook.
+6. Include a title for the recipe at the very beginning in the format `Title: Recipe Name`. 
 
 Your goal is to provide accurate, helpful information about meal recipe generation for each query.
 """
@@ -94,3 +95,11 @@ def rebuild_chat_session(chat_history: List[Dict]) -> ChatSession:
             generate_chat_response(new_session, message)
     
     return new_session
+
+def extract_title_from_response(response: str) -> str:
+    """
+    Extracts the recipe title from the LLM response. Assumes a format like 'Title: Recipe Name'.
+    """
+    import re
+    match = re.search(r"Title:\s*(.*)", response, re.IGNORECASE)
+    return match.group(1).strip() if match else None

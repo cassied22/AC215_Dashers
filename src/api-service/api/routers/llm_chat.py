@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 import mimetypes
 from pathlib import Path
-from api.utils.llm_utils import chat_sessions, create_chat_session, generate_chat_response, rebuild_chat_session
+from api.utils.llm_utils import chat_sessions, create_chat_session, generate_chat_response, rebuild_chat_session, extract_title_from_response
 from api.utils.chat_utils import ChatHistoryManager
 
 # Define Router
@@ -31,6 +31,48 @@ async def get_chat(chat_id: str, x_session_id: str = Header(None, alias="X-Sessi
         raise HTTPException(status_code=404, detail="Chat not found")
     return chat
 
+# @router.post("/chats")
+# async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, alias="X-Session-ID")):
+#     print("content:", message["content"])
+#     print("x_session_id:", x_session_id)
+#     """Start a new chat with an initial message"""
+#     chat_id = str(uuid.uuid4())
+#     current_time = int(time.time())
+    
+#     # Create a new chat session
+#     chat_session = create_chat_session()
+#     chat_sessions[chat_id] = chat_session
+    
+#     # Add ID and role to the user message
+#     message["message_id"] = str(uuid.uuid4())
+#     message["role"] = "user"
+    
+#     # Generate response
+#     assistant_response = generate_chat_response(chat_session, message)
+    
+#     # Create chat response
+#     title = message.get("content")
+#     if title == "":
+#         title =  "Image chat"
+#     title = title[:50] + "..."
+#     chat_response = {
+#         "chat_id": chat_id,
+#         "title": title,
+#         "dts": current_time,
+#         "messages": [
+#             message,
+#             {
+#                 "message_id": str(uuid.uuid4()),
+#                 "role": "assistant",
+#                 "content": assistant_response
+#             }
+#         ]
+#     }
+    
+#     # Save chat
+#     chat_manager.save_chat(chat_response, x_session_id)
+#     return chat_response
+
 @router.post("/chats")
 async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, alias="X-Session-ID")):
     print("content:", message["content"])
@@ -50,14 +92,14 @@ async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, al
     # Generate response
     assistant_response = generate_chat_response(chat_session, message)
     
+    # Extract title from assistant response (assuming LLM response format includes 'Title: ')
+    extracted_title = extract_title_from_response(assistant_response)
+    
     # Create chat response
-    title = message.get("content")
-    if title == "":
-        title =  "Image chat"
-    title = title[:50] + "..."
+    title = extracted_title if extracted_title else message.get("content", "Untitled Recipe")
     chat_response = {
         "chat_id": chat_id,
-        "title": title,
+        "title": title[:50] + "...",
         "dts": current_time,
         "messages": [
             message,
@@ -71,9 +113,11 @@ async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, al
     
     # Save chat
     chat_manager.save_chat(chat_response, x_session_id)
+    
     return chat_response
 
-@router.post("/chats/{chat_id}")
+
+# @router.post("/chats/{chat_id}")
 async def continue_chat_with_llm(chat_id: str, message: Dict, x_session_id: str = Header(None, alias="X-Session-ID")):
     print("content:", message["content"])
     print("x_session_id:", x_session_id)
@@ -98,6 +142,10 @@ async def continue_chat_with_llm(chat_id: str, message: Dict, x_session_id: str 
     
     # Generate response
     assistant_response = generate_chat_response(chat_session, message)
+    
+    # Extract title from assistant response (or message content)
+    extracted_title = extract_title_from_response(assistant_response)
+    chat["title"] = extracted_title if extracted_title else chat["title"]
     
     # Add messages
     chat["messages"].append(message)

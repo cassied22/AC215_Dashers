@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ChatInput from '@/components/chat/ChatInput';
+import ChatHistory from '@/components/chat/ChatHistory';
 import ChatHistorySidebar from '@/components/chat/ChatHistorySidebar';
 import ChatMessage from '@/components/chat/ChatMessage';
 import DataService from "../../services/DataService";
@@ -12,7 +13,9 @@ export default function ChatPage() {
     // Extract the query parameters
     const searchParams = useSearchParams();
     const ingredient = searchParams.get('ingredient'); // Extract the ingredient from the URL
-    const model = searchParams.get('model') || 'llm';
+    const model = searchParams.get('model'); // || 'llm';
+    const chat_id = searchParams.get('id'); 
+    console.log(chat_id, model);
 
     // Component States
     const [chat, setChat] = useState(null);
@@ -20,9 +23,33 @@ export default function ChatPage() {
     const [isTyping, setIsTyping] = useState(false);
     const [selectedModel, setSelectedModel] = useState(model);
     const router = useRouter();
+    const [currentFoodTitle, setCurrentFoodTitle] = useState(null);
+
+    const fetchChat = async (id) => {
+        try {
+            setChat(null);
+            const response = await DataService.GetChat(model, id);
+            setChat(response.data);
+            setCurrentFoodTitle(response.data?.title || ""); // Update title
+            console.log(chat);
+        } catch (error) {
+            console.error('Error fetching chat:', error);
+            setChat(null);
+        }
+    };
+    useEffect(() => {
+        if (chat_id) {
+            fetchChat(chat_id);
+            setHasActiveChat(true);
+        } else {
+            setChat(null);
+            setHasActiveChat(false);
+        }
+    }, [chat_id]);
 
     // Function to start a new chat
     const startChatWithIngredient = async (message) => {
+        console.log('Sending message:', message, 'to model:', model);
         try {
             setIsTyping(true);
             setHasActiveChat(false);
@@ -34,6 +61,7 @@ export default function ChatPage() {
 
             // Submit chat to start the conversation
             const response = await DataService.StartChatWithLLM(model, message);
+            setCurrentFoodTitle(response.title || ""); // Update title
             setIsTyping(false);
             setChat(response.data);
             setHasActiveChat(true);
@@ -47,6 +75,7 @@ export default function ChatPage() {
         }
     };
     const appendChat = (message) => {
+        console.log('Sending message:', message, 'to model:', model);
         if (!chat?.chat_id) {
             console.error('No active chat session found. Start a chat first.');
             return;
@@ -78,7 +107,7 @@ export default function ChatPage() {
         };
     
         continueChat(chat_id, message);
-    };    
+    }; 
     // Force re-render by updating the key
     const forceRefresh = () => {
         setRefreshKey(prevKey => prevKey + 1);
@@ -102,9 +131,9 @@ export default function ChatPage() {
     }, [ingredient]);
 
     return (
-        <div className="h-screen flex flex-col pt-16">
+        <div className="h-screen flex flex-col pt-0">
             {!hasActiveChat ? (
-                <div className="flex h-[calc(100vh-64px)]">
+                <div className="flex h-[calc(100vh-64px)] pt-0">
                     {/* Sidebar */}
                     <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
                         <ChatHistorySidebar chat_id={chat?.chat_id} model={model} />
@@ -124,14 +153,15 @@ export default function ChatPage() {
                                 onSendMessage={startChatWithIngredient}
                                 chat={chat}
                                 selectedModel={selectedModel}
-                                onModelChange={setSelectedModel}
-                                disableModelSelect={true}
+                                onModelChange={handleModelChange}
+                                disableModelSelect={false}
+                                currentFoodTitle={currentFoodTitle} // Pass the current title
                             />
                         </div>
                     </div>
                 </div>
             ) : (
-                <div className="flex h-[calc(100vh-64px)]">
+                <div className="flex h-[calc(100vh-64px)] pt-0">
                     {/* Sidebar */}
                     <div className="w-80 flex-shrink-0 bg-white border-r border-gray-200">
                         <ChatHistorySidebar chat_id={chat?.chat_id} model={model} />
@@ -151,8 +181,9 @@ export default function ChatPage() {
                                 onSendMessage={appendChat}
                                 chat={chat}
                                 selectedModel={selectedModel}
-                                onModelChange={setSelectedModel}
-                                disableModelSelect={true}
+                                onModelChange={handleModelChange}
+                                disableModelSelect={false}
+                                currentFoodTitle={currentFoodTitle} // Pass the current title
                             />
                         </div>
                     </div>

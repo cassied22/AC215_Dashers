@@ -1,20 +1,24 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, CameraAltOutlined } from '@mui/icons-material';
+import { Send, CameraAltOutlined, VideocamOutlined, MapOutlined } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
+import { useRouter } from 'next/navigation';
 
 export default function ChatInput({
     onSendMessage,
     selectedModel,
     onModelChange,
-    disableModelSelect = false
+    disableModelSelect = false,
+    currentFoodTitle, // Add this prop
 }) {
     // Component States
     const [message, setMessage] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
     const textAreaRef = useRef(null);
     const fileInputRef = useRef(null);
+
+    const router = useRouter();
 
     const adjustTextAreaHeight = () => {
         const textarea = textAreaRef.current;
@@ -68,27 +72,36 @@ export default function ChatInput({
             }
         }
     };
-    const handleImageClick = () => {
-        fileInputRef.current?.click();
+    // const handleImageClick = () => {
+    //     fileInputRef.current?.click();
+    // };
+    const handleVideoPageRedirect = () => {
+        console.log('Video display button clicked');
+        router.push(`/youtube?recipe_name=${encodeURIComponent(currentFoodTitle)}`);
     };
-    const handleImageChange = (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            if (file.size > 5000000) { // 5MB limit
-                alert('File size should be less than 5MB');
-                return;
-            }
+    const handleMapPageRedirect = () => {
+        console.log('Redirecting to the map page');
+        router.push('/googleMap');
+    };
 
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setSelectedImage({
-                    file: file,
-                    preview: reader.result
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // const handleImageChange = (e) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         if (file.size > 5000000) { // 5MB limit
+    //             alert('File size should be less than 5MB');
+    //             return;
+    //         }
+
+    //         const reader = new FileReader();
+    //         reader.onloadend = () => {
+    //             setSelectedImage({
+    //                 file: file,
+    //                 preview: reader.result
+    //             });
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
     const handleModelChange = (event) => {
         onModelChange(event.target.value);
     };
@@ -126,7 +139,7 @@ export default function ChatInput({
                     className="w-full bg-gray-100 border-0 rounded-lg px-4 py-3 pr-12 text-gray-800 
                              placeholder-gray-500 focus:ring-2 focus:ring-purple-500 min-h-[24px] 
                              max-h-[400px] resize-none overflow-hidden leading-relaxed"
-                    placeholder="What ingredient do you have?"
+                    placeholder="I want ..."
                     value={message}
                     onChange={handleMessageChange}
                     onKeyDown={handleKeyPress}
@@ -146,19 +159,36 @@ export default function ChatInput({
 
             <div className="flex justify-between items-center border-t border-gray-200 pt-4">
                 <div className="flex items-center gap-2">
-                    <input
+                    {/* <input
                         type="file"
                         ref={fileInputRef}
                         className="hidden"
                         accept="image/*"
                         onChange={handleImageChange}
-                    />
+                    /> */}
                     <IconButton
-                        onClick={handleImageClick}
+                        onClick={handleVideoPageRedirect}
                         className="text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                     >
-                        <CameraAltOutlined />
+                        <VideocamOutlined />
                     </IconButton>
+
+                    <span className="text-sm text-gray-500">
+                        Watch a video 👀
+                    </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <IconButton
+                        onClick={handleMapPageRedirect}
+                        className="text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                        <MapOutlined />
+                    </IconButton>
+
+                    <span className="text-sm text-gray-500">
+                        Dine out 😋
+                    </span>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -173,9 +203,9 @@ export default function ChatInput({
                         disabled={disableModelSelect}
                     >
                         <option value="llm">AI Assistant (LLM)</option>
-                        <option value="llm-cnn">AI Assistant (LLM + CNN)</option>
+                        {/* <option value="llm-cnn">AI Assistant (LLM + CNN)</option> */}
                         <option value="llm-rag">AI Expert (RAG)</option>
-                        <option value="llm-agent">AI Expert (Agent)</option>
+                        {/* <option value="llm-agent">AI Expert (Agent)</option> */}
                     </select>
                 </div>
             </div>
