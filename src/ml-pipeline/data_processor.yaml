@@ -1,0 +1,29 @@
+# PIPELINE DEFINITION
+# Name: data-processor-pipeline
+components:
+  comp-data-processor:
+    executorLabel: exec-data-processor
+deploymentSpec:
+  executors:
+    exec-data-processor:
+      container:
+        args:
+        - cli.py
+        - --clean
+        - --prepare
+        - --bucket cheese-app-ml-workflow-demo
+        image: gcr.io/ac215-project/cheese-app-data-processor:20241121124526
+pipelineInfo:
+  name: data-processor-pipeline
+root:
+  dag:
+    tasks:
+      data-processor:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-data-processor
+        taskInfo:
+          name: data-processor
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.4.0
