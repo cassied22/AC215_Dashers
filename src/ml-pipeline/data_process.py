@@ -117,8 +117,10 @@ def clean():
     # Perform cleaning operations
     raw_csv_path = os.path.join(raw_folder, "recipe_raw.csv")
     recipe = pd.read_csv(raw_csv_path)
+    # Remove duplicates and missing values
     recipe_cleaned = recipe.drop_duplicates().dropna()
     recipe_cleaned = recipe_cleaned[recipe_cleaned['NER'].apply(lambda x: x != '[]')]
+    # Take first 1000 rows for training/testing purposes
     recipe_cleaned_6000 = recipe_cleaned.head(6000)
 
      # Save the cleaned dataset
@@ -134,9 +136,12 @@ def clean():
      # Save QA pairs
     training_data_csv = os.path.join(training_data_folder, "preparation_qa.csv")
     os.makedirs(training_data_folder, exist_ok=True)
+
+    # Save the first 5000 rows of QA pairs for training
     training_data_df = preparation_qa_df.head(5000)
     training_data_df.to_csv(training_data_csv, index=False)
 
+    # Save the last 1000 rows of QA Pairs for evaluations
     testing_data_csv = os.path.join(testing_data_folder, "test_qa.csv")
     os.makedirs(testing_data_folder, exist_ok=True)
     testing_data_df = preparation_qa_df.iloc[-1000:]
