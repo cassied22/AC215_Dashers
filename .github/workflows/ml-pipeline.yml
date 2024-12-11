@@ -3,10 +3,7 @@ name: ML Pipeline Workflow
 on:
   push:
     branches:
-      - cassie_mlworkflow
-  pull_request:
-    branches:
-      - cassie_mlworkflow
+      - main
 
 jobs:
   Explore-GitHub-Actions:
