@@ -50,4 +50,30 @@ jobs:
             -e GCS_SERVICE_ACCOUNT=llm-service-account@brilliant-lens-421801.iam.gserviceaccount.com \
             -e GCP_REGION=us-central1 \
             mlpipe sh run-model_training.sh
+      - name: Run Data Processor
+        if: contains(github.event.head_commit.message, '/run-data-processor')
+        run: |-
+          docker run --rm --name mlpipe \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/llm_service.json \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm_service.json \
+            -e GCP_PROJECT=brilliant-lens-421801 \
+            -e GCP_ZONE=us-central1-a \
+            -e GCS_BUCKET_NAME=food-planner-ml-workflow \
+            -e GCS_SERVICE_ACCOUNT=llm-service-account@brilliant-lens-421801.iam.gserviceaccount.com \
+            -e GCP_REGION=us-central1 \
+            mlpipe sh run-data_processor.sh
+      - name: Run Mahine Learning Pipeline
+        if: contains(github.event.head_commit.message, '/run-ml-pipeline')
+        run: |-
+          docker run --rm --name mlpipe \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/llm_service.json \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm_service.json \
+            -e GCP_PROJECT=brilliant-lens-421801 \
+            -e GCP_ZONE=us-central1-a \
+            -e GCS_BUCKET_NAME=food-planner-ml-workflow \
+            -e GCS_SERVICE_ACCOUNT=llm-service-account@brilliant-lens-421801.iam.gserviceaccount.com \
+            -e GCP_REGION=us-central1 \
+            mlpipe sh run-ml_pipeline.sh
       - run: echo "Job's status is ${{ job.status }}."
