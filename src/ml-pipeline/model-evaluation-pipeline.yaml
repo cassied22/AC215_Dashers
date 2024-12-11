@@ -1,0 +1,48 @@
+# PIPELINE DEFINITION
+# Name: model-evaluation-pipeline
+components:
+  comp-model-evaluation:
+    executorLabel: exec-model-evaluation
+    inputDefinitions:
+      parameters:
+        gcp_project:
+          parameterType: STRING
+        gcs_bucket_name:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-model-evaluation:
+      container:
+        args:
+        - python
+        - cli.py
+        - --model_evaluation
+        command:
+        - sh
+        - -c
+        - |
+          pip install -r requirements.txt
+          python "$@"
+        image: gcr.io/{{ gcp_project }}/food-planner-model-evaluation:{{ timestamp }}
+pipelineInfo:
+  name: model-evaluation-pipeline
+root:
+  dag:
+    tasks:
+      model-evaluation:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-model-evaluation
+        inputs:
+          parameters:
+            gcp_project:
+              runtimeValue:
+                constant: "{{ GCP_PROJECT }}"
+            gcs_bucket_name:
+              runtimeValue:
+                constant: "{{ GCS_BUCKET_NAME }}"
+        taskInfo:
+          name: model-evaluation
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.4.0

@@ -20,7 +20,7 @@ docker network inspect recipe-rag-network >/dev/null 2>&1 || docker network crea
 docker build -t $IMAGE_NAME -f Dockerfile .
 
 # Run All Containers
-docker-compose run --rm --service-ports $IMAGE_NAME
+docker compose run --rm --service-ports $IMAGE_NAME
 # docker-compose up
 
 

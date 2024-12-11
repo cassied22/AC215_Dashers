@@ -1,0 +1,23 @@
+# pipeline.yaml
+name: food-planner-ml-workflow
+description: End-to-end ML pipeline for food planner
+
+components:
+  - name: data-processing
+    pipelineRef:
+      name: data-processor-pipeline
+  
+  - name: model-training  
+    pipelineRef:
+      name: model-training-pipeline
+    dependsOn: 
+      - data-processing
+      
+  - name: model-evaluation
+    pipelineRef:
+      name: model-evaluation-pipeline  
+    dependsOn:
+      - model-training
+
+execution:
+  service_account: ${{ env.GCS_SERVICE_ACCOUNT }}

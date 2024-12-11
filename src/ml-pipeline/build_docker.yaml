@@ -1,0 +1,56 @@
+---
+- name: "Build docker images and push them to GCR"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: "Get timestamp for docker tag"
+    shell: "(date +%Y%m%d%H%M%S)"
+    register: tag
+  - name: Print tag
+    debug:
+      var: tag
+
+  - name: Build data-processor container image
+    community.general.docker_image:
+      build:
+        path: ./data-processor
+        platform: linux/amd64/v2
+      name: gcr.io/{{ gcp_project }}/food-planner-data-processor:{{ tag.stdout}}
+      source: build
+  - name: Push data-processor image to GCR
+    community.general.docker_image:
+      name: gcr.io/{{ gcp_project }}/food-planner-data-processor:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/food-planner-data-processor:{{ tag.stdout}}
+      push: yes
+      source: local
+
+  - name: Build model-training container image
+    community.general.docker_image:
+      build:
+        path: ./model-training
+        platform: linux/amd64/v2
+      name: gcr.io/{{ gcp_project }}/food-planner-model-training:{{ tag.stdout}}
+      source: build
+  - name: Push model-training image to GCR
+    community.general.docker_image:
+      name: gcr.io/{{ gcp_project }}/food-planner-model-training:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/food-planner-model-training:{{ tag.stdout}}
+      push: yes
+      source: local
+
+  - name: Build model-evaluation container image
+    community.general.docker_image:
+      build:
+        path: ./model-evaluation
+        platform: linux/amd64/v2
+      name: gcr.io/{{ gcp_project }}/food-planner-model-evaluation:{{ tag.stdout}}
+      source: build
+  - name: Push model-evaluation image to GCR
+    community.general.docker_image:
+      name: gcr.io/{{ gcp_project }}/food-planner-model-evaluation:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/food-planner-model-evaluation:{{ tag.stdout}}
+      push: yes
+      source: local
+
+  - name: "Save docker tag"
+    shell: echo {{ tag.stdout}} > .docker-tag-ml

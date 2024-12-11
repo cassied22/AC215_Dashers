@@ -1,0 +1,33 @@
+name: ML Pipeline CI/CD
+
+on:
+  push:
+    branches: [hanna_mlworkflow]
+  pull_request:
+    branches: [hanna_mlworkflow]
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT }}
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        export_default_credentials: true
+
+    - name: Build and Push Docker Images
+      run: |
+        gcloud auth configure-docker
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/ml-pipeline:${{ github.sha }} .
+        docker push gcr.io/${{ secrets.GCP_PROJECT }}/ml-pipeline:${{ github.sha }}
+
+    - name: Deploy to Vertex AI
+      run: |
+        gcloud ai custom-jobs submit \
+          --region=us-central1 \
+          --display-name=ml-pipeline-job \
+          --config=pipeline.yaml

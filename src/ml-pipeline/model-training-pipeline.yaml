@@ -1,0 +1,64 @@
+# PIPELINE DEFINITION
+# Name: model-training-pipeline
+components:
+  comp-model-training:
+    executorLabel: exec-model-training
+    inputDefinitions:
+      parameters:
+        gcp_project:
+          parameterType: STRING
+        gcs_bucket_name:
+          parameterType: STRING
+        train_dataset:
+          parameterType: STRING
+        validation_dataset:
+          parameterType: STRING
+        location:
+          parameterType: STRING
+          defaultValue: "us-central1"
+deploymentSpec:
+  executors:
+    exec-model-training:
+      container:
+        args:
+        - python
+        - cli.py
+        - --model_training
+        command:
+        - sh
+        - -c
+        - |
+          pip install -r requirements.txt
+          python "$@"
+        image: gcr.io/{{ gcp_project }}/food-planner-model-training:{{ timestamp }}
+pipelineInfo:
+  name: model-training-pipeline
+root:
+  dag:
+    tasks:
+      model-training:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-model-training
+        inputs:
+          parameters:
+            gcp_project:
+              runtimeValue:
+                constant: "{{ GCP_PROJECT }}"
+            gcs_bucket_name:
+              runtimeValue:
+                constant: "{{ GCS_BUCKET_NAME }}"
+            train_dataset:
+              runtimeValue:
+                constant: "gs://{{ GCS_BUCKET_NAME }}/llm_training_data/train.jsonl"
+            validation_dataset:
+              runtimeValue:
+                constant: "gs://{{ GCS_BUCKET_NAME }}/llm_training_data/test.jsonl"
+            location:
+              runtimeValue:
+                constant: "us-central1"
+        taskInfo:
+          name: model-training
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.4.0
