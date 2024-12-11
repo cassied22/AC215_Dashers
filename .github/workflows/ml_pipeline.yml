@@ -2,15 +2,26 @@ name: ML Pipeline CI/CD
 
 on:
   push:
-    branches: [hanna_mlworkflow]
+    branches: 
+      - hanna_mlworkflow
+      - main  # add main for testing
   pull_request:
-    branches: [hanna_mlworkflow]
+    branches: 
+      - hanna_mlworkflow
+      - main  # add main for testing
 
 jobs:
   pipeline:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Debug Information
+      run: |
+        echo "Current directory: $(pwd)"
+        echo "Directory contents: $(ls -la)"
+        echo "Branch name: ${{ github.ref }}"
     
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
@@ -21,6 +32,15 @@ jobs:
 
     - name: Build and Run Docker Pipeline
       run: |
+        echo "Moving to ml-pipeline directory"
         cd src/ml-pipeline
+        echo "Directory contents: $(ls -la)"
+        echo "Making docker-shell.sh executable"
         chmod +x docker-shell.sh
+        echo "Running pipeline"
         ./docker-shell.sh python cli.py --pipeline
+
+    - name: Pipeline Status
+      if: always()
+      run: |
+        echo "Pipeline completed with status: ${{ job.status }}"
