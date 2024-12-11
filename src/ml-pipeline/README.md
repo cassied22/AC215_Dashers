@@ -83,7 +83,6 @@ From the training image of model 1, we observed that both training and validatio
 
 
 ### Model 2: food-planner-finetuned-v2
-![](../../images/ml_workflow/ml_process2.png)
 generation_config = {
     "max_output_tokens": 3000,  # Maximum number of tokens for output
     "temperature": 0.75,  # Control randomness in output
