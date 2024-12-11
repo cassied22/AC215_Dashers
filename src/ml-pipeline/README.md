@@ -14,7 +14,7 @@ This module focus on the Machine Learning workflow, which contains the following
 - Run Model Training in the Docker Container locally by using:
 ```python cli.py --model_training```
 
-- Run Model Evaluation in the Docker Container locally by using:
+- Run Model Evaluation using our customizer metric(explained later) in the Docker Container locally by using:
 ```python cli.py --model_evaluation```
 
 - Run Entire Machine Learning Pipelin (including data process, model training/devlopment, and eveluation) locally by using:
