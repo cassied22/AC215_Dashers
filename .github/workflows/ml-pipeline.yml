@@ -1,0 +1,49 @@
+name: Data Processor Workflow
+
+on:
+  push:
+    branches:
+      - cassie_mlworkflow
+  pull_request:
+    branches:
+      - cassie_mlworkflow
+
+jobs:
+  data-processor:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t ml-pipeline --platform=linux/amd64 -f Dockerfile .
+
+      # Run the Docker container
+      - name: Run Data Processor
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
+          GCS_SERVICE_ACCOUNT: ${{ secrets.GCS_SERVICE_ACCOUNT }}
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          GCP_ZONE: us-central1-a
+          GCP_REGION: us-central1
+          GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+        run: |
+          docker run --rm --name ml-pipeline -ti \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v "$PWD":/app \
+          -v "$GITHUB_WORKSPACE/secrets":/secrets \
+          -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-cassie.json \
+          -e GCS_SERVICE_ACCOUNT=${{ secrets.GCS_SERVICE_ACCOUNT }} \
+          -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
+          -e GCP_ZONE=us-central1-a \
+          -e GCP_REGION=us-central1 \
+          -e GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }} \
+          ml-pipeline python cli.py --data-processor
