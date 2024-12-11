@@ -100,7 +100,7 @@ hyperparameter= {
 
 ## Model Evaluation
 We evaluate our model through three main methods:
-First, we visually check the validation metrics(include Fraction of correct next step preds and total loss) that is automatically generated and recorded during the Vertex AI finituning process as shown in the pictures above. 
+First, we visually check the validation metrics(include Fraction of correct next step preds and total loss) that are automatically generated and recorded during the Vertex AI finituning process as shown in the pictures above. 
 
 We then manually test the output of the finetuned models. For example, when we asked the Model 2:food-planner-finetuned-v2 above:"
 Can you give me a recipe using these ingredients: [""salt"", ""flour""]", it responds with: "With those ingredients, we can make a salt dough! Here are the step-by-step instructions: ["Mix dry ingredients well, then add salt water to form a dough.", "Roll out on floured board and cut with cutters.", "Bake at 350\u00b0 for 1 1/2 to 2 hours."], which looks valid.
