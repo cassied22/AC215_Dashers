@@ -108,6 +108,9 @@ Can you give me a recipe using these ingredients: [""salt"", ""flour""]", it res
 
 Lastly we customized our own evaluation metric to assess the relavancy of generated recipe providing a list of ingredients (implementations in`model_evaluation.py`). We take the questions from question-answer pairs in the testing test as prompts and use finetuned model to generate recipes; then we compute the percentage of provided ingredients that appears in the generated recipe: the generated recipe which contains more than 50% of provided ingredients were considered valid. We then compute the percentage of valid recipes among all rows and output such percentage as an evaluation metric. We found that the Model 2: food-planner-finetuned-v2 shown above gives the highest percentage of valid recipes of 80%, and decided to adopt this model.
 
+## Machine Learning Pipeline
+Our machine learning pipeline integrates all components listed above. 
+
 
 
 
