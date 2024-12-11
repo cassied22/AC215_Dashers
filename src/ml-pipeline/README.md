@@ -26,7 +26,7 @@ Please noted that during our model training step, since we are finetuning the ge
 
 
 # Automated Data Processing, Model Training and Machine Learning Pipeline  in github action
-We have set up the CI/CD pipeline to automate the machine learning workflow in github action. Workflow file[../../.github/workflows/ml-pipeline.yml])
+We have set up the CI/CD pipeline to automate the machine learning workflow in github action. [Workflow file](../../.github/workflows/ml-pipeline.yml)
 
 To run Machine Learning Pipelines on updates to the codebase, add the following to code commit comment to the `main` branch:
 * Add `/run-ml-pipeline` to the commit message to run the entire ML pipeline
