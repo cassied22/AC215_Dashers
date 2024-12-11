@@ -38,7 +38,7 @@ jobs:
           GCP_REGION: us-central1
           GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
         run: |
-          docker run --rm --name ml-pipeline -ti \
+          docker run --rm --name ml-pipeline \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v "$PWD":/app \
           -v "$GITHUB_WORKSPACE/secrets":/secrets \
