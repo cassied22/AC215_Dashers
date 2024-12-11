@@ -31,7 +31,7 @@ jobs:
       - name: Run Data Processor
         working-directory: src/ml-pipeline  # Change working directory to src/ml-pipeline
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           GCS_SERVICE_ACCOUNT: ${{ secrets.GCS_SERVICE_ACCOUNT }}
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
           GCP_ZONE: us-central1-a
