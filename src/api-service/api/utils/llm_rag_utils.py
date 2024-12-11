@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Any, List, Optional
+from typing import Dict, List
 from fastapi import HTTPException
 import traceback
 import chromadb

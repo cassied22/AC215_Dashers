@@ -1,12 +1,8 @@
 import os
-from typing import Dict, Any, List, Optional
+from typing import Dict, List
 from fastapi import HTTPException
-import base64
-import io
-from PIL import Image
-from pathlib import Path
 import traceback
-from vertexai.generative_models import GenerativeModel, ChatSession, Part
+from vertexai.generative_models import GenerativeModel, ChatSession
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]

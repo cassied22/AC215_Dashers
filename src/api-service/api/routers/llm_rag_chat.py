@@ -1,12 +1,8 @@
 import os
-from fastapi import APIRouter, Header, Query, Body, HTTPException
-from fastapi.responses import FileResponse
-from typing import Dict, Any, List, Optional
+from fastapi import APIRouter, Header, Query,  HTTPException
+from typing import Dict, Optional
 import uuid
 import time
-from datetime import datetime
-import mimetypes
-from pathlib import Path
 from api.utils.llm_rag_utils import chat_sessions, create_chat_session, generate_chat_response, rebuild_chat_session, ModelType
 from api.utils.chat_utils import ChatHistoryManager
 from api.utils.llm_utils import extract_title_from_response

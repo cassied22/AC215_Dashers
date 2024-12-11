@@ -4,22 +4,25 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "8.3.4"
 
 [packages]
-user-agent = "*"
-requests = "*"
-google-cloud-storage = "*"
-google-generativeai = "*"
-google-cloud-aiplatform = "*"
-pandas = "*"
-uvicorn = "*"
-fastapi = "*"
-python-multipart = "*"
-pillow = "*"
-chromadb = "*"
-openai = "*"
-phidata = "*"
+user-agent = "0.1.10"
+requests = "2.32.3"
+google-cloud-storage = "2.19.0"
+google-generativeai = "0.8.3"
+google-cloud-aiplatform = "1.74.0"
+pandas = "2.2.3"
+uvicorn = "0.32.1"
+fastapi = "0.115.6"
+python-multipart = "0.0.19"
+pillow = "11.0.0"
+chromadb = "0.5.23"
+openai = "1.57.0"
+phidata = "2.6.1"
 duckduckgo-search = "5.3.1b1"
+pytest-cov = "6.0.0"
+pytest-asyncio = "0.24.0"
 
 [requires]
 python_version = "3.12"
