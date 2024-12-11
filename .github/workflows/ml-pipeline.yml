@@ -25,7 +25,7 @@ jobs:
       - name: Build Docker image
         working-directory: src/ml-pipeline
         run: |
-          docker build -t ml-pipeline --platform=linux/amd64 -f Dockerfile .
+          docker build -t ml-pipeline -f Dockerfile .
 
       # Run the Docker container
       - name: Run Data Processor
