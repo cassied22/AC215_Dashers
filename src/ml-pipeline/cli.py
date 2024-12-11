@@ -1,3 +1,10 @@
+"""
+Module that contains the command line app.
+
+Typical usage example from command line:
+        python cli.py
+"""
+
 import os
 import argparse
 import random
@@ -7,6 +14,7 @@ import google.cloud.aiplatform as aip
 import vertexai
 from vertexai.preview.tuning import sft
 
+
 from data_process import prepare as data_prepare, upload as data_upload, clean as data_clean
 from model_training import gemini_fine_tuning
 from model_evaluation import evaluate
@@ -14,12 +22,16 @@ from model_evaluation import evaluate
 
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
-TRAIN_DATASET = f"gs://{GCS_BUCKET_NAME}/llm_training_data/train.jsonl"
-VALIDATION_DATASET = f"gs://{GCS_BUCKET_NAME}/llm_training_data/test.jsonl"
+TRAIN_DATASET = f"gs://food-planner-ml-workflow/llm_training_data/train.jsonl"
+VALIDATION_DATASET = "gs://food-planner-ml-workflow/llm_training_data/test.jsonl"
+# GCS_PACKAGE_URI = os.environ["GCS_PACKAGE_URI"]
 GCP_LOCATION = "us-central1"
+
+
 
 def generate_uuid(length: int = 8) -> str:
     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
+
 
 def run_pipeline():
     print("Running the entire pipeline: Data Processing, Model Training, and Model Evaluation")
@@ -31,6 +43,7 @@ def run_pipeline():
     data_upload()
 
     job_id = generate_uuid()
+
     DISPLAY_NAME = "food-planner-" + job_id
 
     # Step 2: Model training
@@ -50,14 +63,12 @@ def run_pipeline():
     print(f"Validation Percentage of Correct Pairs: {valid_percentage:.2f}%")
 
     print("Pipeline execution complete.")
+   
+    
 
 def main():
-    # KFP Pipeline Imports
-    from kfp import dsl
-    from kfp import compiler
-
     parser = argparse.ArgumentParser(description="Pipeline CLI for Data Processing, Model Training, and Evaluation")
-
+    
     parser.add_argument(
         "--data_processor",
         action="store_true",
@@ -78,67 +89,9 @@ def main():
         action="store_true",
         help="Run the entire pipeline: Data Processing, Model Training, and Evaluation.",
     )
-
+    
     args = parser.parse_args()
 
-    # New Pipeline Compilation Logic
-    if args.data_processor:
-        @dsl.component
-        def data_processor_component():
-            data_clean()
-            data_prepare()
-            data_upload()
-
-        @dsl.pipeline
-        def data_processor_pipeline():
-            data_processor_component()
-
-        # Compile the pipeline
-        compiler.Compiler().compile(
-            data_processor_pipeline, 
-            package_path="data_processor_pipeline.yaml"
-        )
-
-    if args.model_training:
-        @dsl.component
-        def model_training_component():
-            job_id = generate_uuid()
-            DISPLAY_NAME = "food-planner-" + job_id
-            
-            gemini_fine_tuning(
-                project=GCP_PROJECT,
-                location=GCP_LOCATION,
-                train_dataset=f"gs://{GCS_BUCKET_NAME}/llm_training_data/train.jsonl",
-                validation_dataset=f"gs://{GCS_BUCKET_NAME}/llm_training_data/test.jsonl",
-                tuned_model_display_name=DISPLAY_NAME,
-            )
-
-        @dsl.pipeline
-        def model_training_pipeline():
-            model_training_component()
-
-        # Compile the pipeline
-        compiler.Compiler().compile(
-            model_training_pipeline, 
-            package_path="model_training_pipeline.yaml"
-        )
-
-    if args.model_evaluation:
-        @dsl.component
-        def model_evaluation_component():
-            evaluate()
-
-        @dsl.pipeline
-        def model_evaluation_pipeline():
-            model_evaluation_component()
-
-        # Compile the pipeline
-        compiler.Compiler().compile(
-            model_evaluation_pipeline, 
-            package_path="model_evaluation_pipeline.yaml"
-        )
-
-    # Original Flow Preservation
     if args.data_processor:
         print("Running Data Processor")
         data_clean()
@@ -148,6 +101,7 @@ def main():
     if args.model_training:
         print("Running Model Training")
         job_id = generate_uuid()
+
         DISPLAY_NAME = "food-planner-" + job_id
         gemini_fine_tuning(
             project=GCP_PROJECT,

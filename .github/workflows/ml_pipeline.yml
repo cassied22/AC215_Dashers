@@ -19,15 +19,8 @@ jobs:
         service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         export_default_credentials: true
 
-    - name: Build and Push Docker Images
+    - name: Build and Run Docker Pipeline
       run: |
-        gcloud auth configure-docker
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/ml-pipeline:${{ github.sha }} .
-        docker push gcr.io/${{ secrets.GCP_PROJECT }}/ml-pipeline:${{ github.sha }}
-
-    - name: Deploy to Vertex AI
-      run: |
-        gcloud ai custom-jobs submit \
-          --region=us-central1 \
-          --display-name=ml-pipeline-job \
-          --config=pipeline.yaml
+        cd src/ml-pipeline
+        chmod +x docker-shell.sh
+        ./docker-shell.sh python cli.py --pipeline
