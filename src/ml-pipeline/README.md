@@ -99,7 +99,7 @@ hyperparameter= {
 <img src="../../images/ml_workflow/training-img2.png"  width="600">
 
 ## Model Evaluation
-We evaluate our model through two main methods:
+We evaluate our model through three main methods:
 First, we visually check the validation metrics(include Fraction of correct next step preds and total loss) that is automatically generated and recorded during the Vertex AI finituning process as shown in the pictures above. 
 
 We then manually test the output of the finetuned models. For example, when we asked the Model 2:food-planner-finetuned-v2 above:"
