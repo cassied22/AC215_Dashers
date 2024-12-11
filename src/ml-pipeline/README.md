@@ -33,7 +33,7 @@ To run Machine Learning Pipelines on updates to the codebase, add the following 
 * Add `/run-model-training` to the commit message to run the model training/deployment
 * Add `/run-data-processor` to the commit message to run the data processor 
 
-# Screenshot of Succesful Data/Processing, Model Training, Machine Learning Pipeline workflow runs
+# Screenshot of Successful Data/Processing, Model Training, Machine Learning Pipeline workflow runs
 ### Machine Learning Pipeline
 ![](../../images/ml_workflow/ml_pipeline1.png)
 ![](../../images/ml_workflow/ml_pipeline2.png)
