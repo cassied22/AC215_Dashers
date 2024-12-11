@@ -15,7 +15,7 @@ GENERATION_CONFIG = GenerationConfig(
     temperature=0.75,
     top_p=0.95,
 )
-# def chat():
+# def chat()
 #     print("chat()")
 #     # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
 #     #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
