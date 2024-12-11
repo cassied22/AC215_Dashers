@@ -13,9 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - id: 'auth'
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+      - name: Configure Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
 
       # Set up Docker Buildx
       - name: Set up Docker Buildx
@@ -42,7 +45,6 @@ jobs:
           cd src/ml-pipeline
           docker run --rm --name ml-pipeline \
           -v /var/run/docker.sock:/var/run/docker.sock \
-          -v "$PWD":/app \
           -v "$GITHUB_WORKSPACE/secrets":/secrets \
           -e GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} \
           -e GCS_SERVICE_ACCOUNT=${{ secrets.GCS_SERVICE_ACCOUNT }} \
