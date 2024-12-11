@@ -57,7 +57,7 @@ For data processing, we performed the following steps
         - Question: ""Can you give me a recipe using these ingredients: [""shortening"", ""sugar"", ""egg"", ""pumpkin"", ""vanilla"", ""flour"", ""baking powder"", ""baking soda"", ""cinnamon"", ""salt"", ""raisins""]?""
         - Answer: "With those ingredients, we can make a Pumpkin Cookies! Here are the step-by-step instructions: [""Mix together shortening and sugar until creamy."", ""Add egg, pumpkin and vanilla and blend."", ""Combine all dry ingredients and blend into batter a little at a time."", ""Add raisins or nuts."", ""Bake at 350\u00b0 for 10 to 12 minutes.""]"
 4. **Data Split**: We first save the last 1000 QA pairs for our customized evaluation metric which will be explained below. Then for the first 5000 pairs, we will use it for Vextex AI pipeline: We split it into training and test sets using a 90/10 split ratio, ensuring that 10% of the dataset was held out for testing.
-5. **Data Upload**: We then save the training and test sets as CSV files for review (`train.csv` and `test.csv`). Additionally, we save in JSONL format (`train.jsonl` and `test.jsonl`) for uploading to Vertex AI and used in the fine-tuning process. 
+5. **Data Upload**: We then save all the datasets and upload to GCP bucket.  
 
 ## Model Training/Deployment:
 The fine-tuning process was executed on Google Cloud Platform (GCP) using Vertex AI. The finetuned models are automatically deployed to an endpoint in Vertex AI when the training job is completed. We keep track/return the final endpoints for further eveluations.
