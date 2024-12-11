@@ -1,4 +1,4 @@
-name: Data Processor Workflow
+name: ML Pipeline Workflow
 
 on:
   push:
@@ -9,43 +9,45 @@ on:
       - cassie_mlworkflow
 
 jobs:
-  data-processor:
+  Explore-GitHub-Actions:
+    if: contains(github.event.head_commit.message, '/run-')
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      # Build Docker image
-      - name: Build Docker image
+      - run: echo "Comment ${{ github.event.head_commit.message }}"
+      - run: echo "Job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "Job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "Branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - id: 'auth'
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+      - name: Configure Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Configure Docker Client
+        run: |-
+          gcloud auth configure-docker # --quiet #authenticate to gcr
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
         run: |
-          cd src/ml-pipeline
-          docker build -t ml-pipeline -f Dockerfile .
-      - name: List Docker Images
-        run: docker images
-        
-      # Run the Docker container
-      - name: Run Data Processor
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          GCS_SERVICE_ACCOUNT: ${{ secrets.GCS_SERVICE_ACCOUNT }}
-          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-          GCP_ZONE: us-central1-a
-          GCP_REGION: us-central1
-          GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
-        run: |
-          cd src/ml-pipeline
-          docker run --rm --name ml-pipeline \
-          -v /var/run/docker.sock:/var/run/docker.sock \
-          -e GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} \
-          -e GCS_SERVICE_ACCOUNT=${{ secrets.GCS_SERVICE_ACCOUNT }} \
-          -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
-          -e GCP_ZONE=us-central1-a \
-          -e GCP_REGION=us-central1 \
-          -e GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }} \
-          ml-pipeline python cli.py --model_training
+          ls ${{ github.workspace }}
+      - name: Build ML Pipeline Container 
+        run: |-
+          cd ${{ github.workspace }}/src/ml-pipeline/
+          docker build -t mlpipe -f Dockerfile .
+      - name: Run Model Training 
+        if: contains(github.event.head_commit.message, '/run-model-training')
+        run: |-
+          docker run --rm --name mlpipe \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/llm_service.json \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm_service.json \
+            -e GCP_PROJECT=brilliant-lens-421801 \
+            -e GCP_ZONE=us-central1-a \
+            -e GCS_BUCKET_NAME=food-planner-ml-workflow \
+            -e GCS_SERVICE_ACCOUNT=llm-service-account@brilliant-lens-421801.iam.gserviceaccount.com \
+            -e GCP_REGION=us-central1 \
+            mlpipe sh run-model_training.sh
+      - run: echo "Job's status is ${{ job.status }}."
