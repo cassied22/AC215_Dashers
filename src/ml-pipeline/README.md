@@ -11,13 +11,13 @@ This module focus on the Machine Learning workflow, which contains the following
 - Run Data Processor in the Docker Container by using:
 ```python cli.py --data_processor```
 
-- Run Model Training in the Docker Container by using:
+- Run Model Training in the Docker Container locally by using:
 ```python cli.py --model_training```
 
-- Run Model Evaluation in the Docker Container by using:
+- Run Model Evaluation in the Docker Container locally by using:
 ```python cli.py --model_evaluation```
 
-- Run Entire Machine Learning Pipelin (including data process, model training/devlopment, and eveluation) by using:
+- Run Entire Machine Learning Pipelin (including data process, model training/devlopment, and eveluation) locally by using:
 ```python cli.py --pipeline```
 
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
