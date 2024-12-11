@@ -42,7 +42,6 @@ jobs:
           cd src/ml-pipeline
           docker run --rm --name ml-pipeline \
           -v /var/run/docker.sock:/var/run/docker.sock \
-          -v "$GITHUB_WORKSPACE/secrets":/secrets \
           -e GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} \
           -e GCS_SERVICE_ACCOUNT=${{ secrets.GCS_SERVICE_ACCOUNT }} \
           -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
