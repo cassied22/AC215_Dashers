@@ -15,39 +15,6 @@ GENERATION_CONFIG = GenerationConfig(
     temperature=0.75,
     top_p=0.95,
 )
-# def chat():
-#     print("chat()")
-#     # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
-#     #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
-#     #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
-#     # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048" # Finetuned model
-
-#         # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048" # Finetuned model
-#     # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/2727018634814685184"
-#     # MODEL_ENDPOINT ="projects/978082269307/locations/us-central1/endpoints/8362147668562018304"
-#     MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/2539828979209076736"
-#     print(MODEL_ENDPOINT)
-    
-#     generative_model = GenerativeModel(MODEL_ENDPOINT)
-
-#     query = """Can you give me a recipe using these ingredients: [""margarine"", ""white sugar"", ""brown sugar"", ""chunky peanut butter"", ""vanilla"", ""eggs"", ""oats"", ""soda"", ""chocolate chips""]?"""
-#     print("query: ",query)
-#     response = generative_model.generate_content(
-#         [query],  # Input prompt
-#         generation_config=GENERATION_CONFIG,  # Configuration settings
-#         stream=False,  # Enable streaming for responses
-#     )
-#     generated_text = response.text
-#     print("Fine-tuned LLM Response:", generated_text)
-     
-
-# def main(args=None):
-#     print("CLI Arguments:", args)
-#     if args.train:
-#         train()
-    
-#     if args.chat:
-#         chat()
 
 # Function to extract ingredients based on the corrected pattern
 def extract_ingredients_corrected(question):
@@ -92,8 +59,8 @@ def comupute_valid_pair_percentages(data, threshold=25):
 def get_valid_percentages(data):
     # Given data consisting of question/answer pair, calculate the pertentage of valid receipes generated  
     # valid recipes are defined by the recipe which contains more than 25% of ingrendients mentioned in the prompt
-    data['ingredients'] = data['question'].apply(extract_ingredients_corrected)
-    data['match_percentage'] = data.apply(lambda row: calculate_ingredient_match(row['question'], row['answer']), axis=1)
+    data.loc[:, 'ingredients'] = data['question'].apply(extract_ingredients_corrected)
+    data.loc[:, 'match_percentage'] = data.apply(lambda row: calculate_ingredient_match(row['question'], row['answer']), axis=1)
     return comupute_valid_pair_percentages(data)
 
 
@@ -121,11 +88,12 @@ def evaluate(endpoint="projects/978082269307/locations/us-central1/endpoints/486
 
     # Generate answers for each question
     print("Generating answers...")
-    data['answer'] = data['question'].apply(lambda question: generative_model.generate_content(
+    data.loc[:, 'answer'] = data['question'].apply(lambda question: generative_model.generate_content(
         [question],
         generation_config=GENERATION_CONFIG,
         stream=False
     ).text)
+
 
     # Compute valid pair percentages
     valid_percentage = get_valid_percentages(data)

@@ -90,13 +90,18 @@ def upload():
     data_files = glob.glob(os.path.join(OUTPUT_FOLDER, "*.jsonl")) + glob.glob(os.path.join(OUTPUT_FOLDER, "*.csv"))
     data_files.sort()
 
+    uploaded_files = set()
+
     # Upload files
     for data_file in data_files:
         filename = os.path.basename(data_file)
         destination_blob_name = os.path.join("llm_training_data", filename)
-        blob = bucket.blob(destination_blob_name)
-        print(f"Uploading {data_file} to {destination_blob_name}...")
-        blob.upload_from_filename(data_file)
+        # Avoid duplicate uploads
+        if destination_blob_name not in uploaded_files:
+            blob = bucket.blob(destination_blob_name)
+            print(f"Uploading {data_file} to {destination_blob_name}...")
+            blob.upload_from_filename(data_file)
+            uploaded_files.add(destination_blob_name)
 
     print("Upload complete.")
 
