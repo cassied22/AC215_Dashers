@@ -21,7 +21,7 @@ This module focus on the Machine Learning workflow, which contains the following
 ```python cli.py --pipeline```
 
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-Please noted that during our model training step, since we are finetuning the gemini model in Vertex AI using SupervisedTuningJob, the model will get automatically deployed to an endpoint on vertex ai upon the completion of the training job. Therefore we did not have a separate function for model deployment.
+Please noted that during our model training step, since we are finetuning the gemini model in Vertex AI using SupervisedTuningJob, the model will get automatically deployed to an endpoint on vertex AI upon the completion of the training job. Therefore we did not have a separate function for model deployment.
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 
@@ -33,7 +33,7 @@ To run Machine Learning Pipelines on updates to the codebase, add the following 
 * Add `/run-model-training` to the commit message to run the model training/deployment
 * Add `/run-data-processor` to the commit message to run the data processor 
 
-# Screenshot of Successful Data/Processing, Model Training, Machine Learning Pipeline workflow runs
+# Screenshot of Successful Data Processing, Model Training/Deployment, Machine Learning Pipeline workflow runs
 ### Machine Learning Pipeline
 ![](../../images/ml_workflow/ml_pipeline1.png)
 ![](../../images/ml_workflow/ml_pipeline2.png)
