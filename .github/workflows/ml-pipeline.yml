@@ -23,13 +23,14 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        working-directory: src/ml-pipeline
         run: |
+          cd src/ml-pipeline
           docker build -t ml-pipeline -f Dockerfile .
-
+      - name: List Docker Images
+        run: docker images
+        
       # Run the Docker container
       - name: Run Data Processor
-        working-directory: src/ml-pipeline
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           GCS_SERVICE_ACCOUNT: ${{ secrets.GCS_SERVICE_ACCOUNT }}
@@ -38,6 +39,7 @@ jobs:
           GCP_REGION: us-central1
           GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
         run: |
+          cd src/ml-pipeline
           docker run --rm --name ml-pipeline \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v "$PWD":/app \
