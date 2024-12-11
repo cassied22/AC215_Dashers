@@ -1,1 +1,1 @@
-python cli.py ----pipeline
+python cli.py --pipeline
