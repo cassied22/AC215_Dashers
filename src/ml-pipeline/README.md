@@ -14,7 +14,7 @@ This module focus on the Machine Learning workflow, which contains the following
 - Run Model Training in the Docker Container locally by using:
 ```python cli.py --model_training```
 
-- Run Model Evaluation using our customizer metric(explained later) in the Docker Container locally by using:
+- Run Model Evaluation using our custom metric(explained later) in the Docker Container locally by using:
 ```python cli.py --model_evaluation```
 
 - Run Entire Machine Learning Pipelin (including data process, model training/devlopment, and eveluation) locally by using:
@@ -25,7 +25,7 @@ Please noted that during our model training step, since we are finetuning the ge
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 
-# Automated Data Processing, Model Training and Machine Learning Pipeline  in github action
+# Automated Data Processing, Model Training/Deployment and Machine Learning Pipeline  in github action
 We have set up the CI/CD pipeline to automate the machine learning workflow in github action. [Workflow file](../../.github/workflows/ml-pipeline.yml)
 
 To run Machine Learning Pipelines on updates to the codebase, add the following to code commit comment to the `main` branch:
