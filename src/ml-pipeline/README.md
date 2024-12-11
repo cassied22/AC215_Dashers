@@ -21,7 +21,7 @@ This module focus on the Machine Learning workflow, which contains the following
 ```python cli.py --pipeline```
 
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-Please noted that during our model training step, since we are finetuning the gemini model in Vertex AI using SupervisedTuningJob, it will get automatically deployed to an endpoint on vertex ai upon the completion of the training job, we did not have a separate function for model deployment.
+Please noted that during our model training step, since we are finetuning the gemini model in Vertex AI using SupervisedTuningJob, the model will get automatically deployed to an endpoint on vertex ai upon the completion of the training job. Therefore we did not have a separate function for model deployment.
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 
