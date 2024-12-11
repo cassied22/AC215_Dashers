@@ -35,8 +35,7 @@ To run Machine Learning Pipelines on updates to the codebase, add the following 
 
 
 ## Data Processor:
-The data processor performs the 
-
+For data processing, we first downloaded the raw recipe data
 * Model Training and Deployment: Submits training jobs to Vertex AI to train models
 * Model Deploy: Updates trained models signature with preprocessing logic added to it. Upload model to Vertex AI Model Registry and Deploy model to Model Endpoints.
 * API Service: FastAPI service to expose APIs to the frontend.
