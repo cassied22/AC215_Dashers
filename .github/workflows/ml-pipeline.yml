@@ -23,13 +23,13 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        working-directory: src/ml-pipeline  # Change working directory to src/ml-pipeline
+        working-directory: src/ml-pipeline
         run: |
           docker build -t ml-pipeline --platform=linux/amd64 -f Dockerfile .
 
       # Run the Docker container
       - name: Run Data Processor
-        working-directory: src/ml-pipeline  # Change working directory to src/ml-pipeline
+        working-directory: src/ml-pipeline
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           GCS_SERVICE_ACCOUNT: ${{ secrets.GCS_SERVICE_ACCOUNT }}
@@ -42,7 +42,7 @@ jobs:
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v "$PWD":/app \
           -v "$GITHUB_WORKSPACE/secrets":/secrets \
-          -e GOOGLE_APPLICATION_CREDENTIALS=/ ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} \
+          -e GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} \
           -e GCS_SERVICE_ACCOUNT=${{ secrets.GCS_SERVICE_ACCOUNT }} \
           -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
           -e GCP_ZONE=us-central1-a \
