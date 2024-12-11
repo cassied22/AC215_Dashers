@@ -14,11 +14,9 @@ RUN set -ex; \
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt .
+# Install python packages
+ADD --chown=app:app Pipfile Pipfile.lock /app/
 
-# Install the Python dependencies
-RUN pipenv install -r requirements.txt
 RUN pipenv sync
 
 # Copy the current directory contents into the container

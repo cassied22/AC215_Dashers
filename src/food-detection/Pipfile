@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-openai = "*"
-requests = "*"
-google-generativeai = "*"
-pytest-cov = "*"
+openai = "1.57.2"
+requests = "2.32.3"
+google-generativeai = "0.8.3"
+pytest-cov = "6.0.0"
 
 [dev-packages]
+pytest = "8.3.4"
 
 [requires]
 python_version = "3.9"
