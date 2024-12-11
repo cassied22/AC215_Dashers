@@ -17,17 +17,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Docker
+      # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
       # Build Docker image
       - name: Build Docker image
+        working-directory: src/ml-pipeline  # Change working directory to src/ml-pipeline
         run: |
           docker build -t ml-pipeline --platform=linux/amd64 -f Dockerfile .
 
       # Run the Docker container
       - name: Run Data Processor
+        working-directory: src/ml-pipeline  # Change working directory to src/ml-pipeline
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
           GCS_SERVICE_ACCOUNT: ${{ secrets.GCS_SERVICE_ACCOUNT }}
@@ -46,4 +48,4 @@ jobs:
           -e GCP_ZONE=us-central1-a \
           -e GCP_REGION=us-central1 \
           -e GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }} \
-          ml-pipeline python cli.py --data-processor
+          ml-pipeline python cli.py --model_training

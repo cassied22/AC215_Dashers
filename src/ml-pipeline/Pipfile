@@ -12,4 +12,10 @@ google-cloud-storage = "*"
 google-generativeai = "*"
 google-cloud-aiplatform = ">=1.38"
 kfp = "*"
-pan
+pandas = "*"
+scikit-learn = "*"
+
+[requires]
+python_version = "3.9"
+
+
