@@ -29,13 +29,26 @@ docker build -t gcr.io/brilliant-lens-421801/vector-db --platform=linux/amd64 -f
 docker push gcr.io/brilliant-lens-421801/vector-db
 ```
 
+# Useful shell scipts and commands
 ```sh
 # View GCR Containers
 gcloud container images list --repository=gcr.io/brilliant-lens-421801
 gcloud container images list-tags gcr.io/brilliant-lens-421801/daily-meal-frontend-react
 gcloud container images garbage-collect --repository=gcr.io/brilliant-lens-421801
-```
 
-```sh
+# ansible playbook for registering docker images on GCR
 ansible-playbook register-docker-images.yml -i inventory.yml
+
+# Activate service account
+gcloud auth activate-service-account [ACCOUNT] --key-file=KEY_FILE 
+gcloud auth activate-service-account --key-file="gcp-service-cassie.json"
+
+# Add IAM policy binding
+gcloud projects add-iam-policy-binding angular-harmony-434717-n1 \
+    --member="serviceAccount:gcp-service@angular-harmony-434717-n1.iam.gserviceaccount.com" \
+    --role="roles/artifactregistry.reader"
+
+# View VM instances
+gcloud compute instances list
+gcloud compute ssh --project=brilliant-lens-421801 --zone=us-central1-a daily-meal-instance
 ```
