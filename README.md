@@ -157,32 +157,19 @@ on every pull request or merge to the main branch. It includes the following key
 
 #### Unit Tests: 
 We write unit tests for all the Python scripts in our repo, including the source code for each component(container) and the scripts to deploy API endpoints. 
-##### datapipeline
-  - **tests/datapipeline/test_cli_rag.py**: Tests all the functions in **src/datapipeline/cli_rag.py**. 
-##### food-detection
-  - **tests/food-detection/test_gemini_object_detection.py**: Tests all the functions in **src/food-detection/gemini_object_detection.py**.
-  - **tests/food-detection/test_gpt_object_detection.py**: Tests all the functions in **src/food-detection/gpt_object_detection.py**.
-##### ml-pipeline   
-  - **tests/ml-pipeline/**: There are 4 test scripts in this folder, corresponding to each Python script in the **src/ml-pipeline**
-##### api-service 
-  - **tests/api-service/**: There are 9 test scripts in this folder, corresponding to each Python script in the **src/api-service/api**
+We achieved code coverage of over 90% on unit test based on the coverage report below.
 
-    We achieved code coverage of over 90% on unit test based on the coverage report below.
-
-    <img src="images/coverage_datapipeline.jpg" width="500">
-    <img src="images/coverage_food.jpg" width="500">
-    <img src="images/coverage_ml.jpg" width="500">
-    <img src="images/coverage_api.jpg" width="500">
+<img src="images/coverage_datapipeline.jpg" width="500">
+<img src="images/coverage_food.jpg" width="500">
+<img src="images/coverage_ml.jpg" width="500">
+<img src="images/coverage_api.jpg" width="500">
 
 #### Integration Tests:
-  - **tests/integration/test_api_service.py**: test the functionality of each API endpoint
-  - **tests/integration/test_api_service::test_full_workflow**: verify the interaction and integration between different application components
-    
-    <img src="images/coverage_integration.png">
-#### System Tests:
-  - **tests/integration/test_front_end.py**: verify end-to-end user interaction in web browser. 
 
-    <img src="images/coverage_system.png">
+<img src="images/coverage_integration.png">
+#### System Tests:
+
+<img src="images/coverage_system.png">
 
 For detailed documentation on our CI/CD and testing, please refer to [Testing Documentation](src/tests/README.md)
 
