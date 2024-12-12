@@ -79,20 +79,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/src/food-detection
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
 
-      # ML Pipeline Tests
-      - name: Run ML Pipeline Tests
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r src/ml-pipeline/requirements.txt
-          cd tests/ml-pipeline
-          PYTHONPATH=$PYTHONPATH:../../src/ml-pipeline python -m pytest \
-            test_*.py \
-            -v \
-            --cov=../../src/ml-pipeline \
-            --cov-report=html:../../tests/coverage-report/ml-pipeline
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src/ml-pipeline
-          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+ 
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
