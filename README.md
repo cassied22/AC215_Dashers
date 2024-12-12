@@ -161,7 +161,7 @@ We have developed a production-ready machine learning workflow including the fol
 
 #### Docker Containers
 
-- [API Service](src/api-service): this container implementations related to the api services
+- [API Service](src/api-service): this container includes implementations related to the api services
 - [Data Versioning](src/data-versioning): this container serves the data version controls functionality.
 - [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe.
 - [deployment](src/deployment): this container is responsible for deployment of our application. 
