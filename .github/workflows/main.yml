@@ -27,6 +27,9 @@ jobs:
   unit-tests:
     needs: lint
     runs-on: ubuntu-latest
+    env:
+      CHROMADB_HOST: recipe-rag-chromadb
+      CHROMADB_PORT: 8000
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -45,9 +48,13 @@ jobs:
       # Setup environment file
       - name: Create environment file
         run: |
-          echo "GCP_PROJECT=${{ secrets.GCP_PROJECT }}" > .env
-          echo "GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}" >> .env
-          echo "GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/credentials.json" >> .env
+          cat << EOF > .env
+          GCP_PROJECT=${{ secrets.GCP_PROJECT }}
+          GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
+          GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/credentials.json
+          CHROMADB_HOST=recipe-rag-chromadb
+          CHROMADB_PORT=8000
+          EOF
       
       # API Service Tests
       - name: Run API Service Tests
@@ -58,6 +65,7 @@ jobs:
           docker build -t api-service-tests -f Dockerfile .
           docker run --rm \
             --env-file ../../.env \
+            --network recipe-rag-network \
             -v $(pwd)/secrets:/app/secrets:ro \
             api-service-tests pytest \
               --cov=. \
@@ -73,6 +81,7 @@ jobs:
           docker build -t datapipeline-tests -f Dockerfile .
           docker run --rm \
             --env-file ../../.env \
+            --network recipe-rag-network \
             -v $(pwd)/secrets:/app/secrets:ro \
             datapipeline-tests pytest \
               --cov=. \
@@ -88,6 +97,7 @@ jobs:
           docker build -t food-detection-tests -f Dockerfile .
           docker run --rm \
             --env-file ../../.env \
+            --network recipe-rag-network \
             -v $(pwd)/secrets:/app/secrets:ro \
             food-detection-tests pytest \
               --cov=. \
@@ -103,6 +113,7 @@ jobs:
           docker build -t ml-pipeline-tests -f Dockerfile .
           docker run --rm \
             --env-file ../../.env \
+            --network recipe-rag-network \
             -v $(pwd)/secrets:/app/secrets:ro \
             ml-pipeline-tests pytest \
               --cov=. \
@@ -118,6 +129,9 @@ jobs:
   integration-tests:
     needs: unit-tests
     runs-on: ubuntu-latest
+    env:
+      CHROMADB_HOST: recipe-rag-chromadb
+      CHROMADB_PORT: 8000
     steps:
       - uses: actions/checkout@v2
       - name: Create Docker Network
