@@ -131,13 +131,23 @@ class TestAPIService:
         assert "results" in data["messages"][1], "Expected 'results' in the gpt message"
         return data["chat_id"], data["messages"][0]["message_id"]
     
-    def test_youtube(recipe_name):
-        recipe_name = "chocolate chip cookies"
-        payload = {
-            "recipe_name": recipe_name
-        }
-        response = make_request("GET", "/youtube", data=payload)
-        assert response.status == 200, f"Failed at endpoint /youtube with status {response.status}"
+    def test_search_youtube(self):
+        endpoint = "/youtube/"
+        recipe_name = "beef"
+        query = f"{endpoint}?recipe_name={recipe_name}"
+        
+        response = make_request("GET", query)
+        assert response.status == 200, f"Failed at endpoint {endpoint} with status {response.status}"
         
         data = json.loads(response.read())
-        assert len(data['videos']) > 0
+        assert isinstance(data, dict), "Expected response to be a dictionary"
+        assert "videos" in data, "Expected 'videos' key in the response"
+        assert isinstance(data["videos"], list), "Expected 'videos' to be a list"
+        assert len(data["videos"]) > 0, "Expected at least one video in the 'videos' list"
+        
+        for video in data["videos"]:
+            assert "name" in video, "Each video should have a 'name' key"
+            assert "url" in video, "Each video should have a 'url' key"
+            assert isinstance(video["name"], str) and video["name"], "Video 'name' should be a non-empty string"
+            assert isinstance(video["url"], str) and video["url"].startswith("http"), "Video 'url' should be a valid URL"
+
