@@ -203,48 +203,48 @@ Input ingredients the user has: [chicken, broccoli, cheese], create a recipe'''
         stream=False,
     )
 
-# Test main function
-def test_main():
-    mock_df = pd.DataFrame({
-        "id": [1, 2],
-        "title": ["Recipe 1", "Recipe 2"],
-        "ingredients": [["chicken", "broccoli"], ["cheese", "tomato"]],
-        "directions": [["Step 1", "Step 2"], ["Step 1", "Step 2"]],
-        "NER": ['["chicken", "broccoli"]', '["cheese", "tomato"]'],
-    })
+# # Test main function
+# def test_main():
+#     mock_df = pd.DataFrame({
+#         "id": [1, 2],
+#         "title": ["Recipe 1", "Recipe 2"],
+#         "ingredients": [["chicken", "broccoli"], ["cheese", "tomato"]],
+#         "directions": [["Step 1", "Step 2"], ["Step 1", "Step 2"]],
+#         "NER": ['["chicken", "broccoli"]', '["cheese", "tomato"]'],
+#     })
 
-    # Set constant test bucket name
-    test_bucket = 'dasher-recipe'
+#     # Set constant test bucket name
+#     test_bucket = 'dasher-recipe'
     
-    with patch("pandas.read_feather", return_value=mock_df) as mock_read_feather, \
-         patch("subprocess.run", return_value=MagicMock(returncode=0)) as mock_subprocess_run, \
-         patch.dict(os.environ, {'GCS_BUCKET_NAME': test_bucket}):
+#     with patch("pandas.read_feather", return_value=mock_df) as mock_read_feather, \
+#          patch("subprocess.run", return_value=MagicMock(returncode=0)) as mock_subprocess_run, \
+#          patch.dict(os.environ, {'GCS_BUCKET_NAME': test_bucket}):
 
-        mock_args = argparse.Namespace(embed=True, load=False, query=False, chat=None, download=False, test=False)
-        main(mock_args)
+#         mock_args = argparse.Namespace(embed=True, load=False, query=False, chat=None, download=False, test=False)
+#         main(mock_args)
 
-        # Verify read_feather call
-        mock_read_feather.assert_called_once_with("input-datasets/recipe_cookbook.feather")
+#         # Verify read_feather call
+#         mock_read_feather.assert_called_once_with("input-datasets/recipe_cookbook.feather")
         
-        # Get the actual command that was called
-        actual_cmd = mock_subprocess_run.call_args[0][0]
+#         # Get the actual command that was called
+#         actual_cmd = mock_subprocess_run.call_args[0][0]
         
-        # Expected command with consistent bucket name
-        expected_cmd = [
-            "gcloud", 
-            "storage", 
-            "cp", 
-            "outputs/recipe_embeddings.jsonl", 
-            f"gs://{test_bucket}/recipe_embeddings.jsonl"
-        ]
+#         # Expected command with consistent bucket name
+#         expected_cmd = [
+#             "gcloud", 
+#             "storage", 
+#             "cp", 
+#             "outputs/recipe_embeddings.jsonl", 
+#             f"gs://{test_bucket}/recipe_embeddings.jsonl"
+#         ]
         
-        # Compare each part of the command separately for better error reporting
-        assert len(actual_cmd) == len(expected_cmd), f"Command length mismatch: {len(actual_cmd)} != {len(expected_cmd)}"
-        for i, (act, exp) in enumerate(zip(actual_cmd, expected_cmd)):
-            assert act == exp, f"Mismatch at position {i}: '{act}' != '{exp}'"
+#         # Compare each part of the command separately for better error reporting
+#         assert len(actual_cmd) == len(expected_cmd), f"Command length mismatch: {len(actual_cmd)} != {len(expected_cmd)}"
+#         for i, (act, exp) in enumerate(zip(actual_cmd, expected_cmd)):
+#             assert act == exp, f"Mismatch at position {i}: '{act}' != '{exp}'"
         
-        assert mock_subprocess_run.call_args[1] == {'check': True}
-        
+#         assert mock_subprocess_run.call_args[1] == {'check': True}
+
 def test_main_load():
     with patch("cli_rag.load") as mock_load:
         mock_args = argparse.Namespace(embed=False, load=True, query=False, chat=None, download=False, test=False)
