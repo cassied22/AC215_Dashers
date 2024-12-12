@@ -83,19 +83,22 @@ jobs:
       - name: Run ML Pipeline Tests
         run: |
           cd src/ml-pipeline
-          # Install pipenv if not already installed
-          pip install pipenv
-          # Install dependencies from Pipfile
-          pipenv install --dev
-          # Run tests with coverage
-          PYTHONPATH=$PYTHONPATH:../../src/ml-pipeline pipenv run pytest \
-            ../../tests/ml-pipeline/test_*.py \
-            -v \
-            --cov=. \
-            --cov-report=xml:../../coverage_reports/ml-pipeline-coverage.xml
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src/ml-pipeline
-          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          docker build -t ml-pipeline-tests -f Dockerfile .
+          docker run --rm \
+            -v "$(pwd)":/app \
+            -v "$(pwd)/../secrets":/secrets \
+            -v "$(pwd)/../../tests/ml-pipeline":/app/tests \
+            -v "$(pwd)/../../coverage_reports":/coverage_reports \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-cassie.json \
+            -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
+            -e PYTHONPATH=/app \
+            ml-pipeline-tests \
+            pipenv run pytest \
+              tests/test_*.py \
+              -v \
+              --cov=. \
+              --cov-report=xml:/coverage_reports/ml-pipeline-coverage.xml
+
  
 
       - name: Upload coverage reports
