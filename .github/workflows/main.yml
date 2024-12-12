@@ -89,8 +89,9 @@ jobs:
             -e DEV=1 \
             -e CI=true \
             -e PYTHONPATH=/app \
+            -w /app \
             daily-meal-api-service \
-            bash -c "cd /app && pipenv run pytest tests/"
+            pipenv run pytest tests/ -p no:warnings --disable-warnings
 
       # Cleanup ChromaDB
       - name: Cleanup ChromaDB
