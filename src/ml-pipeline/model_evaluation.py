@@ -15,39 +15,6 @@ GENERATION_CONFIG = GenerationConfig(
     temperature=0.75,
     top_p=0.95,
 )
-# def chat():
-#     print("chat()")
-#     # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
-#     #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
-#     #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
-#     # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048" # Finetuned model
-
-#         # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/9072590509779714048" # Finetuned model
-#     # MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/2727018634814685184"
-#     # MODEL_ENDPOINT ="projects/978082269307/locations/us-central1/endpoints/8362147668562018304"
-#     MODEL_ENDPOINT = "projects/978082269307/locations/us-central1/endpoints/2539828979209076736"
-#     print(MODEL_ENDPOINT)
-    
-#     generative_model = GenerativeModel(MODEL_ENDPOINT)
-
-#     query = """Can you give me a recipe using these ingredients: [""margarine"", ""white sugar"", ""brown sugar"", ""chunky peanut butter"", ""vanilla"", ""eggs"", ""oats"", ""soda"", ""chocolate chips""]?"""
-#     print("query: ",query)
-#     response = generative_model.generate_content(
-#         [query],  # Input prompt
-#         generation_config=GENERATION_CONFIG,  # Configuration settings
-#         stream=False,  # Enable streaming for responses
-#     )
-#     generated_text = response.text
-#     print("Fine-tuned LLM Response:", generated_text)
-     
-
-# def main(args=None):
-#     print("CLI Arguments:", args)
-#     if args.train:
-#         train()
-    
-#     if args.chat:
-#         chat()
 
 # Function to extract ingredients based on the corrected pattern
 def extract_ingredients_corrected(question):
