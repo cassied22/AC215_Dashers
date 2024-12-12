@@ -175,21 +175,6 @@ Essentially, there are 2 components in our App:
 More components (chat history) will be finalized in the next milestone.
 
 
-Here are some screenshots of our app:
-The start of the page: click on "Get Started" to go to the image upload page.
-<img src="images/frontend/1.png"  width="800">
-Upload image here:
-<img src="images/frontend/2.png"  width="800">
-<img src="images/frontend/3.png"  width="800">
-See the results here:
-<img src="images/frontend/4.png"  width="800">
-Get recipe in the chat box page:
-<img src="images/frontend/5.png"  width="800">
-See the sample recipies and detail use of ingredients:
-<img src="images/frontend/6.png"  width="800">
-<img src="images/frontend/7.png"  width="800">
-Continue chatting with the AI for additional requirements:
-<img src="images/frontend/8.png"  width="800">
 
 **CI and Test**
 
@@ -233,8 +218,6 @@ Our project aims to maintain a minimum code coverage of 50%. The coverage report
 <img width="795" alt="test1" src="images/coverage1.png">
 <img width="787" alt="test2" src="images/coverage2.png">
 
-
-
 ##### Run Tests Manually
 1. Ensure that you have Python installed on your system.
 2. Clone the project repository
@@ -243,6 +226,9 @@ Our project aims to maintain a minimum code coverage of 50%. The coverage report
 4. To generate a coverage report, type the following command:
    ```pytest --cov=src/ --cov-report=html <YOUR PATH TO THE TEST FILE>```
     This will run the tests and generate an HTML coverage report. You can view the generated html coverage report in a web browser.
+
+## Machine Learning Workflow
+We have developed a production-ready machine learning workflow including the following components: Data Processor, Model Training/Evaluation and Model Evaluation. We have also set up a CI/CD pipeline to trigger automated data processing, model retraining, and pipeline running. For detailed documentation on our machine learning workflow, please refer to [ML Documentation](src/ml-pipeline/README.md)
 
 ## Prerequistes and Setup Instructions
 ### Build Recipe Vector Database
@@ -292,10 +278,97 @@ npm run dev
 TODO
 
 ## Usage details and examples
-TODO
+We have deployed our application at http://35.188.13.243/ for all users to try out. 
+
+To run the application locally, please refer to the Prerequisites and Setup Instructions above.
+
+Our application offers a smart solution for daily meal planning from a single image. Key features include:
+
+- Ingredients Detection: Automatically identify ingredients in the uploaded image.
+- Recipe Generation: Generate personalized recipes based on detected ingredients.
+- Interactive AI Chat Agent: Allow user to refine and customize generated recipes through an intuitive chat interface with our AI agent.
+- Video Demonstration: Provide users with option to watch step-by-step video instructions for cooking the generated recipes.
+- Restaurant Search: Allow users to search for nearby restaurants instead if they are not in the mood to cook.
+
+Our platform is designed to streamline the cooking experience, whether users are looking to create a meal from scratch or dine out conveniently.
+
+### Example Usage:
+
+#### Example 1: The start of the page: click on "Get Started" to go to the image upload page.
+
+<img src="images/usage/1.png">
+
+Upload an image of a refridgerator filled with raw ingredients:
+<img src="images/usage/2.png">
+<img src="images/usage/3.png">
+
+See the list of detected results here. We have two AI assistants to choose from: the LLM without RAG and LLM with RAG; this time we can try the LLM without RAG, click on the "AI Assistant(LLM)" and proceed:
+
+<img src="images/usage/4.png">
+
+get recipe in the chat box page, check the generated recipe and detail use of ingredients:
+<img src="images/usage/5.png">
+
+Click on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe (you can always click reload below to get more search results):
+
+<img src="images/usage/6.png">
+
+Click on the first search result link, and watch the video on youtube about how to make your dish: 
+
+<img src="images/usage/7.png">
+
+Example 2: The start of the page: click on "Get Started" to go to the image upload page.
+
+<img src="images/usage2/1.png">
+
+Upload an image of a dish to learn the ingredients and how to cook it:
+
+<img src="images/usage2/2.png">
+<img src="images/usage2/3.png">
+See the identified ingredients here and click on the AI assistant to proceed:
+
+Get recipe in the chat box page, check the generated recipe and detail use of ingredients:
+
+<img src="images/usage2/4.png">
+
+Continue chatting with the AI assistant to refine the recipe based on your personal preference:
+
+<img src="images/usage2/5.png">
+<img src="images/usage2/6.png">
+
+
+If you do not feel like cooking yourself, click on the Dine Out Button at the bottom of the chat page and you will be able search for restaurants on Google Map as below 
+<img src="images/usage2/7.png">
+
+
 
 ## Known issues and limitations
-TODO
+Here are a few limitations we've identified in the current version of our application:
+ 1. Geolocation Restrictions: The deployed public website currently cannot directly retrieve the user's real-time location when using the Google Maps function. However, running the application locally enables accurate location retrieval.
+ 2. RAG LLM Flexibility: We've observed that the RAG-empowered LLM can sometimes be less flexible due to its reliance on a specific database. To address this, we plan to implement customized databases for each user to enhance the accuracy and relevance of RAG-based suggestions in the future.
+ 3. User Preference Profiling: While we track user preferences to some extent through chat history, we haven't yet implemented a comprehensive system to build a holistic preference profile for each user at the start of a new chat. This can lead to less ideal initial recipe suggestions, requiring more interaction between the user and the AI assistant to refine the recommendations.
+
+
+## Docker Containers 
+- [API Service](src/api-service): this container implementations related to the api services
+- [Data Versioning](src/data-versioning): this container serves the data version controls functionality.
+- [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe.
+- [deployment](src/deployment): this container is responsible for deployment of our application. 
+- [food-detection](src/food-detection): this container contains implementation for food detection functionality.
+- [frontend_react](src/frontend_react): this container contains frontend implementations.
+- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow 
+
+<hr style="height:2px;border-width:0;color:gray;background-color:gray">
+Run docker container by 
+
+```cd src/...```
+
+```chmod +x docker-shell.s```
+
+```sh docker-shell.sh```
+
+<hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
 
 ----
 
