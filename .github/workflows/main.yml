@@ -45,6 +45,10 @@ jobs:
       - name: Configure Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
       
+      # Create Docker network
+      - name: Create Docker network
+        run: docker network create recipe-rag-network || true
+      
       # Setup environment file
       - name: Create environment file
         run: |
@@ -55,6 +59,15 @@ jobs:
           CHROMADB_HOST=recipe-rag-chromadb
           CHROMADB_PORT=8000
           EOF
+      
+      # Start ChromaDB container
+      - name: Start ChromaDB
+        run: |
+          docker run -d \
+            --name recipe-rag-chromadb \
+            --network recipe-rag-network \
+            -p 8000:8000 \
+            chromadb/chroma:latest
       
       # API Service Tests
       - name: Run API Service Tests
@@ -119,6 +132,14 @@ jobs:
               --cov=. \
               --cov-report=xml:/coverage/coverage.xml \
               ../tests/ml-pipeline/
+
+      # Cleanup
+      - name: Cleanup Docker resources
+        if: always()
+        run: |
+          docker stop recipe-rag-chromadb || true
+          docker rm recipe-rag-chromadb || true
+          docker network rm recipe-rag-network || true
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
