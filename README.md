@@ -154,6 +154,29 @@ We have a functioning CI pipeline implemented using GitHub Actions that:
 - achieves test coverage over 90% of the lines 
   
 on every pull request or merge to the main branch. It includes the following key components:
+<img src="images/ci_overview.png" width="500">
+#### Code Build and Linting
+The CI pipeline incorporates an automated build process and code quality checks using linting tools. The specific tools used are:
+- Flake8: A Python linting tool that checks for code style and potential errors.
+The linting process ensures that the codebase adheres to consistent coding standards and identifies any potential issues or violations.
+<img src="images/ci_lint.png" width="500">
+
+#### Automated Testing
+The specific testing frameworks and tools used are:
+
+- pytest: A powerful and flexible testing framework for Python.
+
+The tests are organized into separate directories based on their type:
+
+- Unit tests: Testing the functionality of each component in isolation
+  - tests/datapipeline
+  - tests/food-detection
+  - tests/ml-pipeline
+  - tests/api-service
+<img src="images/ci_unittests.png" width="500">
+- Integration(System) test: Testing the interaction between different components
+  - tests/integration
+<img src="images/ci_integration.png" width="500">
 
 #### Unit Tests: 
 We write unit tests for all the Python scripts in our repo, including the source code for each component(container) and the scripts to deploy API endpoints. 
