@@ -167,19 +167,12 @@ We have developed a production-ready machine learning workflow including the fol
 - [deployment](src/deployment): this container is responsible for deployment of our application. 
 - [food-detection](src/food-detection): this container contains implementation for food detection functionality.
 - [frontend_react](src/frontend_react): this container contains frontend implementations.
-- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow 
+- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow
 
-<hr style="height:2px;border-width:0;color:gray;background-color:gray">
-Run docker container by 
-
-```cd src/...```
-
-```chmod +x docker-shell.s```
-
-```sh docker-shell.sh```
-
-<hr style="height:2px;border-width:0;color:gray;background-color:gray">
-
+```bash
+cd src/...
+sh docker-shell.sh
+```
 
 #### Notebooks/Reports
 
