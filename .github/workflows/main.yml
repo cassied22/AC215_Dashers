@@ -46,7 +46,7 @@ jobs:
       - name: Run API Service Tests
         run: |
           cd src/api-service
-          docker build -t api-service-tests -f Dockerfile.test .
+          docker build -t api-service-tests -f Dockerfile .
           docker run --rm api-service-tests pytest \
             --cov=. \
             --cov-report=xml:/coverage/coverage.xml \
@@ -56,7 +56,7 @@ jobs:
       - name: Run Data Pipeline Tests
         run: |
           cd src/datapipeline
-          docker build -t datapipeline-tests -f Dockerfile.test .
+          docker build -t datapipeline-tests -f Dockerfile .
           docker run --rm datapipeline-tests pytest \
             --cov=. \
             --cov-report=xml:/coverage/coverage.xml \
@@ -66,7 +66,7 @@ jobs:
       - name: Run Food Detection Tests
         run: |
           cd src/food-detection
-          docker build -t food-detection-tests -f Dockerfile.test .
+          docker build -t food-detection-tests -f Dockerfile .
           docker run --rm food-detection-tests pytest \
             --cov=. \
             --cov-report=xml:/coverage/coverage.xml \
@@ -76,7 +76,7 @@ jobs:
       - name: Run ML Pipeline Tests
         run: |
           cd src/ml-pipeline
-          docker build -t ml-pipeline-tests -f Dockerfile.test .
+          docker build -t ml-pipeline-tests -f Dockerfile .
           docker run --rm ml-pipeline-tests pytest \
             --cov=. \
             --cov-report=xml:/coverage/coverage.xml \
