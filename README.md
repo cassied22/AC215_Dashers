@@ -169,6 +169,7 @@ We have developed a production-ready machine learning workflow including the fol
 - [frontend_react](src/frontend_react): this container contains frontend implementations.
 - [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow
 
+Instructions for running dockers above locally:
 ```bash
 cd src/...
 sh docker-shell.sh
