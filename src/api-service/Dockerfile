@@ -9,12 +9,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Python wants UTF-8 locale
 ENV LANG=C.UTF-8
 
-# Tell pipenv where the shell is. This allows us to use "pipenv shell" as a
-# container entry point.
+# Tell pipenv where the shell is
 ENV PYENV_SHELL=/bin/bash
 
 # Tell Python to disable buffering so we don't lose any logs.
 ENV PYTHONUNBUFFERED=1
+
+# Add CI environment variable (defaults to false)
+ENV CI=false
+
+# Add DEV environment variable (defaults to 0)
+ENV DEV=0
 
 # Ensure we have an up to date baseline, install dependencies and
 # create a user so we don't run the app as root
@@ -30,9 +35,10 @@ RUN set -ex; \
     useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
     mkdir -p /app && \
     mkdir -p /persistent && \
+    mkdir -p /app/.pytest_cache && \
     chown app:app /persistent && \
-    chown app:app /app
-
+    chown -R app:app /app && \
+    chmod -R 777 /app/.pytest_cache
 
 # Switch to the new user
 USER app
@@ -41,11 +47,14 @@ WORKDIR /app
 # Install python packages
 ADD --chown=app:app Pipfile Pipfile.lock /app/
 
-RUN pipenv sync
+# Install both default and development dependencies
+RUN pipenv sync --dev
 
-# Add the rest of the source code. This is done last so we don't invalidate all
-# layers when we change a line of code.
+# Add the rest of the source code
 ADD --chown=app:app . /app
+
+# Make sure the entrypoint script is executable
+RUN chmod +x /app/docker-entrypoint.sh
 
 # Entry point
 ENTRYPOINT ["/bin/bash","./docker-entrypoint.sh"]

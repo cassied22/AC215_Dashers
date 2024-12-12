@@ -21,8 +21,13 @@ The following commands are available:
 \033[0m
 "
 
-if [ "${DEV}" = 1 ]; then
-  pipenv shell
+if [ "${CI}" = "true" ]; then
+    # In CI environment, just run the tests directly
+    pipenv run python -m pytest "$@"
+elif [ "${DEV}" = 1 ]; then
+    # In development environment, start shell
+    pipenv shell
 else
-  uvicorn_server_production
+    # In production environment, start server
+    uvicorn_server_production
 fi
