@@ -103,7 +103,7 @@ get recipe in the chat box page, check the generated recipe and detail use of in
 <img src="images/usage/5.png">
 
 Click on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe:
-<img src="images/usage/5.5.png.png">
+<img src="images/usage/5.5.png">
 
 You can always click reload below to get different search results:
 <img src="images/usage/6.png">
