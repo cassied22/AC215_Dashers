@@ -154,11 +154,12 @@ We have a functioning CI pipeline implemented using GitHub Actions that:
 - achieves test coverage over 90% of the lines 
   
 on every pull request or merge to the main branch.
+
 <img src="images/ci_overview.png" width="500">
 
 #### Unit Tests: 
 We write unit tests for all the Python scripts in our repo, including the source code for each component(container) and the scripts to deploy API endpoints. 
-We achieved code coverage of over 90% on unit test based on the coverage report below.
+We achieved code coverage of **over 90%** on unit test based on the coverage report below.
 
 <img src="images/coverage_datapipeline.jpg" width="500">
 <img src="images/coverage_food.jpg" width="500">
