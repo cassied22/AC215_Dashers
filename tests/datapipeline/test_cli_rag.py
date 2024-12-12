@@ -156,7 +156,7 @@ def test_download(mock_subprocess_run, mock_path_exists, mock_makedirs):
             "storage",
             "cp",
             "-r",
-            "gs:////dasher-recipe//recipe_embeddings.jsonl",
+            "gs://dasher-recipe/recipe_embeddings.jsonl",
             "outputs/recipe_embeddings.jsonl",
         ]
         mock_subprocess_run.assert_called_once_with(expected_cmd, check=True)
