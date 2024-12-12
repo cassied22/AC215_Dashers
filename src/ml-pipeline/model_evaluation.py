@@ -58,9 +58,9 @@ def comupute_valid_pair_percentages(data, threshold=25):
 
 def get_valid_percentages(data):
     # Given data consisting of question/answer pair, calculate the pertentage of valid receipes generated  
-    # valid recipes are defined by the recipe which contains more than 25% of ingrendients mentioned in the prompt
-    data.loc[:, 'ingredients'] = data['question'].apply(extract_ingredients_corrected)
-    data.loc[:, 'match_percentage'] = data.apply(lambda row: calculate_ingredient_match(row['question'], row['answer']), axis=1)
+    # valid recipes are defined by the recipe which contains more than 50% of ingrendients mentioned in the prompt
+    data['ingredients'] = data['question'].apply(extract_ingredients_corrected)
+    data['match_percentage'] = data.apply(lambda row: calculate_ingredient_match(row['question'], row['answer']), axis=1)
     return comupute_valid_pair_percentages(data)
 
 
