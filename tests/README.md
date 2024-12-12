@@ -22,7 +22,7 @@ The tests are organized into separate directories based on their type:
   - tests/integration
 
 ### Unit Tests: 
-We write unit tests for all the Python scripts in our repo, including the source code for each component and the scripts to deloy API endpoints. 
+We write unit tests for all the Python scripts in our repo, including the source code for each component(container) and the scripts to deploy API endpoints. 
 #### datapipeline
   - **tests/datapipeline/test_cli_rag.py**: Tests all the functions in **src/datapipeline/cli_rag.py**. It validates the functionality of a CLI-based recipe recommendation system by mocking external dependencies and ensuring correct behavior for core operations like embedding generation, data loading, querying, chatting, downloading, and argument parsing.
 #### food-detection
@@ -49,14 +49,17 @@ We write unit tests for all the Python scripts in our repo, including the source
     <img src="../images/coverage_ml.jpg" width="500">
     <img src="../images/coverage_api.jpg" width="500">
 
-### Integration Tests(System Tests):
-  - The integration(system) tests environment is defined in the docker-compose.yml file in the tests/integration directory. Since our integration and system tests use the same environment, we put them both into the same file **tests/integration/test_api_service.py**. In this integrated environment, the container for recipe-rag-cli, chromadb, api-service, and food-detection service will all be run.
-  - For the integration test, we test the functionality of each API endpoint by checking the response code when calling these APIs using our mock input.
-  - For the system test, in **tests/integration/test_api_service::test_full_workflow**, we verify the interaction and integration between different application components by simulating a complete API calling workflow for users uploading images, getting text responses from LLM, chatting with LLM, and getting video search results from Youtube.
+### Integration Tests:
+  - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory. In this integrated environment, the container for recipe-rag-cli, chromadb, api-service, and food-detection service will all be run.
+  - For the integration test, in **tests/integration/test_api_service.py**, we test the functionality of each API endpoint by checking the response code when calling these APIs using our mock input. Also, in **tests/integration/test_api_service::test_full_workflow**, we verify the interaction and integration between different application components by simulating a complete backend API calling workflow for users uploading images, getting text responses from LLM, chatting with LLM, and getting video search results from Youtube.
   - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run. 
 
     <img src="../images/coverage_integration.png">
+### System Tests:
+  - We also have a system test, in **tests/integration/test_front_end,py**, to verify end-to-end user interaction in web browser. To run it locally, you need to follow the setup instructions from the root page [README.md](../README.md#prerequistes-and-setup-instructions) to start the API server, install Selenium through ```pip install selenium``` and run ```pytest test_front_end.py``` to trigger the testing Chrome browser.
+  - The test automates a browser-based workflow to validate the UI and functionality of our app. It covers image upload with preview and table validation, starting a chat to process detected items and verify chatbot responses, and initiating a YouTube search to ensure results are displayed in a table.
 
+    <img src="../images/coverage_system.png">
 
 ### Run Tests Manually
 1. Clone the project repository
