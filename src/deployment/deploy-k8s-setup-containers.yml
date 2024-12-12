@@ -24,41 +24,84 @@
       var: tag
     when: cluster_state == "present"
 
-  - name: Importing GCP service account credentials as a Secret
-    shell: |
-      #!/bin/bash
-      kubectl create secret generic llm-service-key \
-        --from-file=llm-service.json=../secrets/llm-service-account-cassie.json \
-        --namespace="{{cluster_name}}-namespace"
+  - name: "Create/Update GCP service account credentials as a Secret"
+    k8s:
+      state: present
+      namespace: "{{cluster_name}}-namespace"
+      definition:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: llm-service-key
+        type: Opaque
+        data:
+          # Encode the file content to base64 and store it in the secret
+          llm-service.json: "{{ lookup('file', '../secrets/llm-service-account-cassie.json') | b64encode }}"
     register: create_gcp_secret_op
-    ignore_errors: yes
     when: cluster_state == "present"
-  
+
   - name: "Print Create GCP Secret Output"
     debug:
       var: create_gcp_secret_op
     when: cluster_state == "present"
 
-  - name: Importing OpenAI API key as a Secret
-    shell: |
-      #!/bin/bash
-      kubectl create secret generic openai-key \
-        --from-file=openai-key.json=../secrets/openai-key.json \
-        --namespace="{{cluster_name}}-namespace"
+  - name: "Create/Update OpenAI API key as a Secret"
+    k8s:
+      state: present
+      namespace: "{{cluster_name}}-namespace"
+      definition:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: openai-key
+        type: Opaque
+        data:
+          # Encode the file content to base64 and store it in the secret
+          openai-key.json: "{{ lookup('file', '../secrets/openai-key.json') | b64encode }}"
     register: create_openai_secret_op
-    ignore_errors: yes
     when: cluster_state == "present"
 
   - name: "Print Create OpenAI Secret Output"
     debug:
       var: create_openai_secret_op
     when: cluster_state == "present"
+
+
+  # - name: Importing GCP service account credentials as a Secret
+  #   shell: |
+  #     #!/bin/bash
+  #     kubectl create secret generic llm-service-key \
+  #       --from-file=llm-service.json=../secrets/llm-service-account-cassie.json \
+  #       --namespace="{{cluster_name}}-namespace"
+  #   register: create_gcp_secret_op
+  #   ignore_errors: yes
+  #   when: cluster_state == "present"
+  
+  # - name: "Print Create GCP Secret Output"
+  #   debug:
+  #     var: create_gcp_secret_op
+  #   when: cluster_state == "present"
+
+  # - name: Importing OpenAI API key as a Secret
+  #   shell: |
+  #     #!/bin/bash
+  #     kubectl create secret generic openai-key \
+  #       --from-file=openai-key.json=../secrets/openai-key.json \
+  #       --namespace="{{cluster_name}}-namespace"
+  #   register: create_openai_secret_op
+  #   ignore_errors: yes
+  #   when: cluster_state == "present"
+
+  # - name: "Print Create OpenAI Secret Output"
+  #   debug:
+  #     var: create_openai_secret_op
+  #   when: cluster_state == "present"
   
   - name: "Create Deployment for Frontend"
     k8s:
       state: present
       definition:
-        apiVersion: v1
+        apiVersion: apps/v1
         kind: Deployment
         metadata:
           name: frontend
@@ -85,22 +128,22 @@
     k8s:
       state: present
       definition:
-        apiVersion: v1
+        apiVersion: apps/v1
         kind: Deployment
         metadata:
-          name: vector-db
+          name: recipe-rag-chromadb
           namespace: "{{cluster_name}}-namespace"
         spec:
           selector:
             matchLabels:
-              run: vector-db
+              run: recipe-rag-chromadb
           template:
             metadata:
               labels:
-                run: vector-db
+                run: recipe-rag-chromadb
             spec:
               containers:
-              - name: vector-db
+              - name: recipe-rag-chromadb
                 image: chromadb/chroma:0.5.18
                 ports:
                 - containerPort: 8000
@@ -123,7 +166,7 @@
     k8s:
       state: present
       definition:
-        apiVersion: v1
+        apiVersion: apps/v1
         kind: Deployment
         metadata:
           name: api
@@ -160,7 +203,7 @@
                     mountPath: /secrets
                 env:
                   - name: GOOGLE_APPLICATION_CREDENTIALS
-                    value: /secrets/gcp-service.json
+                    value: /secrets/llm-service.json
                   - name: OPENAI_API_KEY
                     value: /secrets/openai-key.json
                   # - name: GCS_BUCKET_NAME
@@ -199,7 +242,7 @@
         apiVersion: v1
         kind: Service
         metadata:
-          name: vector-db
+          name: recipe-rag-chromadb
           namespace: "{{cluster_name}}-namespace"
         spec:
           ports:
@@ -207,7 +250,7 @@
             protocol: TCP
             targetPort: 8000
           selector:
-            run: vector-db
+            run: recipe-rag-chromadb
           type: NodePort
     when: cluster_state == "present"
 
@@ -230,7 +273,7 @@
     k8s:
       state: present
       definition:
-        apiVersion: v1
+        apiVersion: batch/v1
         kind: Job
         metadata:
           name: vector-db-loader
@@ -242,7 +285,7 @@
               - name: wait-for-chromadb
                 image: busybox:1.28
                 command: ['sh', '-c', 
-                  'until wget --spider -S http://vector-db:8000/api/v1/heartbeat 2>&1 | grep "HTTP/1.1 200"; 
+                  'until wget --spider -S http://recipe-rag-chromadb:8000/api/v1/heartbeat 2>&1 | grep "HTTP/1.1 200"; 
                   do echo "Waiting for ChromaDB..."; sleep 5; done;']
               containers:
               - name: vector-db-loader
@@ -255,7 +298,7 @@
                 - name: CHROMADB_PORT
                   value: "8000"
                 - name: GOOGLE_APPLICATION_CREDENTIALS
-                  value: "/secrets/llm-service-account-cassie.json"
+                  value: "/secrets/llm-service.json"
                 volumeMounts:
                 - name: google-cloud-key
                   mountPath: /secrets
@@ -271,7 +314,7 @@
     shell: |
       kubectl wait --for=condition=complete job/vector-db-loader -n {{cluster_name}}-namespace --timeout=600s
     register: wait_job_result
-    retries: 1
+    retries: 0
     delay: 60
     until: wait_job_result.rc == 0
     when: cluster_state == "present"

@@ -41,26 +41,34 @@ ansible-playbook deploy-k8s-setup-containers.yml -i inventory.yml --extra-vars c
 kubectl get all
 kubectl get all --all-namespaces
 kubectl get pods --all-namespaces
+kubectl get pods -n daily-meal-cluster-namespace
 kubectl get componentstatuses
 kubectl get nodes
+kubectl describe pod api-7687bf556d-pbw64 -n daily-meal-cluster-namespace
+
+
+wget -qO- http://api:9000/llm-food-detection/chats
+
 
 # Check the init container logs:
-kubectl logs -n cheese-app-cluster-namespace job/vector-db-loader -c wait-for-chromadb
+kubectl logs -n daily-mean-cluster-namespace job/vector-db-loader -c wait-for-chromadb
 
 # Check the main container logs:
-kubectl logs -n cheese-app-cluster-namespace job/vector-db-loader -c vector-db-loader
+kubectl logs -n daily-meal-cluster-namespace job/vector-db-loader -c vector-db-loader
+kubectl logs -n daily-meal-cluster-namespace pod/api-7687bf556d-pbw64 
+kubectl logs api-7687bf556d-pbw64 -n daily-meal-cluster-namespace
 
 # Check the job status:
-kubectl describe job vector-db-loader -n cheese-app-cluster-namespace
+kubectl describe job vector-db-loader -n daily-meal-cluster-namespace
 
 
 
 # First, find the pod name for your job
-kubectl get pods -n cheese-app-cluster-namespace | grep vector-db-loader
+kubectl get pods -n daily-meal-cluster-namespace | grep vector-db-loader
 
 # Then get the logs from that pod (replace <pod-name> with the actual name)
 kubectl logs -n cheese-app-cluster-namespace <pod-name>
-kubectl logs -n cheese-app-cluster-namespace vector-db-loader-9gr5m
+kubectl logs -n daily-meal-cluster-namespace vector-db-loader-5t8vw 
 
 # If you want to see logs from the init container specifically
 kubectl logs -n cheese-app-cluster-namespace <pod-name> -c wait-for-chromadb
