@@ -5,8 +5,7 @@ This module serves the food detection functionality: given a picture, output lis
 ## Instruction for running docker 
 
 - Run docker container by using:
-```chmod +x docker-shell.s```
-```sh docker-shell.sh```
+```chmod +x docker-shell.sh```
 ```sh docker-shell.sh```
 
 

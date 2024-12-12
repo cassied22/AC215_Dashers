@@ -50,8 +50,8 @@ def calculate_ingredient_match(question, answer):
     return len(matched_ingredients) / len(ingredients) * 100
 
 
-def comupute_valid_pair_percentages(data, threshold=25):
-     # Calculate the percentage of rows with more than 25% of ingredients mentioned in the recipe 
+def comupute_valid_pair_percentages(data, threshold=50):
+     # Calculate the percentage of rows with more than 50% of ingredients mentioned in the recipe 
     over_threshold_percent = (data['match_percentage'] >= threshold).mean() * 100
     return over_threshold_percent
 
