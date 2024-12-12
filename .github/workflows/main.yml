@@ -87,8 +87,9 @@ jobs:
             -e CHROMADB_HOST=${{ env.CHROMADB_HOST }} \
             -e CHROMADB_PORT=${{ env.CHROMADB_PORT }} \
             -e DEV=1 \
+            -e CI=true \
             daily-meal-api-service \
-            pytest \
+            python -m pytest \
               --cov=. \
               --cov-report=xml:/coverage/coverage.xml \
               tests/
@@ -130,6 +131,7 @@ jobs:
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
           GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+          CI: true
       - name: Print Docker logs on failure
         if: failure()
         run: |
