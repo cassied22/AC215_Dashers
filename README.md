@@ -260,6 +260,8 @@ Here are a few limitations we've identified in the current version of our applic
  2. RAG LLM Flexibility: We've observed that the RAG-empowered LLM can sometimes be less flexible due to its reliance on a specific database. To address this, we plan to implement customized databases for each user to enhance the accuracy and relevance of RAG-based suggestions in the future.
  3. User Preference Profiling: While we track user preferences to some extent through chat history, we haven't yet implemented a comprehensive system to build a holistic preference profile for each user at the start of a new chat. This can lead to less ideal initial recipe suggestions, requiring more interaction between the user and the AI assistant to refine the recommendations.
 
+## Technical Implementation
+
 #### CI and Test
 
 We have a functioning CI pipeline that runs unit tests across every container and integration tests cross the exposed API on every pull request or merge to the main branch with test coverage reported. It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. For detailed documentation on our CI/CD pipeline and testing, please refer to [Testing Documentation](tests/README.md)
