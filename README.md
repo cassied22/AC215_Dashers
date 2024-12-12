@@ -184,6 +184,8 @@ We write unit tests for all the Python scripts in our repo, including the source
 
     <img src="images/coverage_system.png">
 
+For detailed documentation on our CI/CD and testing, please refer to [Testing Documentation](src/tests/README.md)
+
 ### Machine Learning Workflow
 
 We have developed a production-ready machine learning workflow including the following components: Data Processor, Model Training/Evaluation and Model Evaluation. We have also set up a CI/CD pipeline to trigger automated data processing, model retraining, and pipeline running. For detailed documentation on our machine learning workflow, please refer to [ML Documentation](src/ml-pipeline/README.md)
