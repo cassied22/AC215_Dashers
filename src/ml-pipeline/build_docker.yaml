@@ -13,7 +13,7 @@
   - name: Build ml pipeline container image
     community.general.docker_image:
       build:
-        path: ./ml-pipeline
+        path: ./
         platform: linux/amd64/v2
       name: gcr.io/{{ gcp_project }}/food-planner-data-processor:{{ tag.stdout}}
       source: build
