@@ -27,78 +27,59 @@ jobs:
   unit-tests:
     needs: lint
     runs-on: ubuntu-latest
-    env:
-      CHROMADB_HOST: recipe-rag-chromadb
-      CHROMADB_PORT: 8000
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.12'
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
       - id: 'auth'
         uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
       - name: Configure Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-
-      # Create Docker network
-      - name: Create Docker network
-        run: docker network create recipe-rag-network || true
-
-      # Start ChromaDB container
-      - name: Start ChromaDB
-        run: |
-          docker run -d \
-            --name recipe-rag-chromadb \
-            --network recipe-rag-network \
-            -p 8000:8000 \
-            chromadb/chroma:latest
-
-      # Create necessary directories
-      - name: Create directories
+      
+      # Create necessary directories and setup secrets
+      - name: Setup environment
         run: |
           mkdir -p src/secrets
-          mkdir -p persistent-folder
-
-      # Setup secrets and configs
-      - name: Setup secrets
-        run: |
           echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
           echo '${{ secrets.OPENAI_API_KEY }}' > src/secrets/openai-key.json
 
-      # API Service Tests
-      - name: Run API Service Tests
+      # Data Pipeline Tests
+      - name: Run Data Pipeline Tests
         run: |
-          cd src/api-service
-          docker build -t daily-meal-api-service -f Dockerfile .
-          docker run --rm \
-            -v "$(pwd)":/app \
-            -v "$(pwd)/../secrets":/secrets \
-            -v "$(pwd)/../../persistent-folder":/persistent \
-            -v "$(pwd)/../../tests/api-service":/app/tests \
-            --network recipe-rag-network \
-            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-cassie.json \
-            -e OPENAI_API_KEY=/secrets/openai-key.json \
-            -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
-            -e CHROMADB_HOST=${{ env.CHROMADB_HOST }} \
-            -e CHROMADB_PORT=${{ env.CHROMADB_PORT }} \
-            -e DEV=1 \
-            -e CI=true \
-            -e PYTHONPATH=/app \
-            -w /app \
-            daily-meal-api-service \
-            pipenv run pytest tests/ -p no:warnings --disable-warnings
+          cd src/datapipeline
+          chmod +x docker-shell.sh
+          CI=true ./docker-shell.sh pytest ../tests/datapipeline/test_cli_rag.py \
+            --cov=. \
+            --cov-report=xml:/coverage/coverage.xml
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
 
-      # Cleanup ChromaDB
-      - name: Cleanup ChromaDB
-        if: always()
+      # Food Detection Tests
+      - name: Run Food Detection Tests
         run: |
-          docker stop recipe-rag-chromadb || true
-          docker rm recipe-rag-chromadb || true
+          cd src/food-detection
+          chmod +x docker-shell.sh
+          CI=true ./docker-shell.sh pytest ../tests/food-detection/test_*.py \
+            --cov=. \
+            --cov-report=xml:/coverage/coverage.xml
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+
+      # ML Pipeline Tests
+      - name: Run ML Pipeline Tests
+        run: |
+          cd src/ml-pipeline
+          chmod +x docker-shell.sh
+          CI=true ./docker-shell.sh pytest ../tests/ml-pipeline/test_*.py \
+            --cov=. \
+            --cov-report=xml:/coverage/coverage.xml
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
@@ -109,33 +90,30 @@ jobs:
   integration-tests:
     needs: unit-tests
     runs-on: ubuntu-latest
-    env:
-      CHROMADB_HOST: recipe-rag-chromadb
-      CHROMADB_PORT: 8000
     steps:
       - uses: actions/checkout@v2
-      - name: Create Docker Network
-        run: docker network create recipe-rag-network || true
       - name: Setup Directories
         run: |
           mkdir -p src/secrets
-          mkdir -p persistent-folder
           echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
           echo '${{ secrets.OPENAI_API_KEY }}' > src/secrets/openai-key.json
+      
       - name: Run Integration Tests
         run: |
           cd tests/integration
-          docker-compose build --no-cache
-          docker-compose up --exit-code-from recipe-rag-cli --exit-code-from food-detection
+          chmod +x docker-shell.sh
+          ./docker-shell.sh
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
           GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
           CI: true
+      
       - name: Print Docker logs on failure
         if: failure()
         run: |
           cd tests/integration
           docker-compose logs
+      
       - name: Clean up
         if: always()
         run: |
