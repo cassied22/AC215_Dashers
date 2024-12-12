@@ -44,22 +44,11 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
       - name: Configure Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-      
+
       # Create Docker network
       - name: Create Docker network
         run: docker network create recipe-rag-network || true
-      
-      # Setup environment file
-      - name: Create environment file
-        run: |
-          cat << EOF > .env
-          GCP_PROJECT=${{ secrets.GCP_PROJECT }}
-          GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
-          GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/credentials.json
-          CHROMADB_HOST=recipe-rag-chromadb
-          CHROMADB_PORT=8000
-          EOF
-      
+
       # Start ChromaDB container
       - name: Start ChromaDB
         run: |
@@ -68,78 +57,48 @@ jobs:
             --network recipe-rag-network \
             -p 8000:8000 \
             chromadb/chroma:latest
-      
+
+      # Create necessary directories
+      - name: Create directories
+        run: |
+          mkdir -p src/secrets
+          mkdir -p persistent-folder
+
+      # Setup secrets and configs
+      - name: Setup secrets
+        run: |
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
+          echo '${{ secrets.OPENAI_API_KEY }}' > src/secrets/openai-key.json
+
       # API Service Tests
       - name: Run API Service Tests
         run: |
           cd src/api-service
-          mkdir -p secrets
-          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
-          docker build -t api-service-tests -f Dockerfile .
+          docker build -t daily-meal-api-service -f Dockerfile .
           docker run --rm \
-            --env-file ../../.env \
+            -v "$(pwd)":/app \
+            -v "$(pwd)/../secrets":/secrets \
+            -v "$(pwd)/../../persistent-folder":/persistent \
+            -v "$(pwd)/../../tests/api-service":/app/tests \
             --network recipe-rag-network \
-            -v $(pwd)/secrets:/app/secrets:ro \
-            api-service-tests pytest \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-cassie.json \
+            -e OPENAI_API_KEY=/secrets/openai-key.json \
+            -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
+            -e CHROMADB_HOST=${{ env.CHROMADB_HOST }} \
+            -e CHROMADB_PORT=${{ env.CHROMADB_PORT }} \
+            -e DEV=1 \
+            daily-meal-api-service \
+            pytest \
               --cov=. \
               --cov-report=xml:/coverage/coverage.xml \
-              ../tests/api-service/
-      
-      # Data Pipeline Tests
-      - name: Run Data Pipeline Tests
-        run: |
-          cd src/datapipeline
-          mkdir -p secrets
-          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
-          docker build -t datapipeline-tests -f Dockerfile .
-          docker run --rm \
-            --env-file ../../.env \
-            --network recipe-rag-network \
-            -v $(pwd)/secrets:/app/secrets:ro \
-            datapipeline-tests pytest \
-              --cov=. \
-              --cov-report=xml:/coverage/coverage.xml \
-              ../tests/datapipeline/
+              tests/
 
-      # Food Detection Tests
-      - name: Run Food Detection Tests
-        run: |
-          cd src/food-detection
-          mkdir -p secrets
-          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
-          docker build -t food-detection-tests -f Dockerfile .
-          docker run --rm \
-            --env-file ../../.env \
-            --network recipe-rag-network \
-            -v $(pwd)/secrets:/app/secrets:ro \
-            food-detection-tests pytest \
-              --cov=. \
-              --cov-report=xml:/coverage/coverage.xml \
-              ../tests/food-detection/
-
-      # ML Pipeline Tests
-      - name: Run ML Pipeline Tests
-        run: |
-          cd src/ml-pipeline
-          mkdir -p secrets
-          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
-          docker build -t ml-pipeline-tests -f Dockerfile .
-          docker run --rm \
-            --env-file ../../.env \
-            --network recipe-rag-network \
-            -v $(pwd)/secrets:/app/secrets:ro \
-            ml-pipeline-tests pytest \
-              --cov=. \
-              --cov-report=xml:/coverage/coverage.xml \
-              ../tests/ml-pipeline/
-
-      # Cleanup
-      - name: Cleanup Docker resources
+      # Cleanup ChromaDB
+      - name: Cleanup ChromaDB
         if: always()
         run: |
           docker stop recipe-rag-chromadb || true
           docker rm recipe-rag-chromadb || true
-          docker network rm recipe-rag-network || true
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
@@ -160,7 +119,9 @@ jobs:
       - name: Setup Directories
         run: |
           mkdir -p src/secrets
+          mkdir -p persistent-folder
           echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > src/secrets/llm-service-account-cassie.json
+          echo '${{ secrets.OPENAI_API_KEY }}' > src/secrets/openai-key.json
       - name: Run Integration Tests
         run: |
           cd tests/integration
