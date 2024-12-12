@@ -21,10 +21,6 @@ ENV CI=false
 # Add DEV environment variable (defaults to 0)
 ENV DEV=0
 
-# Create pytest cache directory and set permissions
-RUN mkdir -p /app/.pytest_cache && \
-    chmod 777 /app/.pytest_cache
-
 # Ensure we have an up to date baseline, install dependencies and
 # create a user so we don't run the app as root
 RUN set -ex; \
@@ -39,8 +35,10 @@ RUN set -ex; \
     useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
     mkdir -p /app && \
     mkdir -p /persistent && \
+    mkdir -p /app/.pytest_cache && \
     chown app:app /persistent && \
-    chown -R app:app /app
+    chown -R app:app /app && \
+    chmod -R 777 /app/.pytest_cache
 
 # Switch to the new user
 USER app

@@ -88,11 +88,9 @@ jobs:
             -e CHROMADB_PORT=${{ env.CHROMADB_PORT }} \
             -e DEV=1 \
             -e CI=true \
+            -e PYTHONPATH=/app \
             daily-meal-api-service \
-            pipenv run pytest tests/ \
-              --asyncio-mode=auto \
-              --cov=api \
-              --cov-report=xml:/coverage/coverage.xml
+            bash -c "cd /app && pipenv run pytest tests/"
 
       # Cleanup ChromaDB
       - name: Cleanup ChromaDB
