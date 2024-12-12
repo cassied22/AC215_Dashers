@@ -47,9 +47,10 @@ The tests are organized into separate directories based on their type:
     <img src="../images/coverage_api.jpg" width="500">
 
 ### Integration Tests(System Tests):
-  - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory.
-  - In this integrated environment, the container for recipe-rag-cli, chromadb, api-service, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
-  - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run. Specifically, we test the complete API calling workflow for users uploading images, getting text responses from LLM, chatting with LLM, and getting video search result from Youtube.
+  - The integration(system) tests environment is defined in the docker-compose.yml file in the tests/integration directory. Since our integration and system tests use the same environment, we put them both into the same file **tests/integration/test_api_service.py**. In this integrated environment, the container for recipe-rag-cli, chromadb, api-service, and food-detection service will all be run.
+  - For the integration test, we test the functionality of each API endpoint by checking the response code when calling these APIs using our mock input.
+  - For the system test, in **tests/integration/test_api_service::test_full_workflow**, we verify the interaction and integration between different application components by simulating a complete API calling workflow for users uploading images, getting text responses from LLM, chatting with LLM, and getting video search results from Youtube.
+  - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run. 
 
     <img src="../images/coverage_integration.png">
 
