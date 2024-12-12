@@ -42,45 +42,72 @@ jobs:
       - name: Configure Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
       
+      # Setup environment file
+      - name: Create environment file
+        run: |
+          echo "GCP_PROJECT=${{ secrets.GCP_PROJECT }}" > .env
+          echo "GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}" >> .env
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/credentials.json" >> .env
+      
       # API Service Tests
       - name: Run API Service Tests
         run: |
           cd src/api-service
+          mkdir -p secrets
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
           docker build -t api-service-tests -f Dockerfile .
-          docker run --rm api-service-tests pytest \
-            --cov=. \
-            --cov-report=xml:/coverage/coverage.xml \
-            ../tests/api-service/
+          docker run --rm \
+            --env-file ../../.env \
+            -v $(pwd)/secrets:/app/secrets:ro \
+            api-service-tests pytest \
+              --cov=. \
+              --cov-report=xml:/coverage/coverage.xml \
+              ../tests/api-service/
       
       # Data Pipeline Tests
       - name: Run Data Pipeline Tests
         run: |
           cd src/datapipeline
+          mkdir -p secrets
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
           docker build -t datapipeline-tests -f Dockerfile .
-          docker run --rm datapipeline-tests pytest \
-            --cov=. \
-            --cov-report=xml:/coverage/coverage.xml \
-            ../tests/datapipeline/
+          docker run --rm \
+            --env-file ../../.env \
+            -v $(pwd)/secrets:/app/secrets:ro \
+            datapipeline-tests pytest \
+              --cov=. \
+              --cov-report=xml:/coverage/coverage.xml \
+              ../tests/datapipeline/
 
       # Food Detection Tests
       - name: Run Food Detection Tests
         run: |
           cd src/food-detection
+          mkdir -p secrets
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
           docker build -t food-detection-tests -f Dockerfile .
-          docker run --rm food-detection-tests pytest \
-            --cov=. \
-            --cov-report=xml:/coverage/coverage.xml \
-            ../tests/food-detection/
+          docker run --rm \
+            --env-file ../../.env \
+            -v $(pwd)/secrets:/app/secrets:ro \
+            food-detection-tests pytest \
+              --cov=. \
+              --cov-report=xml:/coverage/coverage.xml \
+              ../tests/food-detection/
 
       # ML Pipeline Tests
       - name: Run ML Pipeline Tests
         run: |
           cd src/ml-pipeline
+          mkdir -p secrets
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > secrets/credentials.json
           docker build -t ml-pipeline-tests -f Dockerfile .
-          docker run --rm ml-pipeline-tests pytest \
-            --cov=. \
-            --cov-report=xml:/coverage/coverage.xml \
-            ../tests/ml-pipeline/
+          docker run --rm \
+            --env-file ../../.env \
+            -v $(pwd)/secrets:/app/secrets:ro \
+            ml-pipeline-tests pytest \
+              --cov=. \
+              --cov-report=xml:/coverage/coverage.xml \
+              ../tests/ml-pipeline/
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
