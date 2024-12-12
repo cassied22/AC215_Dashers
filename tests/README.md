@@ -1,49 +1,63 @@
 ## Testing & CI
-### Continuous Integration Setup
 Our project utilizes a CI pipeline that runs on every push or merge to the main branch. The pipeline is implemented using GitHub Actions and includes the following key components:
 
-**Code Build and Linting**
+### Code Build and Linting
 The CI pipeline incorporates an automated build process and code quality checks using linting tools. The specific tools used are:
 - Flake8: A Python linting tool that checks for code style and potential errors.
 The linting process ensures that the codebase adheres to consistent coding standards and identifies any potential issues or violations.
 
-**Automated Testing**
-- Unit Tests: 
-  - test_cli_rag.py: Tests individual functions in the cli_rag.py module, including generate_query_embedding, generate_text_embeddings, embed, load, and query. It uses mocking to isolate dependencies and ensure the functions behave as expected.
-  - test_gemini_object_detection.py: Tests the identify_food_gemini function and the main function in the gemini_object_detection.py module. It checks the behavior of the functions under different scenarios, such as success and failure cases.
-  - test_gpt_object_detection.py: Tests the encode_image, identify_food_gpt, and main functions in the gpt_object_detection.py module. It verifies the correct encoding of images, the functionality of the GPT object detection, and the handling of command-line arguments.
-- Integration Tests(System Tests):
-  - Since we only have two components, our integration tests serve the same purpose as system tests. 
-  - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory.
-  - In this integrated environment, the container for recipe-rag-cli service, chromadb, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
-  - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run.
-
-    <img width="619" alt="183a0b8194ec25401c0306466465b881" src="https://github.com/user-attachments/assets/5fcd9708-50f4-4769-8392-1beaaf57e585">
-
-**Automated Testing Implementation**
+### Automated Testing
 The specific testing frameworks and tools used are:
 
 - pytest: A powerful and flexible testing framework for Python.
 
 The tests are organized into separate directories based on their type:
 
-- tests/datapipeline: Contains unit tests for the data pipeline component.
-- tests/food-detection: Contains unit tests for the food detection component.
-- tests/integration: Contains environment for integration(system) tests that run containers for all components.
-- tests/system: Contains integration(system) tests script that verifies the interaction between different components.
-  
-**Test Coverage Reports**
-Our project aims to maintain a minimum code coverage of 50%. The coverage reports are generated using the pytest-cov plugin and are included in the CI pipeline output.
-<img width="795" alt="test1" src="https://github.com/user-attachments/assets/68839d2f-d780-4b1d-b7c5-d21b5b1757cf">
-<img width="787" alt="test2" src="https://github.com/user-attachments/assets/d55207b4-38ae-4589-b10d-1d5f6fbc8bec">
+- Unit tests: Testing the functionality of each component in isolation
+  - tests/datapipeline
+  - tests/food-detection
+  - tests/ml-pipeline
+  - tests/api-service
+- Integration(System) test: Testing the interaction between different components
+  - tests/integration
 
+### Unit Tests: 
+#### datapipeline
+  - **tests/datapipeline/test_cli_rag.py**: Tests all the functions in **src/datapipeline/cli_rag.py**. It validates the functionality of a CLI-based recipe recommendation system by mocking external dependencies and ensuring correct behavior for core operations like embedding generation, data loading, querying, chatting, downloading, and argument parsing.
+#### food-detection
+  - **tests/food-detection/test_gemini_object_detection.py**: Tests all the functions in **src/food-detection/gemini_object_detection.py**, including identify_food_gemini and the main function. It tests the Gemini-based object detection system by mocking API configuration, file handling, and command-line inputs to validate correct functionality and error handling.
+  - **tests/food-detection/test_gpt_object_detection.py**: Tests all the functions in **src/food-detection/gpt_object_detection.py**, including encode_image, identify_food_gpt, and main functions. It verifies the functionality of a GPT-based object detection system by mocking file handling, external API calls, and command-line inputs to ensure correct behavior for image encoding, API requests, and program execution with various scenarios.
+#### ml-pipeline   
+  - **tests/ml-pipeline/test_{...}.py**: There are 4 test scripts in this folder, corresponding to each Python script in the **src/ml-pipeline**:
+    - **tests/ml-pipeline/test_cli.py.py**: validates the functionality of **src/ml-pipeline/cli.py** by testing individual components such as UUID generation, data processing, model training, and evaluation through mock objects.
+    - **tests/ml-pipeline/test_data_process.py**: tests the functionality of **src/ml-pipeline/data_process.py** by mocking GCP storage interactions, file operations, and data transformations to validate the behavior of clean, prepare, and upload functions.
+    - **tests/ml-pipeline/test_model_evaluation.py**: tests **src/ml-pipeline/model_evaluation.py**, including ingredient extraction, match percentage calculation, and valid pair computation. It validates end-to-end evaluation with mocked data, storage, and model dependencies to ensure accurate ingredient-based content generation.
+    - **tests/ml-pipeline/test_model_training.py**: validates the gemini_fine_tuning function in **src/ml-pipeline/model_training.py** by mocking Vertex AI's fine-tuning process, including initialization, training, and job completion. It ensures correct parameter passing and verifies expected outputs for the tuned model and endpoint names.
+#### api-service 
+  - **tests/api-service/test_{...}.py**: There are 9 test scripts in this folder, corresponding to each Python script in the **src/api-service/api**:
+    - **tests/api-service/test_service.py**: tests various API routes in **src/api-service/api/service.py**
+    - **tests/api-service/test_youtube.py**, **tests/api-service/test_llm_chat.py**, **tests/api-service/test_llm_detection_chat.py**, **tests/api-service/test_llm_rag_chat.py** tests 4 scripts to deploy API endpoints in **src/api-service/api/routers/** by verifying API's functionality via mocking external dependencies, without making actual API calls
+    - **tests/api-service/test_chat_utils.py**, **tests/api-service/test_llm_utils.py**, **tests/api-service/test_llm_detection_utils.py**, **tests/api-service/test_llm_rag_utils.py** tests 4 utils scripts in **src/api-service/api/utils/** by verifying the functionality of API utility functions, including chat session creation, query embedding generation, and response handling. It uses mocking to simulate external dependencies like models, collections, and sessions, ensuring correct behavior and error handling in functions like generate_query_embedding, generate_chat_response, and rebuild_chat_session.
+
+    We achieved code coverage of over 90% on unit test based on the coverage report below.
+
+    <img src="../images/coverage_datapipeline.jpg" width="500">
+    <img src="../images/coverage_food.jpg" width="500">
+    <img src="../images/coverage_ml.jpg" width="500">
+    <img src="../images/coverage_api.jpg" width="500">
+
+### Integration Tests(System Tests):
+  - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory.
+  - In this integrated environment, the container for recipe-rag-cli, chromadb, api-service, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
+  - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run. Specifically, we test the complete API calling workflow for users uploading images, getting text responses from LLM, chatting with LLM, and getting video search result from Youtube.
+
+    <img src="../images/coverage_integration.png">
 
 
 ### Run Tests Manually
-1. Ensure that you have Python installed on your system.
-2. Clone the project repository
-3. Navigate to the project directory/test/integration, run ```sh docker-shell.sh```
+1. Clone the project repository
+2. Navigate to ./test/integration, run ```sh docker-shell.sh```
    This will run all the tests located in the tests/ directory and its subdirectories.
-4. To generate a coverage report, type the following command:
+3. To generate a coverage report, type the following command:
    ```pytest --cov=src/ --cov-report=html <YOUR PATH TO THE TEST FILE>```
     This will run the tests and generate an HTML coverage report. You can view the generated html coverage report in a web browser.
