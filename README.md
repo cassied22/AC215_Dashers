@@ -142,94 +142,6 @@ In this final milestone, we focus on three key areas:
 - Project demonstration and documentation.
 - Public communication of results through a live showcase.
 
-**Application Design**
-
-Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
-
-Here is our Solution Architecture:
-
-<img src="images/solution-arch.png"  width="800">
-
-Here is our Technical Architecture:
-
-<img src="images/technical-arch.png"  width="800">
-
-
-**Backend API**
-
-We built backend api service using fast API to expose model functionality to the frontend. The backend includes three APIs: the Food Detection GPT API, the LLM Chat API, and the LLM-RAG Chat API. Each of these APIs supports both GET and POST methods for fetching and storing chat histories. Below is a screenshot of the FastAPI documentation displaying all the available endpoints. To setup the API documentation, you can follow the instructions [here](#setup-instructions).
-
-<img src="images/api-list2.png"  width="800">
-
-**Frontend**
-
-A user friendly React app was built to identify various food ingredients in the photot you provided using GPT models and Gemini models from the backend. Using the app, a user can take a picture of the fridge and upload it. The app will send the image to the backend GPT api to recognize all the food ingredients. After edition and confirmation from the user, the ingredients list will be sent to the backend Gemini LLM api to generate recipes of user preference. If the user have additional requirements, the app has a chatbox to extend the conversation and provide more responses.
-Essentially, there are 2 components in our App:
-
-1. The Image Recognition Component
-    In the path: /Users/qjy/Harvard/2024fall/ac215/AC215_Dashers/src/frontend_react/src/components/image
-    We used ImageClassificationPredict to connect with GPT api to recognize ingredients from photos and output a list of food ingredients.
-2. The LLM Chat Component
-    In the path: /Users/qjy/Harvard/2024fall/ac215/AC215_Dashers/src/frontend_react/src/app/chat
-    We used StartChatWithLLM to take food ingredients from the image recognition component as input and generate the recommended recipes. Then, we used ContinueChatWithLLM to generate further conversations entered by user in the chat box.
-More components (chat history) will be finalized in the next milestone.
-
-
-
-**CI and Test**
-
-We have a functioning CI pipeline that runs on every push or merge. It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. Also, the CI pipeline runs automated testing by executing unit, integration, and systems tests with test results reported.
-
-##### Continuous Integration Setup
-Our project utilizes a CI pipeline that runs on every push or merge to the main branch. The pipeline is implemented using GitHub Actions and includes the following key components:
-
-**Code Build and Linting**
-The CI pipeline incorporates an automated build process and code quality checks using linting tools. The specific tools used are:
-- Flake8: A Python linting tool that checks for code style and potential errors.
-The linting process ensures that the codebase adheres to consistent coding standards and identifies any potential issues or violations.
-
-**Automated Testing**
-- Unit Tests: 
-  - test_cli_rag.py: Tests individual functions in the cli_rag.py module, including generate_query_embedding, generate_text_embeddings, embed, load, and query. It uses mocking to isolate dependencies and ensure the functions behave as expected.
-  - test_gemini_object_detection.py: Tests the identify_food_gemini function and the main function in the gemini_object_detection.py module. It checks the behavior of the functions under different scenarios, such as success and failure cases.
-  - test_gpt_object_detection.py: Tests the encode_image, identify_food_gpt, and main functions in the gpt_object_detection.py module. It verifies the correct encoding of images, the functionality of the GPT object detection, and the handling of command-line arguments.
-- Integration Tests(System Tests):
-  - Since we only have two components, our integration tests serve the same purpose as system tests. 
-  - The integration tests environment is defined in the docker-compose.yml file in the tests/integration directory.
-  - In this integrated environment, the container for recipe-rag-cli service, chromadb, and food-detection service will all be run. We test the interaction between API endpoints by checking the response code of calling these APIs using our mock input to verify the interaction and integration between different application components.
-  - The test results are reported within the CI pipeline, providing visibility into the success or failure of each test run.
-
-    <img width="619" alt="183a0b8194ec25401c0306466465b881" src="images/tests.png">
-
-**Automated Testing Implementation**
-The specific testing frameworks and tools used are:
-
-- pytest: A powerful and flexible testing framework for Python.
-
-The tests are organized into separate directories based on their type:
-
-- tests/datapipeline: Contains unit tests for the data pipeline component.
-- tests/food-detection: Contains unit tests for the food detection component.
-- tests/integration: Contains environment for integration(system) tests that run containers for all components.
-- tests/system: Contains integration(system) tests script that verifies the interaction between different components.
-  
-**Test Coverage Reports**
-Our project aims to maintain a minimum code coverage of 50%. The coverage reports are generated using the pytest-cov plugin and are included in the CI pipeline output.
-<img width="795" alt="test1" src="images/coverage1.png">
-<img width="787" alt="test2" src="images/coverage2.png">
-
-##### Run Tests Manually
-1. Ensure that you have Python installed on your system.
-2. Clone the project repository
-3. Navigate to the project directory/test/integration, run ```sh docker-shell.sh```
-   This will run all the tests located in the tests/ directory and its subdirectories.
-4. To generate a coverage report, type the following command:
-   ```pytest --cov=src/ --cov-report=html <YOUR PATH TO THE TEST FILE>```
-    This will run the tests and generate an HTML coverage report. You can view the generated html coverage report in a web browser.
-
-## Machine Learning Workflow
-We have developed a production-ready machine learning workflow including the following components: Data Processor, Model Training/Evaluation and Model Evaluation. We have also set up a CI/CD pipeline to trigger automated data processing, model retraining, and pipeline running. For detailed documentation on our machine learning workflow, please refer to [ML Documentation](src/ml-pipeline/README.md)
-
 ## Prerequistes and Setup Instructions
 ### Build Recipe Vector Database
 Navigate to src/datapipeline directory:
@@ -348,8 +260,16 @@ Here are a few limitations we've identified in the current version of our applic
  2. RAG LLM Flexibility: We've observed that the RAG-empowered LLM can sometimes be less flexible due to its reliance on a specific database. To address this, we plan to implement customized databases for each user to enhance the accuracy and relevance of RAG-based suggestions in the future.
  3. User Preference Profiling: While we track user preferences to some extent through chat history, we haven't yet implemented a comprehensive system to build a holistic preference profile for each user at the start of a new chat. This can lead to less ideal initial recipe suggestions, requiring more interaction between the user and the AI assistant to refine the recommendations.
 
+#### CI and Test
 
-## Docker Containers 
+We have a functioning CI pipeline that runs unit tests across every container and integration tests cross the exposed API on every pull request or merge to the main branch with test coverage reported. It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. For detailed documentation on our CI/CD pipeline and testing, please refer to [Testing Documentation](tests/README.md)
+
+#### Machine Learning Workflow
+
+We have developed a production-ready machine learning workflow including the following components: Data Processor, Model Training/Evaluation and Model Evaluation. We have also set up a CI/CD pipeline to trigger automated data processing, model retraining, and pipeline running. For detailed documentation on our machine learning workflow, please refer to [ML Documentation](src/ml-pipeline/README.md)
+
+#### Docker Containers
+
 - [API Service](src/api-service): this container implementations related to the api services
 - [Data Versioning](src/data-versioning): this container serves the data version controls functionality.
 - [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe.
@@ -370,8 +290,11 @@ Run docker container by
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 
-----
+#### Notebooks/Reports
 
-**Notebooks/Reports**
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
+- [Notebook](notebook) contains our DVC retrieval procedure, EDA for recipe data, and model selection insights for the Food Detection Models.
+- [Reports](reports) contains different versions of our app's flowchart and a comprehensive project description pdf. 
+- [Midterm](midterm_presentation) contains the slides used for our midterm project pitch.
+- [Image](images) contains all the figures used in the readme. 
+
 
