@@ -91,6 +91,7 @@ jobs:
             -v "$(pwd)/../../coverage_reports":/coverage_reports \
             -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-cassie.json \
             -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
+            -e GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }} \
             -e PYTHONPATH=/app \
             ml-pipeline-tests \
             pipenv run pytest \
@@ -98,7 +99,6 @@ jobs:
               -v \
               --cov=. \
               --cov-report=xml:/coverage_reports/ml-pipeline-coverage.xml
-
  
 
       - name: Upload coverage reports
