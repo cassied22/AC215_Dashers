@@ -151,7 +151,7 @@ We have a functioning CI pipeline implemented using GitHub Actions that:
 - runs unit tests across every container
 - runs integration tests across the exposed API
 - deploys updates to the Kubernetes cluster
-- achieves test coverage over 90% of the lines 
+- achieves test coverage over 70% of the lines 
   
 on every pull request or merge to the main branch.
 
