@@ -302,14 +302,14 @@ Upload an image of a refridgerator filled with raw ingredients:
 <img src="images/usage/2.png">
 <img src="images/usage/3.png">
 
-See the list of detected results here. We have two AI assitants to choose from: the LLM without RAG abd LLM with RAG; this time we can try the vanilla LLM, click on the first option and proceed:
+See the list of detected results here. We have two AI assistants to choose from: the LLM without RAG and LLM with RAG; this time we can try the LLM without RAG, click on the "AI Assistant(LLM)" and proceed:
 
 <img src="images/usage/4.png">
 
 get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 <img src="images/usage/5.png">
 
-CLick on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe (you can always click reload to get more search results):
+Click on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe (you can always click reload below to get more search results):
 
 <img src="images/usage/6.png">
 
@@ -327,15 +327,17 @@ Upload an image of a dish to learn the ingredients and how to cook it:
 <img src="images/usage2/3.png">
 See the identified ingredients here and click on the AI assistant to proceed:
 
-<img src="images/usage/4.png">
+<img src="images/usage2/4.png">
 
 Get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 
-<img src="images/usage/5.png">
+<img src="images/usage2/4.png">
 
 Continue chatting with the AI assistant to refine the recipe based on your personal preference:
 
+<img src="images/usage2/5.png">
 <img src="images/usage2/6.png">
+
 
 If you do not feel like cooking yourself, click on the Dine Out Button at the bottom of the chat page and you will be able search for restaurants on Google Map as below 
 <img src="images/usage2/7.png">
@@ -352,17 +354,20 @@ Here are a few limitations we've identified in the current version of our applic
 ## Docker Containers 
 - [API Service](src/api-service): this container implementations related to the api services
 - [Data Versioning](src/data-versioning): this container serves the data version controls functionality.
--[Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe.
--[deployment](src/deployment): this container is responsible for deployment of our application. 
--[food-detection](src/food-detection): this container contains implementation for food detection functionality.
--[frontend_react](src/frontend_react): this container contains frontend implementations.
--[ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow 
+- [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe.
+- [deployment](src/deployment): this container is responsible for deployment of our application. 
+- [food-detection](src/food-detection): this container contains implementation for food detection functionality.
+- [frontend_react](src/frontend_react): this container contains frontend implementations.
+- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow 
 
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 Run docker container by 
 ```cd src/...```
+
 ```chmod +x docker-shell.s```
+
 ```sh docker-shell.sh```
+
 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 
