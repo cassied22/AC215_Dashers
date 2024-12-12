@@ -125,7 +125,7 @@ See the identified ingredients here and click on the AI expert this time to proc
 
 Get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 
-<img src="images/usage2/4.png">
+<img src="images/usage2/4..png">
 
 Continue chatting with the AI assistant to refine the recipe based on your personal preference:
 
