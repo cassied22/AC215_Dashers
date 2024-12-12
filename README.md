@@ -292,34 +292,53 @@ Our application offers a smart solution for daily meal planning from a single im
 
 Our platform is designed to streamline the cooking experience, whether users are looking to create a meal from scratch or dine out conveniently.
 
-Example Usage:
-Example 1: The start of the page: click on "Get Started" to go to the image upload page.
-<img src="images/usage/1.png"  width="800">
+### Example Usage:
+
+#### Example 1: The start of the page: click on "Get Started" to go to the image upload page.
+
+<img src="images/usage/1.png">
+
 Upload an image of a refridgerator filled with raw ingredients:
-<img src="images/usage/2.png"  width="800">
-<img src="images/usage/3.png"  width="800">
+<img src="images/usage/2.png">
+<img src="images/usage/3.png">
+
 See the list of detected results here. We have two AI assitants to choose from: the LLM without RAG abd LLM with RAG; this time we can try the vanilla LLM, click on the first option and proceed:
-<img src="images/usage/4.png"  width="800">
+
+<img src="images/usage/4.png">
+
 get recipe in the chat box page, check the generated recipe and detail use of ingredients:
-<img src="images/usage/5.png"  width="800">
+<img src="images/usage/5.png">
+
 CLick on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe (you can always click reload to get more search results):
-<img src="images/usage/6.png"  width="800">
+
+<img src="images/usage/6.png">
+
 Click on the first search result link, and watch the video on youtube about how to make your dish: 
-<img src="images/usage/7.png"  width="800">
+
+<img src="images/usage/7.png">
 
 Example 2: The start of the page: click on "Get Started" to go to the image upload page.
-<img src="images/usage2/1.png"  width="800">
+
+<img src="images/usage2/1.png">
+
 Upload an image of a dish to learn the ingredients and how to cook it:
-<img src="images/usage2/2.png"  width="800">
-<img src="images/usage2/3.png"  width="800">
+
+<img src="images/usage2/2.png">
+<img src="images/usage2/3.png">
 See the identified ingredients here and click on the AI assistant to proceed:
-<img src="images/usage/4.png"  width="800">
+
+<img src="images/usage/4.png">
+
 Get recipe in the chat box page, check the generated recipe and detail use of ingredients:
-<img src="images/usage/5.png"  width="800">
+
+<img src="images/usage/5.png">
+
 Continue chatting with the AI assistant to refine the recipe based on your personal preference:
-<img src="images/usage2/6.png"  width="800">
+
+<img src="images/usage2/6.png">
+
 If you do not feel like cooking yourself, click on the Dine Out Button at the bottom of the chat page and you will be able search for restaurants on Google Map as below 
-<img src="images/usage2/7.png"  width="800">
+<img src="images/usage2/7.png">
 
 
 
