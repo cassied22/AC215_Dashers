@@ -56,15 +56,7 @@ We write unit tests for all the Python scripts in our repo, including the source
 
     <img src="../images/coverage_integration.png">
 ### System Tests:
-  - We also have a system test, in **tests/integration/test_front_end,py**, to verify end-to-end user interaction in web browser. To run it locally, you need to follow the setup instructions from the root page [README.md](../README.md#prerequistes-and-setup-instructions) to start the API server, install Selenium through ```pip install selenium``` and run ```pytest test_front_end.py``` to trigger the testing Chrome browser.
+  - We also have a system test, in **tests/integration/test_front_end.py**, to verify end-to-end user interaction in web browser. To run it locally, you need to follow the setup instructions from the root page [README.md](../README.md#prerequistes-and-setup-instructions) to start the API server, install Selenium through ```pip install selenium``` and run ```pytest test_front_end.py``` to trigger the testing Chrome browser.
   - The test automates a browser-based workflow to validate the UI and functionality of our app. It covers image upload with preview and table validation, starting a chat to process detected items and verify chatbot responses, and initiating a YouTube search to ensure results are displayed in a table.
 
     <img src="../images/coverage_system.png">
-
-### Run Tests Manually
-1. Clone the project repository
-2. Navigate to ./test/integration, run ```sh docker-shell.sh```
-   This will run all the tests located in the tests/ directory and its subdirectories.
-3. To generate a coverage report, type the following command:
-   ```pytest --cov=src/ --cov-report=html <YOUR PATH TO THE TEST FILE>```
-    This will run the tests and generate an HTML coverage report. You can view the generated html coverage report in a web browser.
