@@ -102,8 +102,10 @@ See the list of detected results here. We have two AI assistants to choose from:
 get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 <img src="images/usage/5.png">
 
-Click on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe (you can always click reload below to get more search results):
+Click on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe:
+<img src="images/usage/5.5.png.png">
 
+You can always click reload below to get different search results:
 <img src="images/usage/6.png">
 
 Click on the first search result link, and watch the video on youtube about how to make your dish: 
@@ -115,10 +117,11 @@ Example 2: The start of the page: click on "Get Started" to go to the image uplo
 <img src="images/usage2/1.png">
 
 Upload an image of a dish to learn the ingredients and how to cook it:
-
-<img src="images/usage2/2.png">
 <img src="images/usage2/3.png">
-See the identified ingredients here and click on the AI assistant to proceed:
+
+
+See the identified ingredients here and click on the AI expert this time to proceed:
+<img src="images/usage2/2.png">
 
 Get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 
@@ -126,8 +129,7 @@ Get recipe in the chat box page, check the generated recipe and detail use of in
 
 Continue chatting with the AI assistant to refine the recipe based on your personal preference:
 
-<img src="images/usage2/5.png">
-<img src="images/usage2/6.png">
+<img src="images/usage2/5.2.png">
 
 
 If you do not feel like cooking yourself, click on the Dine Out Button at the bottom of the chat page and you will be able search for restaurants on Google Map as below 
