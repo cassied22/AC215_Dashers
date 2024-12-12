@@ -89,10 +89,10 @@ jobs:
             -e DEV=1 \
             -e CI=true \
             daily-meal-api-service \
-            python -m pytest \
-              --cov=. \
-              --cov-report=xml:/coverage/coverage.xml \
-              tests/
+            pipenv run pytest tests/ \
+              --asyncio-mode=auto \
+              --cov=api \
+              --cov-report=xml:/coverage/coverage.xml
 
       # Cleanup ChromaDB
       - name: Cleanup ChromaDB
