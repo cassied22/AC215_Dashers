@@ -300,9 +300,9 @@ Run docker container by
 
 #### Notebooks/Reports
 
-- [Notebook](notebook) contains our DVC retrieval procedure, EDA for recipe data, and model selection insights for the Food Detection Models.
-- [Reports](reports) contains different versions of our app's flowchart and a comprehensive project description pdf. 
-- [Midterm](midterm_presentation) contains the slides used for our midterm project pitch.
+- [Notebook](notebook) contains our DVC retrieval procedure, EDA for the recipe data, and the model selection insights for food detection models.
+- [Reports](reports) contains different versions of our app's flowchart and a comprehensive description pdf of our project. 
+- [Midterm](midterm_presentation) contains the slides for our midterm project pitch.
 - [Image](images) contains all the figures used in the readme. 
 
 
