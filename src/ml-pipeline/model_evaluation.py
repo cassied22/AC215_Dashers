@@ -88,11 +88,12 @@ def evaluate(endpoint="projects/978082269307/locations/us-central1/endpoints/486
 
     # Generate answers for each question
     print("Generating answers...")
-    data['answer'] = data['question'].apply(lambda question: generative_model.generate_content(
+    data.loc[:, 'answer'] = data['question'].apply(lambda question: generative_model.generate_content(
         [question],
         generation_config=GENERATION_CONFIG,
         stream=False
     ).text)
+
 
     # Compute valid pair percentages
     valid_percentage = get_valid_percentages(data)

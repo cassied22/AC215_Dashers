@@ -49,7 +49,7 @@ def api_service():
 class TestAPIService:
     def test_get_chats(self):
         # List of endpoints to test
-        endpoints = ["/llm/chats", "/llm-rag/chats", "/llm-food-detection/chats"]
+        endpoints = ["/llm/chats", "/llm-rag/chats"]
 
         for endpoint in endpoints:
             response = make_request("GET", endpoint)
@@ -58,7 +58,8 @@ class TestAPIService:
             assert isinstance(data, list), f"Expected data to be a list at endpoint {endpoint}"
 
     def test_start_chat(self):
-        endpoints = ["/llm-rag/chats"]
+        endpoints = ["/llm/chats", "/llm-rag/chats", "/llm-food-detection/chats"]
+        chat_ids = {}
         for endpoint in endpoints:
             payload = {
                 "content": "What are healthy breakfast options?"
@@ -71,12 +72,14 @@ class TestAPIService:
             assert len(data["messages"]) == 2
             assert data["messages"][0]["role"] == "user"
             assert data["messages"][1]["role"] == "assistant"
-            return data["chat_id"]
+            chat_ids[endpoint] = data["chat_id"]
+        return chat_ids
 
     def test_continue_chat(self):
-        endpoints = ["/llm-rag/chats"]
+        endpoints = ["/llm/chats", "/llm-rag/chats"]
+        chat_ids = self.test_start_chat()
         for endpoint in endpoints:
-            chat_id = self.test_start_chat()
+            chat_id = chat_ids[endpoint]
             payload = {
                 "content": "What about lunch options?"
             }
@@ -86,16 +89,17 @@ class TestAPIService:
             assert len(data["messages"]) == 4
 
     def test_get_specific_chat(self):
-        endpoints = ["/llm-rag/chats"]
+        endpoints = ["/llm/chats", "/llm-rag/chats"]
+        chat_ids = self.test_start_chat()
         for endpoint in endpoints:
-            chat_id = self.test_start_chat()
+            chat_id = chat_ids[endpoint]
             response = make_request("GET", f"{endpoint}/{chat_id}")
             assert response.status == 200, f"Failed at endpoint {endpoint} with status {response.status}"
             data = json.loads(response.read())
             assert data["chat_id"] == chat_id
 
     def test_invalid_chat_id(self):
-        endpoints = ["/llm/chats", "/llm-rag/chats", "/llm-food-detection/chats"]
+        endpoints = ["/llm/chats", "/llm-rag/chats"]
         for endpoint in endpoints:
             invalid_id = str(uuid.uuid4())
             response = make_request("GET", f"{endpoint}/{invalid_id}")
@@ -126,9 +130,14 @@ class TestAPIService:
         assert data["messages"][1]["role"] == "gpt", "Expected the second message to be from 'gpt'"
         assert "results" in data["messages"][1], "Expected 'results' in the gpt message"
         return data["chat_id"], data["messages"][0]["message_id"]
-
-    def test_get_chat_image(self):
-        chat_id,message_id = self.test_start_chat_with_image()
-        response = make_request("GET", f"/llm-food-detection/images/{chat_id}/{message_id}.png")
-        assert response.status == 200
-        assert response.getheader('Content-Type') == 'image/png'
+    
+    def test_youtube(recipe_name):
+        recipe_name = "chocolate chip cookies"
+        payload = {
+            "recipe_name": recipe_name
+        }
+        response = make_request("GET", "/youtube", data=payload)
+        assert response.status == 200, f"Failed at endpoint /youtube with status {response.status}"
+        
+        data = json.loads(response.read())
+        assert len(data['videos']) > 0

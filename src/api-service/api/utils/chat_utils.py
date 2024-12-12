@@ -1,12 +1,9 @@
 import json
 import os
 from typing import Dict, List, Optional
-from datetime import datetime
-import shutil
 import glob
 import base64
 import traceback
-import io
         
 class ChatHistoryManager:
     def __init__(self, model, history_dir: str = "chat-history"):
