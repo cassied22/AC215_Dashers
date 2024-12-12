@@ -327,8 +327,6 @@ Upload an image of a dish to learn the ingredients and how to cook it:
 <img src="images/usage2/3.png">
 See the identified ingredients here and click on the AI assistant to proceed:
 
-<img src="images/usage2/4.png">
-
 Get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 
 <img src="images/usage2/4.png">
