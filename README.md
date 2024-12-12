@@ -264,7 +264,13 @@ Here are a few limitations we've identified in the current version of our applic
 
 #### CI and Test
 
-We have a functioning CI pipeline that runs unit tests across every container and integration tests cross the exposed API on every pull request or merge to the main branch with test coverage reported. It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. For detailed documentation on our CI/CD pipeline and testing, please refer to [Testing Documentation](tests/README.md)
+We have a functioning CI pipeline that:
+- runs unit tests across every container
+- runs integration tests cross the exposed API
+  
+on every pull request or merge to the main branch with test coverage reported.
+
+It does automated build process and code quality checks using linting tools (Flake8) running on GitHub Actions. For detailed documentation on our CI/CD pipeline and testing, please refer to [Testing Documentation](tests/README.md)
 
 #### Machine Learning Workflow
 
