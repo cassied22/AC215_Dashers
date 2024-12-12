@@ -280,7 +280,7 @@ TODO
 ## Usage details and examples
 We have deployed our application at http://35.188.13.243/ for all users to try out. 
 
-To run the application locally, please refer to the Prerequisites and Setup Instructions below.
+To run the application locally, please refer to the Prerequisites and Setup Instructions above.
 
 Our application offers a smart solution for daily meal planning from a single image. Key features include:
 
