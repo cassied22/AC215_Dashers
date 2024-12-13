@@ -122,13 +122,6 @@
                   value: "TRUE"
                 - name: ANONYMIZED_TELEMETRY
                   value: "FALSE"
-              #   volumeMounts:
-              #   - name: chromadb-storage
-              #     mountPath: /chroma/chroma
-              # volumes:
-              # - name: chromadb-storage
-              #   persistentVolumeClaim:
-              #     claimName: chromadb-pvc
     when: cluster_state == "present"
 
   - name: "Create Deployment for API Service"
@@ -174,26 +167,11 @@
                   - name: openai-key
                     mountPath: /secrets/openai
                     readOnly: true
-                  # # Mount the llm-service.json from google-cloud-key secret to /secrets/llm-service.json
-                  # - name: google-cloud-key
-                  #   mountPath: /secrets
-                  #   # mountPath: /secrets/llm-service.json
-                  #   # subPath: llm-service.json
-                  # # # Mount the openai-key.json from openai-key secret to /secrets/openai-key.json
-                  # # - name: openai-key
-                  # #   mountPath: /secrets/openai-key.json
-                  # #   subPath: openai-key.json
                 env:
                   - name: GOOGLE_APPLICATION_CREDENTIALS
                     value: /secrets/gcp/llm-service.json
                   - name: OPENAI_API_KEY
                     value: /secrets/openai/openai-key.json
-                  # - name: GOOGLE_APPLICATION_CREDENTIALS
-                  #   value: /secrets/llm-service.json
-                  # # - name: OPENAI_API_KEY
-                  # #   value: /secrets/openai-key.json
-                  # - name: GCS_BUCKET_NAME
-                  #   value: cheese-app-models
                   - name: CHROMADB_HOST
                     value: recipe-rag-chromadb
                   - name: CHROMADB_PORT
@@ -302,7 +280,7 @@
       kubectl wait --for=condition=complete job/vector-db-loader -n {{cluster_name}}-namespace --timeout=600s
     register: wait_job_result
     retries: 1
-    delay: 30
+    delay: 60
     until: wait_job_result.rc == 0
     when: cluster_state == "present"
 
