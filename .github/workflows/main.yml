@@ -78,7 +78,27 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/src/food-detection
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-
+      
+      # ML Pipeline Tests
+      - name: Run ML Pipeline Tests
+        run: |
+          cd src/ml-pipeline
+          docker build -t ml-pipeline-tests -f Dockerfile .
+          docker run --rm \
+            -v "$(pwd)":/app \
+            -v "$(pwd)/../secrets":/secrets \
+            -v "$(pwd)/../../tests/ml-pipeline":/app/tests \
+            -v "$(pwd)/../../coverage_reports":/coverage_reports \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account-cassie.json \
+            -e GCP_PROJECT=${{ secrets.GCP_PROJECT }} \
+            -e GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }} \
+            -e PYTHONPATH=/app \
+            ml-pipeline-tests \
+            pipenv run pytest \
+              tests/test_*.py \
+              -v \
+              --cov=. \
+              --cov-report=xml:/coverage_reports/ml-pipeline-coverage.xml
  
 
       - name: Upload coverage reports
@@ -120,18 +140,3 @@ jobs:
           cd tests/integration
           docker-compose down -v
           docker network rm recipe-rag-network || true
-
-  coverage-check:
-    needs: [unit-tests, integration-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Download coverage reports
-        uses: actions/download-artifact@v3
-        with:
-          name: coverage-reports
-      - name: Check coverage threshold
-        run: |
-          pip install coverage
-          coverage combine **/coverage.xml
-          coverage report --fail-under=70

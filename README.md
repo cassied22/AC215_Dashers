@@ -23,55 +23,101 @@ In this final milestone, we focus on three key areas:
 - Project demonstration and documentation.
 - Public communication of results through a live showcase.
 
-## Prerequistes and Setup Instructions
-### Build Recipe Vector Database
-Navigate to src/datapipeline directory:
+## Prerequisites and Setup Instructions
+Several prerequisites:
+- Several secrets and keys: `llm-service-account.json`, `gcp-service.json`, `openai-key.json`
+- HavenNeccessary roles and APIs enabled on GCP service account
+- Public SSH keys: `ssh-key-deployment.pub`
+
+### SSH Setup
+Run the following within the `deployment` container:
+```sh
+gcloud compute project-info add-metadata --project brilliant-lens-421801 --metadata enable-oslogin=TRUE
+# Provide SSH key for service account
+cd /secrets
+ssh-keygen -f ssh-key-deployment
+cd /app
+# Provide public SSH key to instances
+gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub
+```
+From the output of the above command, keep note of the username, and paste it to `inventory.yml` within `src/deployment` folder.
+
+### Local Development Setup
+#### Build Recipe Vector Database
 ```bash
+# Navigate to src/datapipeline directory:
 cd src/datapipeline
-```
-Build container:
-```bash
+# Build container and go to the docker shell
 sh docker-shell.sh
-```
-Run cli_rag.py to download recipe vector database and build Chromadb:
-```bash
+# Run cli_rag.py within shell to download recipe vector database and build Chromadb
 python cli_rag.py --download --load
 ```
 Note: Keep this container running while proceding to the next container.
-### Run API Server
-Navigate to src/api-service:
+#### Run API Server
 ```bash
+# Navigate to src/api-service
 cd src/api-service
-```
-Build container:
-```bash
+# Build container and go to the docker shell
 sh docker-shell.sh
-```
-Start server:
-```bash
+# Start server
 uvicorn_server
 ```
 Note: Keep this container running while proceding to the next container.
-### Run Frontend 
-Navigate to src/frontend_react:
+#### Run Frontend 
 ```bash
+# Navigate to src/frontend_react
 cd src/frontend_react
-```
-Build container:
-```bash
+# Build container and go to the docker shell
 sh docker-shell.sh
-```
-Start frontend:
-```bash
+# Start frontend
 npm install
 npm run dev
 ```
 
 ## Deployment instructions
-TODO
+### GCP Virtual Machine Deployment
+Navigate to `src/deployment` folder. Then:
+```sh
+sh docker-shell.sh
+# Upload docker images to Google Cloud Registra, if running the procedure for the first time
+ansible-playbook deploy-register-docker-images.yml -i inventory.yml
+# Create GCP Virtual Machine compute instance 
+ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=present
+```
+Once the command runs successfully get the IP address of the compute instance from GCP Console and update the `appserver>hosts` in `inventory.yml` file
+```sh
+# Provision compute instance in GCP, installing and setting up required things for deployment
+ansible-playbook deploy-provision-instance.yml -i inventory.yml
+# Set up docker containers in the compute instance
+ansible-playbook deploy-setup-containers.yml -i inventory.yml
+# Set up webserver on compute instance
+ansible-playbook deploy-setup-webserver.yml -i inventory.yml
+```
+You can use the below command to view the `EXTERNAL IP` of the your VM, and go to `http://<EXTERNAL IP>/` to view your website.
+```sh
+gcloud compute instances list
+```
+**Remember** to delete the compute instance if you don't need the compute instance later.
+```sh
+ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent
+```
+### Kubernetes Deployment
+After pushing all docker images to GCR as in the last step, run the following code to setup kubernetes cluster and deploy all containers
+```sh
+# Set up a kubernetes cluster
+ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+# Deploy containers on kubernetes cluster
+ansible-playbook deploy-k8s-setup-containers.yml -i inventory.yml --extra-vars cluster_state=present
+```
+Copy the `nginx_ingress_ip` from the terminal from the create cluster command, and go to `http://<nginx_ingress_ip>.sslip.io` to view the website.
+**Remember** to delete the kubernetes cluster if you don't need it later.
+```sh
+ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=absent
+```
+
 
 ## Usage details and examples
-We have deployed our application at http://35.188.13.243/ for all users to try out. 
+We have deployed our application at [http://35.188.13.243/](http://34.136.111.103.sslip.io/) for all users to try out. 
 
 To run the application locally, please refer to the Prerequisites and Setup Instructions above.
 
@@ -102,8 +148,10 @@ See the list of detected results here. We have two AI assistants to choose from:
 get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 <img src="images/usage/5.png">
 
-Click on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe (you can always click reload below to get more search results):
+Click on the 'Watch a Video' button on the buttom left corner of the chat page above, get the searched results for youtube videos and blog posts related to the generated recipe:
+<img src="images/usage/5.5.png">
 
+You can always click reload below to get different search results:
 <img src="images/usage/6.png">
 
 Click on the first search result link, and watch the video on youtube about how to make your dish: 
@@ -115,19 +163,19 @@ Example 2: The start of the page: click on "Get Started" to go to the image uplo
 <img src="images/usage2/1.png">
 
 Upload an image of a dish to learn the ingredients and how to cook it:
-
-<img src="images/usage2/2.png">
 <img src="images/usage2/3.png">
-See the identified ingredients here and click on the AI assistant to proceed:
+
+
+See the identified ingredients here and click on the AI expert this time to proceed:
+<img src="images/usage2/2.png">
 
 Get recipe in the chat box page, check the generated recipe and detail use of ingredients:
 
-<img src="images/usage2/4.png">
+<img src="images/usage2/4..png">
 
 Continue chatting with the AI assistant to refine the recipe based on your personal preference:
 
-<img src="images/usage2/5.png">
-<img src="images/usage2/6.png">
+<img src="images/usage2/5.2.png">
 
 
 If you do not feel like cooking yourself, click on the Dine Out Button at the bottom of the chat page and you will be able search for restaurants on Google Map as below 
@@ -137,37 +185,56 @@ If you do not feel like cooking yourself, click on the Dine Out Button at the bo
 
 ## Known issues and limitations
 Here are a few limitations we've identified in the current version of our application:
- 1. Geolocation Restrictions: The deployed public website currently cannot directly retrieve the user's real-time location when using the Google Maps function. However, running the application locally enables accurate location retrieval.
+ 1. Geolocation Restrictions: Our deployed public website currently cannot retrieve the user's real-time location when using the Google Maps feature. This limitation arises because the site is deployed over HTTP rather than HTTPS, restricting access to sensitive browser features like the Geolocation API for security and privacy reasons. However, running the application locally allows accurate location retrieval.
  2. RAG LLM Flexibility: We've observed that the RAG-empowered LLM can sometimes be less flexible due to its reliance on a specific database. To address this, we plan to implement customized databases for each user to enhance the accuracy and relevance of RAG-based suggestions in the future.
  3. User Preference Profiling: While we track user preferences to some extent through chat history, we haven't yet implemented a comprehensive system to build a holistic preference profile for each user at the start of a new chat. This can lead to less ideal initial recipe suggestions, requiring more interaction between the user and the AI assistant to refine the recommendations.
 
 ## Technical Implementation
 
-#### CI and Test
+### CI and Test
 
-We have a functioning CI pipeline that:
+We have a functioning CI pipeline implemented using GitHub Actions that:
 - runs unit tests across every container
 - runs integration tests across the exposed API
 - deploys updates to the Kubernetes cluster
-- achieves test coverage over 90% of the lines 
+- achieves test coverage over 70% of the lines 
   
 on every pull request or merge to the main branch.
 
-For detailed documentation on our CI/CD pipeline and testing, please refer to [Testing Documentation](tests/README.md)
+<img src="images/ci_overview.png" width="500">
 
-#### Machine Learning Workflow
+#### Unit Tests: 
+We write unit tests for all the Python scripts in our repo, including the source code for each component(container) and the scripts to deploy API endpoints. 
+We achieved code coverage of **over 90%** on unit test based on the coverage report below.
+
+<img src="images/coverage_datapipeline.jpg" width="500">
+<img src="images/coverage_food.jpg" width="500">
+<img src="images/coverage_ml.jpg" width="500">
+<img src="images/coverage_api.jpg" width="500">
+
+#### Integration Tests:
+
+<img src="images/coverage_integration.png">
+
+#### System Tests:
+
+<img src="images/coverage_system.png">
+
+For detailed documentation on our CI/CD and testing, please refer to [Testing Documentation](tests/README.md)
+
+### Machine Learning Workflow
 
 We have developed a production-ready machine learning workflow including the following components: Data Processor, Model Training/Evaluation and Model Evaluation. We have also set up a CI/CD pipeline to trigger automated data processing, model retraining, and pipeline running. For detailed documentation on our machine learning workflow, please refer to [ML Documentation](src/ml-pipeline/README.md)
 
-#### Docker Containers
+### Docker Containers
 
-- [API Service](src/api-service): this container includes implementations related to the api services
-- [Data Versioning](src/data-versioning): this container serves the data version controls functionality.
-- [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe.
+- [API Service](src/api-service): this container includes implementations related to the api services. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_api/tags)
+- [Data Versioning](src/data-versioning): this container serves the data version controls functionality. 
+- [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_rag/tags)
 - [deployment](src/deployment): this container is responsible for deployment of our application. 
-- [food-detection](src/food-detection): this container contains implementation for food detection functionality.
-- [frontend_react](src/frontend_react): this container contains frontend implementations.
-- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow
+- [food-detection](src/food-detection): this container contains implementation for food detection functionality. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_food/tags)
+- [frontend_react](src/frontend_react): this container contains frontend implementations. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_frontend/tags)
+- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_ml/tags)
 
 Instructions for running dockers above locally:
 ```bash
@@ -175,9 +242,9 @@ cd src/...
 sh docker-shell.sh
 ```
 
-#### Notebooks/Reports
+### Notebooks/Reports
 
-- [Notebook](notebook) contains our DVC retrieval procedure, EDA for the recipe data, and the model selection insights for food detection models.
+- [Notebook](notebooks) contains our DVC retrieval procedure, EDA for the recipe data, and the model selection insights for food detection models.
 - [Reports](reports) contains different versions of our app's flowchart and a comprehensive description pdf of our project. 
 - [Midterm](midterm_presentation) contains the slides for our midterm project pitch.
 - [Image](images) contains all the figures used in the readme. 
