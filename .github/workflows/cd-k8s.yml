@@ -2,7 +2,9 @@ name: Continuous Deployment
 run-name: ${{ github.actor }} submitted a CD Action
 on:
   push:
-    branches: [ "milestone5" ]
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   K8s-CD-Actions:
