@@ -2,9 +2,11 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ milestone5 ]
+    # branches: [ milestone5 ]
+    branches: [ main ]
   pull_request:
-    branches: [ milestone5 ]
+    # branches: [ milestone5 ]
+    branches: [ main ]
 
 jobs:
   lint:

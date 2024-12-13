@@ -33,6 +33,8 @@ docker push gcr.io/brilliant-lens-421801/vector-db
 ```sh
 ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=present
 ansible-playbook deploy-k8s-setup-containers.yml -i inventory.yml --extra-vars cluster_state=present
+ansible-playbook update-k8s-containers.yml -i inventory.yml --extra-vars cluster_state=present
+
 ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=absent
 
 
