@@ -117,7 +117,7 @@ ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars clu
 
 
 ## Usage details and examples
-We have deployed our application at http://35.188.13.243/ for all users to try out. 
+We have deployed our application at [http://35.188.13.243/](http://34.136.111.103.sslip.io/) for all users to try out. 
 
 To run the application locally, please refer to the Prerequisites and Setup Instructions above.
 
@@ -185,7 +185,7 @@ If you do not feel like cooking yourself, click on the Dine Out Button at the bo
 
 ## Known issues and limitations
 Here are a few limitations we've identified in the current version of our application:
- 1. Geolocation Restrictions: The deployed public website currently cannot directly retrieve the user's real-time location when using the Google Maps function. However, running the application locally enables accurate location retrieval.
+ 1. Geolocation Restrictions: Our deployed public website currently cannot retrieve the user's real-time location when using the Google Maps feature. This limitation arises because the site is deployed over HTTP rather than HTTPS, restricting access to sensitive browser features like the Geolocation API for security and privacy reasons. However, running the application locally allows accurate location retrieval.
  2. RAG LLM Flexibility: We've observed that the RAG-empowered LLM can sometimes be less flexible due to its reliance on a specific database. To address this, we plan to implement customized databases for each user to enhance the accuracy and relevance of RAG-based suggestions in the future.
  3. User Preference Profiling: While we track user preferences to some extent through chat history, we haven't yet implemented a comprehensive system to build a holistic preference profile for each user at the start of a new chat. This can lead to less ideal initial recipe suggestions, requiring more interaction between the user and the AI assistant to refine the recommendations.
 
@@ -228,13 +228,13 @@ We have developed a production-ready machine learning workflow including the fol
 
 ### Docker Containers
 
-- [API Service](src/api-service): this container includes implementations related to the api services
-- [Data Versioning](src/data-versioning): this container serves the data version controls functionality.
-- [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe.
+- [API Service](src/api-service): this container includes implementations related to the api services. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_api/tags)
+- [Data Versioning](src/data-versioning): this container serves the data version controls functionality. 
+- [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_rag/tags)
 - [deployment](src/deployment): this container is responsible for deployment of our application. 
-- [food-detection](src/food-detection): this container contains implementation for food detection functionality.
-- [frontend_react](src/frontend_react): this container contains frontend implementations.
-- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow
+- [food-detection](src/food-detection): this container contains implementation for food detection functionality. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_food/tags)
+- [frontend_react](src/frontend_react): this container contains frontend implementations. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_frontend/tags)
+- [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_ml/tags)
 
 Instructions for running dockers above locally:
 ```bash
@@ -244,7 +244,7 @@ sh docker-shell.sh
 
 ### Notebooks/Reports
 
-- [Notebook](notebook) contains our DVC retrieval procedure, EDA for the recipe data, and the model selection insights for food detection models.
+- [Notebook](notebooks) contains our DVC retrieval procedure, EDA for the recipe data, and the model selection insights for food detection models.
 - [Reports](reports) contains different versions of our app's flowchart and a comprehensive description pdf of our project. 
 - [Midterm](midterm_presentation) contains the slides for our midterm project pitch.
 - [Image](images) contains all the figures used in the readme. 
