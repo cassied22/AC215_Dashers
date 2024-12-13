@@ -65,37 +65,6 @@
     debug:
       var: create_openai_secret_op
     when: cluster_state == "present"
-
-
-  # - name: Importing GCP service account credentials as a Secret
-  #   shell: |
-  #     #!/bin/bash
-  #     kubectl create secret generic llm-service-key \
-  #       --from-file=llm-service.json=../secrets/llm-service-account-cassie.json \
-  #       --namespace="{{cluster_name}}-namespace"
-  #   register: create_gcp_secret_op
-  #   ignore_errors: yes
-  #   when: cluster_state == "present"
-  
-  # - name: "Print Create GCP Secret Output"
-  #   debug:
-  #     var: create_gcp_secret_op
-  #   when: cluster_state == "present"
-
-  # - name: Importing OpenAI API key as a Secret
-  #   shell: |
-  #     #!/bin/bash
-  #     kubectl create secret generic openai-key \
-  #       --from-file=openai-key.json=../secrets/openai-key.json \
-  #       --namespace="{{cluster_name}}-namespace"
-  #   register: create_openai_secret_op
-  #   ignore_errors: yes
-  #   when: cluster_state == "present"
-
-  # - name: "Print Create OpenAI Secret Output"
-  #   debug:
-  #     var: create_openai_secret_op
-  #   when: cluster_state == "present"
   
   - name: "Create Deployment for Frontend"
     k8s:
@@ -200,12 +169,29 @@
                   - name: persistent-vol
                     mountPath: /persistent
                   - name: google-cloud-key
-                    mountPath: /secrets
+                    mountPath: /secrets/gcp
+                    readOnly: true
+                  - name: openai-key
+                    mountPath: /secrets/openai
+                    readOnly: true
+                  # # Mount the llm-service.json from google-cloud-key secret to /secrets/llm-service.json
+                  # - name: google-cloud-key
+                  #   mountPath: /secrets
+                  #   # mountPath: /secrets/llm-service.json
+                  #   # subPath: llm-service.json
+                  # # # Mount the openai-key.json from openai-key secret to /secrets/openai-key.json
+                  # # - name: openai-key
+                  # #   mountPath: /secrets/openai-key.json
+                  # #   subPath: openai-key.json
                 env:
                   - name: GOOGLE_APPLICATION_CREDENTIALS
-                    value: /secrets/llm-service.json
+                    value: /secrets/gcp/llm-service.json
                   - name: OPENAI_API_KEY
-                    value: /secrets/openai-key.json
+                    value: /secrets/openai/openai-key.json
+                  # - name: GOOGLE_APPLICATION_CREDENTIALS
+                  #   value: /secrets/llm-service.json
+                  # # - name: OPENAI_API_KEY
+                  # #   value: /secrets/openai-key.json
                   # - name: GCS_BUCKET_NAME
                   #   value: cheese-app-models
                   - name: CHROMADB_HOST
@@ -300,8 +286,9 @@
                 - name: GOOGLE_APPLICATION_CREDENTIALS
                   value: "/secrets/llm-service.json"
                 volumeMounts:
-                - name: google-cloud-key
-                  mountPath: /secrets
+                  - name: google-cloud-key
+                    mountPath: /secrets/llm-service.json
+                    subPath: llm-service.json
               volumes:
               - name: google-cloud-key
                 secret:
@@ -314,8 +301,8 @@
     shell: |
       kubectl wait --for=condition=complete job/vector-db-loader -n {{cluster_name}}-namespace --timeout=600s
     register: wait_job_result
-    retries: 0
-    delay: 60
+    retries: 1
+    delay: 30
     until: wait_job_result.rc == 0
     when: cluster_state == "present"
 

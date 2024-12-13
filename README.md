@@ -300,10 +300,28 @@ ansible-playbook deploy-setup-containers.yml -i inventory.yml
 # Set up webserver on compute instance
 ansible-playbook deploy-setup-webserver.yml -i inventory.yml
 ```
-Remember to delete the compute instance if you don't need the compute instance later.
+You can use the below command to view the `EXTERNAL IP` of the your VM, and go to `http://<EXTERNAL IP>/` to view your website.
+```sh
+gcloud compute instances list
+```
+**Remember** to delete the compute instance if you don't need the compute instance later.
 ```sh
 ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent
 ```
+### Kubernetes Deployment
+After pushing all docker images to GCR as in the last step, run the following code to setup kubernetes cluster and deploy all containers
+```sh
+# Set up a kubernetes cluster
+ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+# Deploy containers on kubernetes cluster
+ansible-playbook deploy-k8s-setup-containers.yml -i inventory.yml --extra-vars cluster_state=present
+```
+Copy the `nginx_ingress_ip` from the terminal from the create cluster command, and go to `http://<nginx_ingress_ip>.sslip.io` to view the website.
+**Remember** to delete the kubernetes cluster if you don't need it later.
+```sh
+ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=absent
+```
+
 
 ## Usage details and examples
 We have deployed our application at http://35.188.13.243/ for all users to try out. 

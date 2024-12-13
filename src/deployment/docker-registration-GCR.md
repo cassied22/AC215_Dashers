@@ -33,10 +33,16 @@ docker push gcr.io/brilliant-lens-421801/vector-db
 ```sh
 ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=present
 ansible-playbook deploy-k8s-setup-containers.yml -i inventory.yml --extra-vars cluster_state=present
+ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=absent
+
+
+gcloud container clusters get-credentials daily-meal-cluster --zone us-central1-a --project brilliant-lens-421801
 ```
 
 # Kubernetes inspection commands
 ```sh
+# 
+kubectl rollout restart deployment/api -n daily-meal-cluster-namespace
 # Check cluster status and namespaces
 kubectl get all
 kubectl get all --all-namespaces
@@ -44,8 +50,8 @@ kubectl get pods --all-namespaces
 kubectl get pods -n daily-meal-cluster-namespace
 kubectl get componentstatuses
 kubectl get nodes
-kubectl describe pod api-7687bf556d-pbw64 -n daily-meal-cluster-namespace
-
+kubectl describe pod api-6fdf9cddb-qr6f8 -n daily-meal-cluster-namespace
+kubectl describe pod api-9bb48c454-b2tg2 -n daily-meal-cluster-namespace
 
 wget -qO- http://api:9000/llm-food-detection/chats
 
@@ -56,7 +62,10 @@ kubectl logs -n daily-mean-cluster-namespace job/vector-db-loader -c wait-for-ch
 # Check the main container logs:
 kubectl logs -n daily-meal-cluster-namespace job/vector-db-loader -c vector-db-loader
 kubectl logs -n daily-meal-cluster-namespace pod/api-7687bf556d-pbw64 
-kubectl logs api-7687bf556d-pbw64 -n daily-meal-cluster-namespace
+kubectl logs api-6fdf9cddb-qr6f8 -n daily-meal-cluster-namespace
+kubectl logs api-9bb48c454-b2tg2 -n daily-meal-cluster-namespace
+
+kubectl exec -it api-9bb48c454-b2tg2 -n daily-meal-cluster-namespace -- /bin/bash
 
 # Check the job status:
 kubectl describe job vector-db-loader -n daily-meal-cluster-namespace
