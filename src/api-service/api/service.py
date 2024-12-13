@@ -17,8 +17,11 @@ app.add_middleware(
 
 # Routes
 @app.get("/")
-async def get_index():
-    return {"message": "Welcome to Daily Meal Assistant"}
+async def get_api_status():
+    return {
+        "message": "Welcome to Daily Meal Assistant API Server",
+        "version": "3.1",
+    }
 
 # Additional routers here
 app.include_router(llm_chat.router, prefix="/llm")

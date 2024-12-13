@@ -1,0 +1,183 @@
+---
+- name: "Update containers in Kubernetes Cluster on git commit"
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    cluster_name: "daily-meal-cluster"
+  
+  tasks:
+  - name: "Connect to cluster (update kubeconfig)"
+    shell: "gcloud container clusters get-credentials {{ cluster_name }} --zone {{ gcp_zone }} --project {{ gcp_project }}"
+  
+  - name: "Copy docker tag file"
+    copy:
+      src: .docker-tag
+      dest: .docker-tag
+      mode: 0644
+
+  - name: "Get docker tag"
+    shell: "cat .docker-tag"
+    register: tag
+
+  - name: "Print tag"
+    debug:
+      var: tag
+  
+  - name: "Update Deployment for Frontend"
+    k8s:
+      state: present
+      definition:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: frontend
+          namespace: "{{ namespace }}"
+        spec:
+          replicas: 2
+          selector:
+            matchLabels:
+              run: frontend
+          template:
+            metadata:
+              labels:
+                run: frontend
+            spec:
+              containers:
+              - name: frontend
+                image: "gcr.io/{{ gcp_project }}/daily-meal-frontend-react:{{ tag.stdout }}"
+                imagePullPolicy: IfNotPresent
+                ports:
+                - containerPort: 3000
+                  protocol: TCP
+
+  - name: "Update Deployment for API Service"
+    k8s:
+      state: present
+      definition:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: api
+          namespace: "{{ namespace }}"
+        spec:
+          replicas: 2
+          selector:
+            matchLabels:
+              run: api
+          template:
+            metadata:
+              labels:
+                run: api
+            spec:
+              volumes:
+                - name: persistent-vol
+                  emptyDir: {}
+                - name: google-cloud-key
+                  secret:
+                    secretName: llm-service-key
+                - name: openai-key
+                  secret:
+                    secretName: openai-key
+              containers:
+              - name: api
+                image: "gcr.io/{{ gcp_project }}/daily-meal-api-service:{{ tag.stdout }}"
+                imagePullPolicy: IfNotPresent
+                ports:
+                - containerPort: 9000
+                  protocol: TCP
+                volumeMounts:
+                  - name: persistent-vol
+                    mountPath: /persistent
+                  - name: google-cloud-key
+                    mountPath: /secrets/gcp
+                    readOnly: true
+                  - name: openai-key
+                    mountPath: /secrets/openai
+                    readOnly: true
+                env:
+                  - name: GOOGLE_APPLICATION_CREDENTIALS
+                    value: /secrets/gcp/llm-service.json
+                  - name: OPENAI_API_KEY
+                    value: /secrets/openai/openai-key.json
+                  - name: CHROMADB_HOST
+                    value: recipe-rag-chromadb
+                  - name: CHROMADB_PORT
+                    value: "8000"
+                  - name: GCP_PROJECT
+                    value: "{{ gcp_project }}"
+
+  - name: "Delete existing vector-db-loader Job if it exists"
+    k8s:
+      state: absent
+      api_version: batch/v1
+      kind: Job
+      namespace: "{{ namespace }}"
+      name: vector-db-loader
+    ignore_errors: yes
+
+  - name: "Wait for vector-db-loader Job deletion to complete"
+    shell: "kubectl wait --for=delete job/vector-db-loader -n {{ namespace }} --timeout=60s"
+    register: wait_delete
+    retries: 5
+    delay: 10
+    until: wait_delete.rc == 0
+    ignore_errors: yes
+
+  - name: "Create/Update Job for Loading Vector DB"
+    k8s:
+      state: present
+      definition:
+        apiVersion: batch/v1
+        kind: Job
+        metadata:
+          name: vector-db-loader
+          namespace: "{{ namespace }}"
+        spec:
+          template:
+            spec:
+              initContainers:
+              - name: wait-for-chromadb
+                image: busybox:1.28
+                command:
+                  - sh
+                  - -c
+                  - |
+                    until wget --spider -S http://recipe-rag-chromadb:8000/api/v1/heartbeat 2>&1 | grep "HTTP/1.1 200"; do
+                      echo "Waiting for ChromaDB...";
+                      sleep 5;
+                    done
+              containers:
+              - name: vector-db-loader
+                image: "gcr.io/{{ gcp_project }}/daily-meal-vector-db-cli:{{ tag.stdout }}"
+                env:
+                  - name: GCP_PROJECT
+                    value: "{{ gcp_project }}"
+                  - name: CHROMADB_HOST
+                    value: "recipe-rag-chromadb"
+                  - name: CHROMADB_PORT
+                    value: "8000"
+                  - name: GOOGLE_APPLICATION_CREDENTIALS
+                    value: "/secrets/gcp/llm-service.json"
+                volumeMounts:
+                  - name: google-cloud-key
+                    mountPath: /secrets/gcp/llm-service.json
+                    subPath: llm-service.json
+              volumes:
+                - name: google-cloud-key
+                  secret:
+                    secretName: llm-service-key
+              restartPolicy: Never
+          backoffLimit: 2
+
+  - name: "Wait for vector-db-loader Job to complete"
+    shell: "kubectl wait --for=condition=complete job/vector-db-loader -n {{ namespace }} --timeout=600s"
+    register: wait_job
+    retries: 1
+    delay: 60
+    until: wait_job.rc == 0
+
+  - name: "Verify vector-db-loader Job succeeded"
+    shell: "kubectl get job vector-db-loader -n {{ namespace }} -o jsonpath='{.status.conditions[?(@.type==\"Complete\")].status}'"
+    register: job_status
+    failed_when: job_status.stdout != "True"
