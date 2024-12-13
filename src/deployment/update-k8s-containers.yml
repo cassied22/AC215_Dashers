@@ -32,7 +32,7 @@
         kind: Deployment
         metadata:
           name: frontend
-          namespace: "{{ namespace }}"
+          namespace: "{{cluster_name}}-namespace"
         spec:
           replicas: 2
           selector:
@@ -59,7 +59,7 @@
         kind: Deployment
         metadata:
           name: api
-          namespace: "{{ namespace }}"
+          namespace: "{{cluster_name}}-namespace"
         spec:
           replicas: 2
           selector:
@@ -112,16 +112,12 @@
       state: absent
       api_version: batch/v1
       kind: Job
-      namespace: "{{ namespace }}"
+      namespace: "{{cluster_name}}-namespace"
       name: vector-db-loader
     ignore_errors: yes
 
   - name: "Wait for vector-db-loader Job deletion to complete"
-    shell: "kubectl wait --for=delete job/vector-db-loader -n {{ namespace }} --timeout=60s"
-    register: wait_delete
-    retries: 5
-    delay: 10
-    until: wait_delete.rc == 0
+    shell: "kubectl wait --for=delete job/vector-db-loader -n {{cluster_name}}-namespace"
     ignore_errors: yes
 
   - name: "Create/Update Job for Loading Vector DB"
@@ -132,7 +128,7 @@
         kind: Job
         metadata:
           name: vector-db-loader
-          namespace: "{{ namespace }}"
+          namespace: "{{cluster_name}}-namespace"
         spec:
           template:
             spec:
@@ -171,13 +167,13 @@
           backoffLimit: 2
 
   - name: "Wait for vector-db-loader Job to complete"
-    shell: "kubectl wait --for=condition=complete job/vector-db-loader -n {{ namespace }} --timeout=600s"
+    shell: "kubectl wait --for=condition=complete job/vector-db-loader -n {{cluster_name}}-namespace --timeout=600s"
     register: wait_job
     retries: 1
     delay: 60
     until: wait_job.rc == 0
 
   - name: "Verify vector-db-loader Job succeeded"
-    shell: "kubectl get job vector-db-loader -n {{ namespace }} -o jsonpath='{.status.conditions[?(@.type==\"Complete\")].status}'"
+    shell: "kubectl get job vector-db-loader -n {{cluster_name}}-namespace -o jsonpath='{.status.conditions[?(@.type==\"Complete\")].status}'"
     register: job_status
     failed_when: job_status.stdout != "True"

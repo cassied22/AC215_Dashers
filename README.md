@@ -109,6 +109,7 @@ ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars clu
 # Deploy containers on kubernetes cluster
 ansible-playbook deploy-k8s-setup-containers.yml -i inventory.yml --extra-vars cluster_state=present
 ```
+
 Copy the `nginx_ingress_ip` from the terminal from the create cluster command, and go to `http://<nginx_ingress_ip>.sslip.io` to view the website.
 **Remember** to delete the kubernetes cluster if you don't need it later.
 ```sh
@@ -191,7 +192,7 @@ Here are a few limitations we've identified in the current version of our applic
 
 ## Technical Implementation
 
-### CI and Test
+### CI/CD and Test
 
 We have a functioning CI pipeline implemented using GitHub Actions that:
 - runs unit tests across every container
@@ -220,7 +221,10 @@ We achieved code coverage of **over 90%** on unit test based on the coverage rep
 
 <img src="images/coverage_system.png">
 
-For detailed documentation on our CI/CD and testing, please refer to [Testing Documentation](tests/README.md)
+For detailed documentation on our CI and testing, please refer to [Testing Documentation](tests/README.md)
+
+#### Continuous Deployment (CD):
+We have set up a GitHub Action that will build and deploy a new version of the app when a git commit has a comment containing `/deploy-app`.
 
 ### Machine Learning Workflow
 
