@@ -224,7 +224,8 @@ We achieved code coverage of **over 90%** on unit test based on the coverage rep
 For detailed documentation on our CI and testing, please refer to [Testing Documentation](tests/README.md)
 
 #### Continuous Deployment (CD):
-We have set up a GitHub Action that will build and deploy a new version of the app when a git commit has a comment containing `/deploy-app`.
+We have set up a GitHub Action that will build and deploy a new version of the app when a git commit has a comment containing `/deploy-app`. You can find an example below. 
+<img src="images/cd_workflow.png">
 
 ### Machine Learning Workflow
 
