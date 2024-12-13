@@ -23,52 +23,98 @@ In this final milestone, we focus on three key areas:
 - Project demonstration and documentation.
 - Public communication of results through a live showcase.
 
-## Prerequistes and Setup Instructions
-### Build Recipe Vector Database
-Navigate to src/datapipeline directory:
+## Prerequisites and Setup Instructions
+Several prerequisites:
+- Several secrets and keys: `llm-service-account.json`, `gcp-service.json`, `openai-key.json`
+- HavenNeccessary roles and APIs enabled on GCP service account
+- Public SSH keys: `ssh-key-deployment.pub`
+
+### SSH Setup
+Run the following within the `deployment` container:
+```sh
+gcloud compute project-info add-metadata --project brilliant-lens-421801 --metadata enable-oslogin=TRUE
+# Provide SSH key for service account
+cd /secrets
+ssh-keygen -f ssh-key-deployment
+cd /app
+# Provide public SSH key to instances
+gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub
+```
+From the output of the above command, keep note of the username, and paste it to `inventory.yml` within `src/deployment` folder.
+
+### Local Development Setup
+#### Build Recipe Vector Database
 ```bash
+# Navigate to src/datapipeline directory:
 cd src/datapipeline
-```
-Build container:
-```bash
+# Build container and go to the docker shell
 sh docker-shell.sh
-```
-Run cli_rag.py to download recipe vector database and build Chromadb:
-```bash
+# Run cli_rag.py within shell to download recipe vector database and build Chromadb
 python cli_rag.py --download --load
 ```
 Note: Keep this container running while proceding to the next container.
-### Run API Server
-Navigate to src/api-service:
+#### Run API Server
 ```bash
+# Navigate to src/api-service
 cd src/api-service
-```
-Build container:
-```bash
+# Build container and go to the docker shell
 sh docker-shell.sh
-```
-Start server:
-```bash
+# Start server
 uvicorn_server
 ```
 Note: Keep this container running while proceding to the next container.
-### Run Frontend 
-Navigate to src/frontend_react:
+#### Run Frontend 
 ```bash
+# Navigate to src/frontend_react
 cd src/frontend_react
-```
-Build container:
-```bash
+# Build container and go to the docker shell
 sh docker-shell.sh
-```
-Start frontend:
-```bash
+# Start frontend
 npm install
 npm run dev
 ```
 
 ## Deployment instructions
-TODO
+### GCP Virtual Machine Deployment
+Navigate to `src/deployment` folder. Then:
+```sh
+sh docker-shell.sh
+# Upload docker images to Google Cloud Registra, if running the procedure for the first time
+ansible-playbook deploy-register-docker-images.yml -i inventory.yml
+# Create GCP Virtual Machine compute instance 
+ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=present
+```
+Once the command runs successfully get the IP address of the compute instance from GCP Console and update the `appserver>hosts` in `inventory.yml` file
+```sh
+# Provision compute instance in GCP, installing and setting up required things for deployment
+ansible-playbook deploy-provision-instance.yml -i inventory.yml
+# Set up docker containers in the compute instance
+ansible-playbook deploy-setup-containers.yml -i inventory.yml
+# Set up webserver on compute instance
+ansible-playbook deploy-setup-webserver.yml -i inventory.yml
+```
+You can use the below command to view the `EXTERNAL IP` of the your VM, and go to `http://<EXTERNAL IP>/` to view your website.
+```sh
+gcloud compute instances list
+```
+**Remember** to delete the compute instance if you don't need the compute instance later.
+```sh
+ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent
+```
+### Kubernetes Deployment
+After pushing all docker images to GCR as in the last step, run the following code to setup kubernetes cluster and deploy all containers
+```sh
+# Set up a kubernetes cluster
+ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+# Deploy containers on kubernetes cluster
+ansible-playbook deploy-k8s-setup-containers.yml -i inventory.yml --extra-vars cluster_state=present
+```
+Copy the `nginx_ingress_ip` from the terminal from the create cluster command, and go to `http://<nginx_ingress_ip>.sslip.io` to view the website.
+**Remember** to delete the kubernetes cluster if you don't need it later.
+```sh
+ansible-playbook deploy-k8s-create-cluster.yml -i inventory.yml --extra-vars cluster_state=absent
+```
+
 
 ## Usage details and examples
 We have deployed our application at http://35.188.13.243/ for all users to try out. 
