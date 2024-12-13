@@ -231,12 +231,12 @@ We have developed a production-ready machine learning workflow including the fol
 - [API Service](src/api-service): this container includes implementations related to the api services. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_api/tags)
 - [Data Versioning](src/data-versioning): this container serves the data version controls functionality. 
 - [Datapipeline](src/datapieline): this container contains implementation of RAG: it prepares data for LLM with RAG, including tasks such as chunking, embedding, and populating the vector database, and output recommended recipe. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_rag/tags)
-- [deployment](src/deployment): this container is responsible for deployment of our application. 
+- [deployment](src/deployment): this container is responsible for deployment of our application. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_deploy/tags)
 - [food-detection](src/food-detection): this container contains implementation for food detection functionality. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_food/tags)
 - [frontend_react](src/frontend_react): this container contains frontend implementations. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_frontend/tags)
 - [ml-pipeline](src/ml-pipeline): this container contains implementations related to machine learning workflow. [Link to Docker Hub](https://hub.docker.com/r/shiyuma/dasher_ml/tags)
 
-Instructions for running dockers above locally:
+We have pushed our docker images to Docker Hub. To reproduce our app, you have the option of pulling containers from Docker Hub or building them locally:
 ```bash
 cd src/...
 sh docker-shell.sh
