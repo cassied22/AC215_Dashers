@@ -3,7 +3,7 @@ name: ML Pipeline Workflow
 on:
   push:
     branches:
-      - milestone5
+      - main
 
 jobs:
   Explore-GitHub-Actions:

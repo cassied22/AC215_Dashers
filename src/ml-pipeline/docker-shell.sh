@@ -24,6 +24,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v "$BASE_DIR":/app \
 -v "$SECRETS_DIR":/secrets \
+-v $(pwd)/../../tests/ml-pipeline:/app/tests \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
 -e GCS_SERVICE_ACCOUNT=$GCS_SERVICE_ACCOUNT \
 -e GCP_PROJECT=$GCP_PROJECT \

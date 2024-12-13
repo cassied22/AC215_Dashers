@@ -23,16 +23,11 @@ services:
             - recipe-rag-network
         entrypoint: ["/bin/bash", "-c"]
         command: |
-            echo "Installing dependencies..." && \
-            python -m pip install -r requirements.txt && \
-            python -m pip install pytest pytest-cov && \
             echo "Running unit tests..." && \
             python -m pytest tests/test_cli_rag.py -v --cov=./ --cov-report=term-missing --junitxml=unit-tests.xml && \
             echo "Running integration tests..." && \
-            python -m pytest tests/integration -v --cov=./ --cov-report=term-missing --junitxml=integration-tests.xml && \
-            echo "Running system tests..." && \
             python cli_rag.py --download --load && \
-            python -m pytest tests/system/test_api_service.py -v --cov=./ --cov-report=term-missing --cov-fail-under=50 --junitxml=system-tests.xml
+            python -m pytest tests/integration/test_api_service.py -v --cov=./ --cov-report=term-missing --cov-fail-under=50 --junitxml=system-tests.xml
 
     chromadb:
         image: chromadb/chroma:latest
@@ -64,12 +59,31 @@ services:
             - recipe-rag-network
         entrypoint: ["/bin/bash", "-c"]
         command: |
-            echo "Installing dependencies..." && \
-            python -m pip install -r requirements.txt && \
-            python -m pip install pytest pytest-cov && \
             echo "Running unit tests..." && \
-            python -m pytest tests/test_gemini_object_detection.py -v --cov=./ --cov-report=term-missing --junitxml=unit-tests.xml && \
-            echo "Running integration tests..." && \
-            python -m pytest tests/integration -v --cov=./ --cov-report=term-missing --junitxml=integration-tests.xml && \
-            echo "Running system tests..." && \
-            python -m pytest tests/system -v --cov=./ --cov-report=term-missing --cov-fail-under=50 --junitxml=system-tests.xml
+            python -m pytest -v --cov=./ -cov-omit=*/tests/* --cov-report=term-missing --junitxml=unit-tests.xml
+    
+    daily-meal-api-service:
+        build:
+            context: ../../src/api-service
+            dockerfile: Dockerfile
+        volumes:
+            - ../../src/secrets:/secrets:ro
+            - ../../src/api-service:/app
+            - ../api-service:/app/tests
+        ports:
+            - 9000:9000
+        environment:
+            DEV: 1
+            GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account-cassie.json
+            OPENAI_API_KEY: ${OPENAI_API_KEY}
+            GCP_PROJECT: ${GCP_PROJECT}
+            GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+            CHROMADB_HOST: ${CHROMADB_HOST}
+            CHROMADB_PORT: ${CHROMADB_PORT}
+            PYTHONPATH: /app
+        networks:
+            - recipe-rag-network
+        entrypoint: ["/bin/bash", "-c"]
+        command: |
+            echo "Running unit tests..." && \
+            python -m pytest -v --cov=api -cov-omit=*/tests/* --cov-report=term-missing --junitxml=unit-tests.xml

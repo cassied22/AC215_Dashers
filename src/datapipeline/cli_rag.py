@@ -154,11 +154,12 @@ def embed(df):
 		df: pd.DataFrame, dataframe with NER embeddings added
     """
     # Concatenate the list of NER entities in each row into a single string
-    df["NER"] = df["NER"].apply(lambda x: eval(x))
+    df.loc[:, "NER"] = df["NER"].apply(lambda x: eval(x))
     concatenated_column = [", ".join(entities) for entities in df["NER"]]
 
     ner_embeddings = generate_text_embeddings(concatenated_column, batch_size=100)
-    df["NER_embeddings"] = ner_embeddings
+    df = df.copy()
+    df.loc[:,"NER_embeddings"] = ner_embeddings
 
     # Save
     print("Shape:", df.shape)
@@ -412,7 +413,6 @@ def main(args=None):
         test()
     else:
         print("No valid operation selected.")
-        parser.print_help()
 
 
 if __name__ == "__main__":

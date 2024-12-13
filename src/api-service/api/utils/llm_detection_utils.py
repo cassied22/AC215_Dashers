@@ -1,17 +1,8 @@
 import os
-from typing import Dict, Any, List, Optional
-from fastapi import HTTPException
+from typing import Dict
 import base64
-import io
-import json
 import requests
-import zipfile
-import numpy as np
-from PIL import Image
-from pathlib import Path
-from tempfile import TemporaryDirectory
-import traceback
-from vertexai.generative_models import GenerativeModel, ChatSession, Part
+from vertexai.generative_models import GenerativeModel, ChatSession
 import sys
 
 # Setup
@@ -71,25 +62,6 @@ def generate_chat_response(chat_session: ChatSession, message: Dict) -> str:
     )
     return response.text
 
-def rebuild_chat_session(chat_history: List[Dict]) -> ChatSession:
-    """Rebuild a chat session with complete context"""
-    new_session = create_chat_session()
-    
-    for message in chat_history:
-        if message["role"] == 'user' and message["content"] != "":
-            prompt = message["content"]
-            response = new_session.send_message(
-                prompt,
-                generation_config=generation_config
-            )
-        if message["role"] == 'gpt':
-            prompt = f"We have already identified the list of ingredients in the image as {message['results']['prediction_label']}"
-            response = new_session.send_message(
-                prompt,
-                generation_config=generation_config
-            )
-    
-    return new_session
 
 
 def encode_image(image_path):

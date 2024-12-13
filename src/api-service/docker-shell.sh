@@ -27,6 +27,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v "$BASE_DIR":/app \
 -v "$SECRETS_DIR":/secrets \
 -v "$PERSISTENT_DIR":/persistent \
+-v $(pwd)/../../tests/api-service:/app/tests \
 -p 9000:9000 \
 -e DEV=1 \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
