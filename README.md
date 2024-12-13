@@ -206,7 +206,7 @@ on every pull request or merge to the main branch.
 
 #### Unit Tests: 
 We write unit tests for all the Python scripts in our repo, including the source code for each component(container) and the scripts to deploy API endpoints. 
-We achieved code coverage of **over 90%** on unit test based on the coverage report below.
+We achieved code coverage of **over 90%** on unit test based on the coverage report below. One lack of testing function is ```test_download()``` in datapipeline inside ```cli_rag.py``` because its too hard to put it running in the CI. Comparing the gcloud storage command arguments is tricky - even though the commands look identical ("Expected: run(['gcloud', 'storage', 'cp', 'outputs/recipe_embeddings.jsonl', 'gs://****/recipe_embeddings.jsonl'], check=True)" vs the actual call), there might be subtle differences in how the strings are formatted or compared by the mock object. All other functions and modules are tested.
 
 <img src="images/coverage_datapipeline.jpg" width="500">
 <img src="images/coverage_food.jpg" width="500">
