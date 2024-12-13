@@ -14,7 +14,7 @@ class TestBrowserInteractions:
     @pytest.fixture(scope="class")
     def browser(self):
         driver = webdriver.Chrome()
-        driver.get("http://35.188.13.243/")  # the public deployed url
+        driver.get("http://34.136.111.103.sslip.io/")  # the public deployed url
         yield driver
         driver.quit()
 
