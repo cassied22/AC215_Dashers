@@ -4,6 +4,7 @@ from typing import Dict
 import uuid
 import time
 import base64
+import json
 from tempfile import TemporaryDirectory
 from api.utils.llm_detection_utils import chat_sessions, create_chat_session, generate_chat_response
 from api.utils.llm_detection_utils import identify_food_gpt
@@ -52,7 +53,10 @@ async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, al
                 f.write(image_bytes)
 
             # Make prediction
-            api_key = "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"
+            api_key_path = os.getenv("OPENAI_API_KEY")
+            if api_key_path and os.path.isfile(api_key_path):
+                with open(api_key_path, 'r') as file:
+                    api_key = json.load(file).get('OPENAI_API_KEY')
             prediction_results = identify_food_gpt(image_path, api_key)
             print(prediction_results)
 
